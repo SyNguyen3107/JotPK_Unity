@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 882e1476797120346a2a8ffe56519d9d, type: 3}
+  m_Name: S1A1W2
+  m_EditorClassIdentifier: Assembly-CSharp::WaveData
+  enemyGroups:
+  - enemyPrefab: {fileID: 3655004690988848967, guid: d5f66560e50c19d45867bb05131fe188, type: 3}
+    count: 10
+    rate: 1
+  - enemyPrefab: {fileID: 3655004690988848967, guid: d5f66560e50c19d45867bb05131fe188, type: 3}
+    count: 10
+    rate: 1

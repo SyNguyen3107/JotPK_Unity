@@ -205,5 +205,7 @@ MonoBehaviour:
   health: 1
   damageToPlayer: 1
   deathEffectPrefab: {fileID: 5037848369709413691, guid: 6050a5da9c530a14999645b9819b5d75, type: 3}
-  deathSounds: []
+  deathSounds:
+  - {fileID: 8300000, guid: 989848622c570d14288a35d16e24adf2, type: 3}
+  - {fileID: 8300000, guid: a6db1b3a065b4324bad9a9619ac33c73, type: 3}
   rb: {fileID: 4635532394864102644}
