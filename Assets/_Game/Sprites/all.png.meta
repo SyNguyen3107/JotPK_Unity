@@ -4373,28 +4373,6 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_184
-      rect:
-        serializedVersion: 2
-        x: 383
-        y: 49
-        width: 16
-        height: 16
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 0a4498c716b9f954ba990c4be0b5a05e
-      internalID: -1501870304
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
       name: all_185
       rect:
         serializedVersion: 2
@@ -6528,6 +6506,28 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
+    - serializedVersion: 2
+      name: default_bullet
+      rect:
+        serializedVersion: 2
+        x: 389
+        y: 61
+        width: 4
+        height: 4
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a8db8a849a71d3d4ca1b0fdf3e352558
+      internalID: -921384764
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     customData: 
     physicsShape: []
@@ -6817,6 +6817,7 @@ TextureImporter:
       all_97: -1443817589
       all_98: 24513268
       all_99: -333824154
+      default_bullet: -921384764
       player_down: 1231330788
       player_idle: 452210076
       player_left: -572029908

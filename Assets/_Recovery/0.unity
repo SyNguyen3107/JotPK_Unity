@@ -662,7 +662,7 @@ MonoBehaviour:
   bulletPrefab: {fileID: 4803697644789391034, guid: 246aeb5273441ff4db9666ee7ea1e9ca, type: 3}
   firePoint: {fileID: 0}
   bulletOffset: 0.5
-  fireDelay: 0.3
+  fireDelay: 0.5
   audioSource: {fileID: 1548647866}
   shootClip: {fileID: 8300000, guid: 592d843afdb33824e89df639c56a68b5, type: 3}
   idleStateObject: {fileID: 470613827}
