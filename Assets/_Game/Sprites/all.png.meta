@@ -360,7 +360,7 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
       spriteID: f5efb212e64fe5360800000000000000
       internalID: 7160429211405778527
@@ -382,7 +382,7 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
       spriteID: 3db275c2db852f160800000000000000
       internalID: 7057801135558962131
@@ -404,7 +404,7 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
       spriteID: 92f2fdf1fbe3726f0800000000000000
       internalID: -709529425693167831
@@ -426,7 +426,7 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
       spriteID: 7adee27d576f68750800000000000000
       internalID: 6306999314160741799
@@ -448,7 +448,7 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
       spriteID: a50fd240ad222b120800000000000000
       internalID: 2428041468874453082
@@ -457,7 +457,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_5
+      name: forest0
       rect:
         serializedVersion: 2
         x: 335
@@ -470,7 +470,7 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
       spriteID: b4ab12e4a54b7c0e0800000000000000
       internalID: -2249631188897383861
@@ -479,7 +479,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_6
+      name: forest1
       rect:
         serializedVersion: 2
         x: 351
@@ -492,7 +492,7 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
       spriteID: 510a4673728032740800000000000000
       internalID: 5125949765403844629
@@ -501,7 +501,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_7
+      name: forest2
       rect:
         serializedVersion: 2
         x: 367
@@ -514,7 +514,7 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
       spriteID: d3bc6f747aea40bf0800000000000000
       internalID: -358970036792669379
@@ -523,7 +523,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_8
+      name: forest3
       rect:
         serializedVersion: 2
         x: 383
@@ -536,7 +536,7 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
       spriteID: d0a3785a8ae47e360800000000000000
       internalID: 7198809015613602317
@@ -545,7 +545,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_9
+      name: forest4
       rect:
         serializedVersion: 2
         x: 399
@@ -558,7 +558,7 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
       spriteID: 794c02b3c8ef6cf30800000000000000
       internalID: 4595640348019049623
@@ -567,7 +567,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_10
+      name: forest5
       rect:
         serializedVersion: 2
         x: 415
@@ -580,7 +580,7 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
       spriteID: 9838e4d71f2f98300800000000000000
       internalID: 255001972926481289
@@ -589,7 +589,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_11
+      name: forest6
       rect:
         serializedVersion: 2
         x: 431
@@ -602,7 +602,7 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
       spriteID: c9227e7920ecdf930800000000000000
       internalID: 4178722539803452060
@@ -611,7 +611,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_12
+      name: forest7
       rect:
         serializedVersion: 2
         x: 447
@@ -624,7 +624,7 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
       spriteID: 3e07deee4fd79af70800000000000000
       internalID: 9199022204814979299
@@ -633,7 +633,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_13
+      name: forest8
       rect:
         serializedVersion: 2
         x: 463
@@ -646,7 +646,7 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
       spriteID: 6cf92a49111a2bb20800000000000000
       internalID: 3148756186365599686
@@ -655,7 +655,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_14
+      name: forest9
       rect:
         serializedVersion: 2
         x: 479
@@ -668,7 +668,7 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
       spriteID: 066839617bbb43fe0800000000000000
       internalID: -1210136004823644576
@@ -677,7 +677,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_15
+      name: forest10
       rect:
         serializedVersion: 2
         x: 495
@@ -690,7 +690,7 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
       spriteID: c132a440ecf30f160800000000000000
       internalID: 7057210770157347612
@@ -712,7 +712,7 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
       spriteID: 4bd2e0aafbd485470800000000000000
       internalID: 8383536191937326516
@@ -734,7 +734,7 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
       spriteID: 5d594a71421305600800000000000000
       internalID: 454917593449666005
@@ -756,7 +756,7 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
       spriteID: d6b846fc6734598c0800000000000000
       internalID: -3993211317029401747
@@ -778,7 +778,7 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
       spriteID: 4c375fa77d04716b0800000000000000
       internalID: -5325716740117269564
@@ -800,7 +800,7 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
       spriteID: 8977fa782596c7200800000000000000
       internalID: 179133888372635544
@@ -822,7 +822,7 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
       spriteID: 495763e167d0ed5f0800000000000000
       internalID: -730131288623254124
@@ -831,7 +831,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_22
+      name: graveyard0
       rect:
         serializedVersion: 2
         x: 335
@@ -844,7 +844,7 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
       spriteID: b4c05c61310cdb260800000000000000
       internalID: 7115054174534175819
@@ -853,7 +853,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_23
+      name: graveyard1
       rect:
         serializedVersion: 2
         x: 351
@@ -866,7 +866,7 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
       spriteID: 5e510216c9d015c00800000000000000
       internalID: 887505566864250341
@@ -875,7 +875,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_24
+      name: graveyard2
       rect:
         serializedVersion: 2
         x: 367
@@ -888,7 +888,7 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
       spriteID: 954f37d6d2f6cd030800000000000000
       internalID: 3520811249597412441
@@ -897,7 +897,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_25
+      name: graveyard3
       rect:
         serializedVersion: 2
         x: 383
@@ -910,7 +910,7 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
       spriteID: 2239dfc1dfe6f2680800000000000000
       internalID: -8777675115329645790
@@ -919,7 +919,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_26
+      name: graveyard4
       rect:
         serializedVersion: 2
         x: 399
@@ -932,7 +932,7 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
       spriteID: 368b5b06cf7975900800000000000000
       internalID: 673173779525253219
@@ -941,7 +941,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_27
+      name: graveyard5
       rect:
         serializedVersion: 2
         x: 415
@@ -954,7 +954,7 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
       spriteID: e0d8ead8fb12b48f0800000000000000
       internalID: -555313022450627314
@@ -963,7 +963,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_28
+      name: graveyard6
       rect:
         serializedVersion: 2
         x: 431
@@ -976,7 +976,7 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
       spriteID: 395b7c7ccb9083530800000000000000
       internalID: 3834825789116233107
@@ -985,7 +985,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_29
+      name: graveyard7
       rect:
         serializedVersion: 2
         x: 447
@@ -998,7 +998,7 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
       spriteID: 0be63e4407028e900800000000000000
       internalID: 713856207502405296
@@ -1007,7 +1007,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_30
+      name: graveyard8
       rect:
         serializedVersion: 2
         x: 463
@@ -1020,7 +1020,7 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
       spriteID: f8b9a4d57c031c9b0800000000000000
       internalID: -5061710873365931121
@@ -1029,7 +1029,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_31
+      name: graveyard9
       rect:
         serializedVersion: 2
         x: 479
@@ -1042,7 +1042,7 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
       spriteID: 5bf67b2a44391bd10800000000000000
       internalID: 2139653220974686133
@@ -1051,7 +1051,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_32
+      name: graveyard10
       rect:
         serializedVersion: 2
         x: 495
@@ -1064,7 +1064,7 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
       spriteID: 276a11e004e6ad450800000000000000
       internalID: 6114320665501869682
@@ -1086,7 +1086,7 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
       spriteID: d68e9ed59911121b0800000000000000
       internalID: -5683241904361576339
@@ -1108,7 +1108,7 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
       spriteID: 711ac538dc23e9200800000000000000
       internalID: 188644092649709847
@@ -1130,7 +1130,7 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
       spriteID: bc9dc3d0d27d24900800000000000000
       internalID: 667332283299846603
@@ -1152,7 +1152,7 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
       spriteID: 92adaa09a403a8b00800000000000000
       internalID: 831530178016107049
@@ -1174,7 +1174,7 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
       spriteID: fd7af30335491d1f0800000000000000
       internalID: -1021872555423717409
@@ -1196,7 +1196,7 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
       spriteID: c22aeb6e053f61340800000000000000
       internalID: 4834318778822992428
@@ -1218,7 +1218,7 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
       spriteID: 2af14f94da0f66c30800000000000000
       internalID: 4352430716960907170
@@ -1240,7 +1240,7 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
       spriteID: fa6d5ba6f56a74c90800000000000000
       internalID: -7185591751703931217
@@ -1262,7 +1262,7 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
       spriteID: 3788da07e05711cd0800000000000000
       internalID: -2589159605880911757
@@ -1284,7 +1284,7 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
       spriteID: b6752131ec4f67c90800000000000000
       internalID: -7172276190620526741
@@ -1306,7 +1306,7 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
       spriteID: ab636c04216713a00800000000000000
       internalID: 734498035006322362
@@ -1328,7 +1328,7 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
       spriteID: 8f5202674330d65e0800000000000000
       internalID: -1914870742707591688
@@ -1337,7 +1337,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_45
+      name: prairie0
       rect:
         serializedVersion: 2
         x: 335
@@ -1350,7 +1350,7 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
       spriteID: c93d89d1649ddd6a0800000000000000
       internalID: -6422738598392966244
@@ -1359,7 +1359,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_46
+      name: prairie1
       rect:
         serializedVersion: 2
         x: 351
@@ -1372,7 +1372,7 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
       spriteID: 652edd944efa34000800000000000000
       internalID: 19052218466296406
@@ -1381,7 +1381,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_47
+      name: prairie2
       rect:
         serializedVersion: 2
         x: 367
@@ -1394,7 +1394,7 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
       spriteID: 36f38811cc06e88b0800000000000000
       internalID: -5148070894454161565
@@ -1403,7 +1403,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_48
+      name: prairie3
       rect:
         serializedVersion: 2
         x: 383
@@ -1416,7 +1416,7 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
       spriteID: 32db4b060d32b6790800000000000000
       internalID: -7535890173591765725
@@ -1425,7 +1425,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_49
+      name: prairie4
       rect:
         serializedVersion: 2
         x: 399
@@ -1438,7 +1438,7 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
       spriteID: dd2c64722de53c550800000000000000
       internalID: 6179887370377544413
@@ -1447,7 +1447,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_50
+      name: prairie5
       rect:
         serializedVersion: 2
         x: 415
@@ -1459,8 +1459,12 @@ TextureImporter:
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
-      physicsShape: []
-      tessellationDetail: -1
+      physicsShape:
+      - - {x: -8, y: -8}
+        - {x: 8, y: -8}
+        - {x: 8, y: 8}
+        - {x: -8, y: 8}
+      tessellationDetail: 0
       bones: []
       spriteID: 2b4f07f00f1d78fa0800000000000000
       internalID: -5798435166234807118
@@ -1469,7 +1473,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_51
+      name: prairie6
       rect:
         serializedVersion: 2
         x: 431
@@ -1481,8 +1485,12 @@ TextureImporter:
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
-      physicsShape: []
-      tessellationDetail: -1
+      physicsShape:
+      - - {x: -8, y: -8}
+        - {x: 8, y: -8}
+        - {x: 8, y: 8}
+        - {x: -8, y: 8}
+      tessellationDetail: 0
       bones: []
       spriteID: 45ff99551cef7be30800000000000000
       internalID: 4519360857407881044
@@ -1491,7 +1499,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_52
+      name: prairie7
       rect:
         serializedVersion: 2
         x: 447
@@ -1504,7 +1512,7 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
       spriteID: ce18abe4ef6236930800000000000000
       internalID: 4135191756540641772
@@ -1513,7 +1521,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_53
+      name: prairie8
       rect:
         serializedVersion: 2
         x: 463
@@ -1526,7 +1534,7 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
       spriteID: 4a1ba31fa003e75e0800000000000000
       internalID: -1910036368403549788
@@ -1535,7 +1543,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_54
+      name: prairie9
       rect:
         serializedVersion: 2
         x: 479
@@ -1548,7 +1556,7 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
       spriteID: b460449caa86f2b50800000000000000
       internalID: 6570585464087250507
@@ -1557,7 +1565,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_55
+      name: prairie10
       rect:
         serializedVersion: 2
         x: 495
@@ -1570,7 +1578,7 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
       spriteID: 51d82921ee73caca0800000000000000
       internalID: -6004362707538375403
@@ -1592,7 +1600,7 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
       spriteID: 45433de299890d980800000000000000
       internalID: -8516139111674596268
@@ -1614,7 +1622,7 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
       spriteID: 430bf039dfa2d93c0800000000000000
       internalID: -4351274396387659724
@@ -1636,7 +1644,7 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
       spriteID: ad0cca95f3cb92560800000000000000
       internalID: 7289564452149313754
@@ -1658,7 +1666,7 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
       spriteID: 10feb8fe53413a440800000000000000
       internalID: 4945819037667684097
@@ -1680,7 +1688,7 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
       spriteID: 07c9f9eecc752f6d0800000000000000
       internalID: -2958205467540611984
@@ -1702,7 +1710,7 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
       spriteID: e8916e1e8e7ff26a0800000000000000
       internalID: -6471681559913686642
@@ -1724,7 +1732,7 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
       spriteID: 3903867a62e14e870800000000000000
       internalID: 8711120730607595667
@@ -1746,7 +1754,7 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
       spriteID: 3cda2f5eea5e70e30800000000000000
       internalID: 4469793694533463491
@@ -1768,7 +1776,7 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
       spriteID: b36e41e1d74585150800000000000000
       internalID: 5861527811375031867
@@ -1790,7 +1798,7 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
       spriteID: ecea55b8bd9184f60800000000000000
       internalID: 8018687567259348686
@@ -1812,7 +1820,7 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
       spriteID: dbe66b5e5ea25ea80800000000000000
       internalID: -8438291159918940483
@@ -1834,7 +1842,7 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
       spriteID: bb2e167e0539deab0800000000000000
       internalID: -4977160037485911365
@@ -1856,7 +1864,7 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
       spriteID: 00d67d17d019e63f0800000000000000
       internalID: -905626988124345088
@@ -1865,7 +1873,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_69
+      name: death0
       rect:
         serializedVersion: 2
         x: 383
@@ -1878,7 +1886,7 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
       spriteID: 9c791a305f38e4dc0800000000000000
       internalID: -3652837159399745591
@@ -1887,7 +1895,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_70
+      name: death1
       rect:
         serializedVersion: 2
         x: 399
@@ -1900,7 +1908,7 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
       spriteID: 45aa281ba286e3540800000000000000
       internalID: 4989539969749133908
@@ -1909,7 +1917,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_71
+      name: death2
       rect:
         serializedVersion: 2
         x: 415
@@ -1922,7 +1930,7 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
       spriteID: dd4a4ce29cbcb9f60800000000000000
       internalID: 8042245624533656797
@@ -1931,7 +1939,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_72
+      name: death3
       rect:
         serializedVersion: 2
         x: 431
@@ -1944,7 +1952,7 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
       spriteID: 346f5ffb984886ff0800000000000000
       internalID: -42638469294066109
@@ -1953,7 +1961,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_73
+      name: death4
       rect:
         serializedVersion: 2
         x: 447
@@ -1966,7 +1974,7 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
       spriteID: eb7799cc73d6ccaa0800000000000000
       internalID: -6139412105589590082
@@ -1975,7 +1983,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_74
+      name: death5
       rect:
         serializedVersion: 2
         x: 463
@@ -1988,7 +1996,7 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
       spriteID: 807354ac870784550800000000000000
       internalID: 6145285355638961928
@@ -2010,7 +2018,7 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
       spriteID: ec54c5393244993d0800000000000000
       internalID: -3199451140683184690
@@ -2032,7 +2040,7 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
       spriteID: d5018d9e01ac71860800000000000000
       internalID: 7500685878400389213
@@ -2054,7 +2062,7 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
       spriteID: 4c20ef0a2fb9de240800000000000000
       internalID: 4822682242369061572
@@ -2076,7 +2084,7 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
       spriteID: 759956e02bb7a07a0800000000000000
       internalID: -6410175114932545193
@@ -2261,7 +2269,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_87
+      name: orc0
       rect:
         serializedVersion: 2
         x: 223
@@ -2283,7 +2291,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_88
+      name: orc1
       rect:
         serializedVersion: 2
         x: 239
@@ -6515,7 +6523,7 @@ TextureImporter:
         width: 4
         height: 4
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -6544,9 +6552,9 @@ TextureImporter:
       - key: SpriteEditor.SliceSettings
         value: '{"sliceOnImport":false,"gridCellCount":{"x":1.0,"y":1.0},"gridSpriteSize":{"x":16.0,"y":16.0},"gridSpriteOffset":{"x":15.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":1,"keepEmptyRects":false,"isAlternate":false}'
     nameFileIdTable:
+      0: 7115054174534175819
       all_0: 7160429211405778527
       all_1: 7057801135558962131
-      all_10: 255001972926481289
       all_100: 1949128863
       all_101: -865044210
       all_102: -1264286004
@@ -6557,7 +6565,6 @@ TextureImporter:
       all_107: 1538238822
       all_108: 1901684188
       all_109: 1493587115
-      all_11: 4178722539803452060
       all_110: -1774927140
       all_111: -808286055
       all_112: 1021272011
@@ -6568,7 +6575,6 @@ TextureImporter:
       all_117: 1115747590
       all_118: 805846955
       all_119: 1618088638
-      all_12: 9199022204814979299
       all_120: 1444307439
       all_121: 499951723
       all_122: 1376343336
@@ -6579,7 +6585,6 @@ TextureImporter:
       all_127: 1002424784
       all_128: -1826199920
       all_129: -951540098
-      all_13: 3148756186365599686
       all_130: -572308852
       all_131: -223515592
       all_132: -1247005217
@@ -6590,7 +6595,6 @@ TextureImporter:
       all_137: 1480823793
       all_138: 436881558
       all_139: -2134375923
-      all_14: -1210136004823644576
       all_140: 349504490
       all_141: -1567105941
       all_142: 414688423
@@ -6601,7 +6605,6 @@ TextureImporter:
       all_147: 1615796000
       all_148: 34521829
       all_149: -1455349396
-      all_15: 7057210770157347612
       all_154: 1657673340
       all_155: -1644906562
       all_156: -1222733631
@@ -6674,7 +6677,6 @@ TextureImporter:
       all_217: 412346009
       all_218: 1463831557
       all_219: -1590997314
-      all_22: 7115054174534175819
       all_220: 303519900
       all_221: 1284842373
       all_222: -2126728643
@@ -6685,7 +6687,6 @@ TextureImporter:
       all_227: 435836708
       all_228: 1845047095
       all_229: -1809607152
-      all_23: 887505566864250341
       all_230: -750504050
       all_231: 2104362070
       all_232: 1070991485
@@ -6696,7 +6697,6 @@ TextureImporter:
       all_237: 581015631
       all_238: -141378192
       all_239: 400557543
-      all_24: 3520811249597412441
       all_240: -1237053869
       all_241: -1498965742
       all_242: -1491798909
@@ -6707,7 +6707,6 @@ TextureImporter:
       all_247: -2115220771
       all_248: -680587051
       all_249: 1514579448
-      all_25: -8777675115329645790
       all_250: 1885453699
       all_251: 242065892
       all_252: -6647371
@@ -6718,7 +6717,6 @@ TextureImporter:
       all_257: -1524350651
       all_258: -1416087736
       all_259: 1396851553
-      all_26: 673173779525253219
       all_260: 1581388313
       all_261: 217959368
       all_262: -435741865
@@ -6729,7 +6727,6 @@ TextureImporter:
       all_267: -605275257
       all_268: 796493990
       all_269: -266258525
-      all_27: -555313022450627314
       all_270: -824749669
       all_271: -772121127
       all_272: -170875961
@@ -6738,12 +6735,7 @@ TextureImporter:
       all_275: 500523321
       all_276: -748085816
       all_277: 1874081189
-      all_28: 3834825789116233107
-      all_29: 713856207502405296
       all_3: 6306999314160741799
-      all_30: -5061710873365931121
-      all_31: 2139653220974686133
-      all_32: 6114320665501869682
       all_33: -5683241904361576339
       all_34: 188644092649709847
       all_35: 667332283299846603
@@ -6757,23 +6749,10 @@ TextureImporter:
       all_42: -7172276190620526741
       all_43: 734498035006322362
       all_44: -1914870742707591688
-      all_45: -6422738598392966244
-      all_46: 19052218466296406
-      all_47: -5148070894454161565
-      all_48: -7535890173591765725
-      all_49: 6179887370377544413
-      all_5: -2249631188897383861
-      all_50: -5798435166234807118
-      all_51: 4519360857407881044
-      all_52: 4135191756540641772
-      all_53: -1910036368403549788
-      all_54: 6570585464087250507
-      all_55: -6004362707538375403
       all_56: -8516139111674596268
       all_57: -4351274396387659724
       all_58: 7289564452149313754
       all_59: 4945819037667684097
-      all_6: 5125949765403844629
       all_60: -2958205467540611984
       all_61: -6471681559913686642
       all_62: 8711120730607595667
@@ -6783,19 +6762,11 @@ TextureImporter:
       all_66: -8438291159918940483
       all_67: -4977160037485911365
       all_68: -905626988124345088
-      all_69: -3652837159399745591
-      all_7: -358970036792669379
-      all_70: 4989539969749133908
-      all_71: 8042245624533656797
-      all_72: -42638469294066109
-      all_73: -6139412105589590082
-      all_74: 6145285355638961928
       all_75: -3199451140683184690
       all_76: 7500685878400389213
       all_77: 4822682242369061572
       all_78: -6410175114932545193
       all_79: -883105623
-      all_8: 7198809015613602317
       all_80: 340960528
       all_81: -1633861669
       all_82: 2034185418
@@ -6803,10 +6774,7 @@ TextureImporter:
       all_84: 1096283802
       all_85: 248269607
       all_86: -969015850
-      all_87: -1285178484
-      all_88: -593301100
       all_89: 974319259
-      all_9: 4595640348019049623
       all_90: -1282451064
       all_91: 1358583071
       all_92: 80625723
@@ -6817,7 +6785,37 @@ TextureImporter:
       all_97: -1443817589
       all_98: 24513268
       all_99: -333824154
+      death0: -3652837159399745591
+      death1: 4989539969749133908
+      death2: 8042245624533656797
+      death3: -42638469294066109
+      death4: -6139412105589590082
+      death5: 6145285355638961928
       default_bullet: -921384764
+      forest0: -2249631188897383861
+      forest1: 5125949765403844629
+      forest10: 7057210770157347612
+      forest2: -358970036792669379
+      forest3: 7198809015613602317
+      forest4: 4595640348019049623
+      forest5: 255001972926481289
+      forest6: 4178722539803452060
+      forest7: 9199022204814979299
+      forest8: 3148756186365599686
+      forest9: -1210136004823644576
+      graveyard0: 7115054174534175819
+      graveyard1: 887505566864250341
+      graveyard10: 6114320665501869682
+      graveyard2: 3520811249597412441
+      graveyard3: -8777675115329645790
+      graveyard4: 673173779525253219
+      graveyard5: -555313022450627314
+      graveyard6: 3834825789116233107
+      graveyard7: 713856207502405296
+      graveyard8: -5061710873365931121
+      graveyard9: 2139653220974686133
+      orc0: -1285178484
+      orc1: -593301100
       player_down: 1231330788
       player_idle: 452210076
       player_left: -572029908
@@ -6827,6 +6825,17 @@ TextureImporter:
       player_leg3: 327699318
       player_right: -1415268768
       player_up: -954812830
+      prairie0: -6422738598392966244
+      prairie1: 19052218466296406
+      prairie10: -6004362707538375403
+      prairie2: -5148070894454161565
+      prairie3: -7535890173591765725
+      prairie4: 6179887370377544413
+      prairie5: -5798435166234807118
+      prairie6: 4519360857407881044
+      prairie7: 4135191756540641772
+      prairie8: -1910036368403549788
+      prairie9: 6570585464087250507
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

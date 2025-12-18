@@ -3,31 +3,39 @@
 public class Bullet : MonoBehaviour
 {
     public float speed = 10f;
-    public float lifeTime = 3f; // Đạn tự hủy sau 
+    public float lifeTime = 3f;
+    public int damage = 1; // --- MỚI: Chỉ số sát thương (Mặc định là 1) ---
     public Rigidbody2D rb;
 
     void Start()
     {
-        // Tự hủy để tránh đầy bộ nhớ
         Destroy(gameObject, lifeTime);
     }
 
-    // Hàm này sẽ được Player gọi khi bắn
     public void Setup(Vector2 direction)
     {
-        // Gán vận tốc cho đạn
         rb.linearVelocity = direction * speed;
-
-        // (Tùy chọn) Xoay viên đạn theo hướng bắn nếu đạn hình dài
-        // transform.up = direction; 
+        // Xoay đạn theo hướng bắn (nếu cần)
+        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+        transform.rotation = Quaternion.Euler(0, 0, angle - 90);
     }
 
-    // Xử lý va chạm (chúng ta sẽ viết kỹ hơn khi làm Enemy)
     void OnTriggerEnter2D(Collider2D hitInfo)
     {
-        // Tạm thời: Nếu trúng Tường (Wall) hoặc Kẻ thù (Enemy) thì hủy đạn
-        if (hitInfo.CompareTag("Wall") || hitInfo.CompareTag("Enemy"))
+        if (hitInfo.CompareTag("Wall"))
         {
+            Destroy(gameObject);
+            return;
+        }
+
+        if (hitInfo.CompareTag("Enemy"))
+        {
+            // Lấy component Enemy (lớp cha) để gây sát thương
+            Enemy enemy = hitInfo.GetComponent<Enemy>();
+            if (enemy != null)
+            {
+                enemy.TakeDamage(damage); // --- MỚI: Truyền damage của đạn vào ---
+            }
             Destroy(gameObject);
         }
     }

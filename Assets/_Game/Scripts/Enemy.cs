@@ -1,0 +1,89 @@
+﻿using UnityEngine;
+
+public class Enemy : MonoBehaviour
+{
+    [Header("Base Stats")]
+    public float moveSpeed = 2f;
+    public int health = 3;
+    public int damageToPlayer = 1; // Sát thương gây ra khi chạm vào Player
+
+    [Header("Death Settings")]
+    public GameObject deathEffectPrefab; // Kéo Prefab EnemyDeathFX vào đây
+    public AudioClip[] deathSounds;
+
+    [Header("Base References")]
+    public Rigidbody2D rb;
+
+    // Protected để các class con (Orc, Imp) có thể truy cập được
+    protected Transform playerTarget;
+    protected bool isDead = false;
+
+    // Virtual: Cho phép class con ghi đè nếu muốn (ví dụ Boss lúc Start sẽ gầm lên)
+    protected virtual void Start()
+    {
+        GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
+        if (playerObj != null)
+        {
+            playerTarget = playerObj.transform;
+        }
+    }
+
+    // Virtual: Để class con tự quyết định cách di chuyển (FixedUpdate)
+    // Ở đây ta để trống, vì Orc đi thẳng, Imp đi lượn sóng, Boss đứng yên...
+    protected virtual void FixedUpdate()
+    {
+        // Mặc định không làm gì cả
+    }
+
+    public void TakeDamage(int damage)
+    {
+        if (isDead) return;
+
+        health -= damage;
+        if (health <= 0)
+        {
+            Die();
+        }
+    }
+
+    protected virtual void Die()
+    {
+        isDead = true;
+
+        // 1. Tạo hiệu ứng chết
+        if (deathEffectPrefab != null)
+        {
+            GameObject fx = Instantiate(deathEffectPrefab, transform.position, Quaternion.identity);
+
+            // 2. Phát âm thanh ngẫu nhiên (thông qua object DeathFX vừa tạo)
+            if (deathSounds.Length > 0)
+            {
+                // Chọn ngẫu nhiên 1 clip từ mảng
+                AudioClip randomClip = deathSounds[Random.Range(0, deathSounds.Length)];
+
+                // Gọi hàm phát nhạc của DeathFX
+                DeathEffect deathScript = fx.GetComponent<DeathEffect>();
+                if (deathScript != null)
+                {
+                    deathScript.PlaySound(randomClip);
+                }
+            }
+        }
+
+        // 3. Xóa Enemy
+        Destroy(gameObject);
+    }
+
+    // Logic va chạm chung: Cứ chạm Player là Player chết
+    protected void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("Player"))
+        {
+            // Gọi hàm Game Over (sẽ làm sau)
+            Debug.Log("Player đã bị tiêu diệt bởi " + gameObject.name);
+
+            // Tự hủy hoặc dừng lại
+            Destroy(gameObject);
+        }
+    }
+}
