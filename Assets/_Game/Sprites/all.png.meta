@@ -1873,7 +1873,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: death0
+      name: enemy_death0
       rect:
         serializedVersion: 2
         x: 383
@@ -1895,7 +1895,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: death1
+      name: enemy_death1
       rect:
         serializedVersion: 2
         x: 399
@@ -1917,7 +1917,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: death2
+      name: enemy_death2
       rect:
         serializedVersion: 2
         x: 415
@@ -1939,7 +1939,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: death3
+      name: enemy_death3
       rect:
         serializedVersion: 2
         x: 431
@@ -1961,7 +1961,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: death4
+      name: enemy_death4
       rect:
         serializedVersion: 2
         x: 447
@@ -1983,7 +1983,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: death5
+      name: enemy_death5
       rect:
         serializedVersion: 2
         x: 463
@@ -3831,7 +3831,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_158
+      name: ui_clock
       rect:
         serializedVersion: 2
         x: 463
@@ -4711,13 +4711,13 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_200
+      name: ui_item_frame
       rect:
         serializedVersion: 2
         x: 159
-        y: 33
-        width: 16
-        height: 16
+        y: 17
+        width: 32
+        height: 32
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -4728,28 +4728,6 @@ TextureImporter:
       bones: []
       spriteID: 4e8c2c25ac9875049a928f90e64f9b5f
       internalID: -190451635
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: all_201
-      rect:
-        serializedVersion: 2
-        x: 175
-        y: 33
-        width: 16
-        height: 16
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 1c1669aa7497fbb4b921425a243e9b1a
-      internalID: -384114809
       vertices: []
       indices: 
       edges: []
@@ -5300,50 +5278,6 @@ TextureImporter:
       bones: []
       spriteID: 61554ebcc727af14caf464ffa337137c
       internalID: 1059489636
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: all_227
-      rect:
-        serializedVersion: 2
-        x: 159
-        y: 17
-        width: 16
-        height: 16
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: d25b519f1a47cea498dbe2ad96eab050
-      internalID: 435836708
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: all_228
-      rect:
-        serializedVersion: 2
-        x: 175
-        y: 17
-        width: 16
-        height: 16
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 8b6fb2deded6eab4aa70658e8e9214e2
-      internalID: 1845047095
       vertices: []
       indices: 
       edges: []
@@ -5921,7 +5855,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_255
+      name: item_1_coin
       rect:
         serializedVersion: 2
         x: 143
@@ -5943,7 +5877,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_256
+      name: item_5_coins
       rect:
         serializedVersion: 2
         x: 159
@@ -5965,7 +5899,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_257
+      name: item_wagon_wheel
       rect:
         serializedVersion: 2
         x: 175
@@ -5987,7 +5921,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_258
+      name: item_heavy_machine_gun
       rect:
         serializedVersion: 2
         x: 191
@@ -6009,7 +5943,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_259
+      name: item_screen_nuke
       rect:
         serializedVersion: 2
         x: 207
@@ -6031,7 +5965,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_260
+      name: item_tombstone
       rect:
         serializedVersion: 2
         x: 223
@@ -6053,7 +5987,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_261
+      name: item_coffee
       rect:
         serializedVersion: 2
         x: 239
@@ -6075,7 +6009,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_262
+      name: item_shotgun
       rect:
         serializedVersion: 2
         x: 255
@@ -6097,7 +6031,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_263
+      name: item_1_up
       rect:
         serializedVersion: 2
         x: 271
@@ -6119,7 +6053,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_264
+      name: item_smoke_bomb
       rect:
         serializedVersion: 2
         x: 287
@@ -6141,7 +6075,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_265
+      name: item_sheriff_badge
       rect:
         serializedVersion: 2
         x: 303
@@ -6163,7 +6097,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_266
+      name: player_death0
       rect:
         serializedVersion: 2
         x: 335
@@ -6185,7 +6119,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_267
+      name: player_death1
       rect:
         serializedVersion: 2
         x: 351
@@ -6207,7 +6141,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_268
+      name: player_death2
       rect:
         serializedVersion: 2
         x: 367
@@ -6229,7 +6163,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_269
+      name: player_death3
       rect:
         serializedVersion: 2
         x: 383
@@ -6251,7 +6185,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_270
+      name: player_death4
       rect:
         serializedVersion: 2
         x: 399
@@ -6536,6 +6470,28 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
+    - serializedVersion: 2
+      name: ui_area_complete_mark
+      rect:
+        serializedVersion: 2
+        x: 383
+        y: 60
+        width: 5
+        height: 5
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5c64cff4635f7a145a8674d3b084a96b
+      internalID: -1331358819
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     customData: 
     physicsShape: []
@@ -6609,7 +6565,6 @@ TextureImporter:
       all_155: -1644906562
       all_156: -1222733631
       all_157: 1612474274
-      all_158: -279602607
       all_159: -574211763
       all_16: 8383536191937326516
       all_160: 899344486
@@ -6656,7 +6611,6 @@ TextureImporter:
       all_199: -624047336
       all_2: -709529425693167831
       all_20: 179133888372635544
-      all_200: -190451635
       all_201: -384114809
       all_202: 1751564041
       all_203: -59099763
@@ -6712,22 +6666,6 @@ TextureImporter:
       all_252: -6647371
       all_253: -1327473248
       all_254: 1174400611
-      all_255: 1471693645
-      all_256: 612721429
-      all_257: -1524350651
-      all_258: -1416087736
-      all_259: 1396851553
-      all_260: 1581388313
-      all_261: 217959368
-      all_262: -435741865
-      all_263: 1628065189
-      all_264: 646514586
-      all_265: 1681397586
-      all_266: 1871118192
-      all_267: -605275257
-      all_268: 796493990
-      all_269: -266258525
-      all_270: -824749669
       all_271: -772121127
       all_272: -170875961
       all_273: -596569770
@@ -6785,13 +6723,13 @@ TextureImporter:
       all_97: -1443817589
       all_98: 24513268
       all_99: -333824154
-      death0: -3652837159399745591
-      death1: 4989539969749133908
-      death2: 8042245624533656797
-      death3: -42638469294066109
-      death4: -6139412105589590082
-      death5: 6145285355638961928
       default_bullet: -921384764
+      enemy_death0: -3652837159399745591
+      enemy_death1: 4989539969749133908
+      enemy_death2: 8042245624533656797
+      enemy_death3: -42638469294066109
+      enemy_death4: -6139412105589590082
+      enemy_death5: 6145285355638961928
       forest0: -2249631188897383861
       forest1: 5125949765403844629
       forest10: 7057210770157347612
@@ -6814,8 +6752,24 @@ TextureImporter:
       graveyard7: 713856207502405296
       graveyard8: -5061710873365931121
       graveyard9: 2139653220974686133
+      item_1_coin: 1471693645
+      item_1_up: 1628065189
+      item_5_coins: 612721429
+      item_coffee: 217959368
+      item_heavy_machine_gun: -1416087736
+      item_screen_nuke: 1396851553
+      item_sheriff_badge: 1681397586
+      item_shotgun: -435741865
+      item_smoke_bomb: 646514586
+      item_tombstone: 1581388313
+      item_wagon_wheel: -1524350651
       orc0: -1285178484
       orc1: -593301100
+      player_death0: 1871118192
+      player_death1: -605275257
+      player_death2: 796493990
+      player_death3: -266258525
+      player_death4: -824749669
       player_down: 1231330788
       player_idle: 452210076
       player_left: -572029908
@@ -6836,6 +6790,9 @@ TextureImporter:
       prairie7: 4135191756540641772
       prairie8: -1910036368403549788
       prairie9: 6570585464087250507
+      ui_area_complete_mark: -1331358819
+      ui_clock: -279602607
+      ui_item_frame: -190451635
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
