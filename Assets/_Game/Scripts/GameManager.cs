@@ -9,8 +9,11 @@ public class GameManager : MonoBehaviour
     public int startLives = 3;       // Số mạng ban đầu
     public float respawnDelay = 1f;  // Thời gian chờ hồi sinh
 
+    [Header("Progress Settings")]
+    public int totalAreasPassed = 0; // Biến đếm tổng số màn đã qua (Start = 0)
+
     [Header("References")]
-    public GameObject gameOverPanel; // Panel Game Over (nếu bạn đã tạo)
+    public GameObject gameOverPanel; // Panel Game Over
 
     // Biến trạng thái (Private)
     private int currentLives;
@@ -18,10 +21,13 @@ public class GameManager : MonoBehaviour
 
     void Awake()
     {
-        // Setup Singleton: Đảm bảo chỉ có 1 GameManager tồn tại
+        // Setup Singleton
         if (Instance == null)
         {
             Instance = this;
+            // Nếu bạn muốn giữ GameManager khi chuyển Scene (ví dụ sang Forest), hãy dùng:
+            DontDestroyOnLoad(gameObject); 
+            // Nhưng hiện tại ta đang làm mọi thứ trong 1 Scene nên chưa cần dòng trên.
         }
         else
         {
@@ -34,18 +40,21 @@ public class GameManager : MonoBehaviour
         currentLives = startLives;
         isGameOver = false;
 
-        // 1. Cập nhật UI ban đầu thông qua UIManager
+        // 1. Cập nhật UI Mạng & Tiền
         if (UIManager.Instance != null)
         {
             UIManager.Instance.UpdateLives(currentLives);
-            // Sau này sẽ thêm: UIManager.Instance.UpdateCoins(currentCoins);
+            UIManager.Instance.UpdateCoins(0); // Tạm thời là 0
+
+            // 2. Cập nhật UI Area Indicator
+            // Mới vào game, totalAreasPassed = 0 -> Ẩn hết icon
+            UIManager.Instance.UpdateAreaIndicator(totalAreasPassed);
         }
 
-        // 2. Ẩn bảng Game Over (đề phòng quên tắt trong Editor)
+        // 3. Ẩn bảng Game Over
         if (gameOverPanel != null)
             gameOverPanel.SetActive(false);
 
-        // Đảm bảo thời gian chạy bình thường (phòng trường hợp restart khi đang pause)
         Time.timeScale = 1f;
     }
 
@@ -56,18 +65,39 @@ public class GameManager : MonoBehaviour
         {
             RestartLevel();
         }
+
+        // --- TEST NHANH (Xóa khi build thật) ---
+        // Nhấn phím P để giả lập việc qua màn
+        if (Input.GetKeyDown(KeyCode.P))
+        {
+            CompleteCurrentArea();
+        }
     }
 
-    // --- LOGIC CHÍNH ---
+    // --- LOGIC GAMEPLAY ---
 
-    // Hàm này được gọi bởi Enemy khi chạm vào Player
+    // Gọi hàm này khi tiêu diệt hết quái trong WaveSpawner
+    public void CompleteCurrentArea()
+    {
+        totalAreasPassed++;
+        Debug.Log("Đã vượt qua Area! Tổng số màn đã qua: " + totalAreasPassed);
+
+        // Cập nhật UI hiện thêm 1 icon mới
+        if (UIManager.Instance != null)
+        {
+            UIManager.Instance.UpdateAreaIndicator(totalAreasPassed);
+        }
+
+        // Logic mở cổng hoặc chuyển cảnh sẽ thêm ở đây...
+    }
+
+    // Gọi hàm này khi Player chạm vào Enemy
     public void PlayerDied()
     {
         if (isGameOver) return;
 
         currentLives--;
 
-        // Cập nhật giao diện ngay lập tức
         if (UIManager.Instance != null)
         {
             UIManager.Instance.UpdateLives(currentLives);
@@ -75,34 +105,25 @@ public class GameManager : MonoBehaviour
 
         if (currentLives > 0)
         {
-            // Còn mạng -> Hồi sinh
             Debug.Log("Player chết! Còn " + currentLives + " mạng.");
-
-            // Có thể thêm Coroutine để delay việc hồi sinh nếu muốn
-            RespawnPlayer();
+            Invoke("RespawnPlayer", respawnDelay); // Dùng Invoke để delay hồi sinh
         }
         else
         {
-            // Hết mạng -> Thua cuộc
             GameOver();
         }
     }
 
     void RespawnPlayer()
     {
-        // 1. Tìm Player
         GameObject player = GameObject.FindGameObjectWithTag("Player");
         if (player != null)
         {
-            // 2. Đặt lại vị trí về giữa map
-            player.transform.position = Vector3.zero;
+            player.transform.position = Vector3.zero; // Về giữa map
+            player.SetActive(true); // Đảm bảo player được bật lại nếu bị tắt
 
-            // (Tùy chọn) Kích hoạt hiệu ứng nhấp nháy bất tử ở đây
-            // player.GetComponent<PlayerController>().TriggerInvincibility();
+            // Trigger hiệu ứng bất tử nếu có
         }
-
-        // 3. (Tùy chọn) Xóa bớt quái gần điểm hồi sinh để tránh chết oan
-        // ClearEnemiesAroundSpawn();
     }
 
     void GameOver()
@@ -110,19 +131,16 @@ public class GameManager : MonoBehaviour
         isGameOver = true;
         Debug.Log("GAME OVER!");
 
-        // Hiện bảng thông báo
         if (gameOverPanel != null)
         {
             gameOverPanel.SetActive(true);
         }
 
-        // Dừng toàn bộ hoạt động của game
         Time.timeScale = 0f;
     }
 
     void RestartLevel()
     {
-        // Load lại Scene hiện tại
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 }
