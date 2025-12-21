@@ -472,6 +472,33 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 1, y: 3}
   m_EdgeRadius: 0
+--- !u!1 &317816357 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7297025670561582784, guid: e17ff324198281040b9eae99f62b9ff3, type: 3}
+  m_PrefabInstance: {fileID: 6614411610303105378}
+  m_PrefabAsset: {fileID: 0}
+--- !u!95 &317816364
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 317816357}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: f4b8ca4a73ffd074ca47da58e9d8686c, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!4 &349220167 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 900365380105726318, guid: 8d8b2a4ab0a3ff84ba238dc87d20bf85, type: 3}
@@ -980,6 +1007,11 @@ MonoBehaviour:
   - {fileID: 660735954}
   - {fileID: 847454951}
   - {fileID: 1124377144}
+--- !u!212 &751312591 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: 3409182247515411201, guid: e17ff324198281040b9eae99f62b9ff3, type: 3}
+  m_PrefabInstance: {fileID: 6614411610303105378}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &842852953
 GameObject:
   m_ObjectHideFlags: 0
@@ -2608,6 +2640,11 @@ RectTransform:
 Transform:
   m_CorrespondingSourceObject: {fileID: 7011624257631496032, guid: 8d8b2a4ab0a3ff84ba238dc87d20bf85, type: 3}
   m_PrefabInstance: {fileID: 6854195300404784574}
+  m_PrefabAsset: {fileID: 0}
+--- !u!212 &1657081310 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: 2016417092962429513, guid: e17ff324198281040b9eae99f62b9ff3, type: 3}
+  m_PrefabInstance: {fileID: 6614411610303105378}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &1657715703
 GameObject:
@@ -7080,13 +7117,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameManager
   startLives: 3
-  respawnDelay: 5
+  respawnDelay: 4
+  deathAnimationDuration: 2
+  deathDuration: 0
+  invincibilityDuration: 2
   levelDuration: 180
   timerNormalColor: {r: 0.60784316, g: 0.8156863, b: 0.14509805, a: 1}
   timerCriticalColor: {r: 0.69182384, g: 0.032633115, b: 0.032633115, a: 1}
   totalAreasPassed: 0
   gameOverPanel: {fileID: 0}
-  playerObject: {fileID: 0}
+  playerObject: {fileID: 317816357}
 --- !u!4 &2108805347 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7422949553761277314, guid: 8d8b2a4ab0a3ff84ba238dc87d20bf85, type: 3}
@@ -7215,6 +7255,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6200525831072786448, guid: e17ff324198281040b9eae99f62b9ff3, type: 3}
+      propertyPath: idleRenderer
+      value: 
+      objectReference: {fileID: 751312591}
+    - target: {fileID: 6200525831072786448, guid: e17ff324198281040b9eae99f62b9ff3, type: 3}
+      propertyPath: legsRenderer
+      value: 
+      objectReference: {fileID: 1657081310}
     - target: {fileID: 7297025670561582784, guid: e17ff324198281040b9eae99f62b9ff3, type: 3}
       propertyPath: m_Name
       value: Player
@@ -7222,7 +7270,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 7297025670561582784, guid: e17ff324198281040b9eae99f62b9ff3, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 317816364}
   m_SourcePrefab: {fileID: 100100000, guid: e17ff324198281040b9eae99f62b9ff3, type: 3}
 --- !u!1001 &6854195300404784574
 PrefabInstance:

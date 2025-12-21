@@ -4,13 +4,14 @@ using System.Collections;
 
 public class WaveSpawner : MonoBehaviour
 {
+    public static WaveSpawner Instance;
+
     [Header("Spawn Settings")]
     public Transform[] spawnPoints;
     public List<WaveData> waves;
     public float timeBetweenWaves = 3f;
 
-    // Biến tham chiếu để GameManager có thể gọi
-    public static WaveSpawner Instance;
+    private bool isWavePaused = false;
 
     void Awake()
     {
@@ -22,21 +23,31 @@ public class WaveSpawner : MonoBehaviour
         StartCoroutine(RunLevelLogic());
     }
 
+    public void SetWavePaused(bool paused)
+    {
+        isWavePaused = paused;
+    }
+
+    public void StopSpawning()
+    {
+        StopAllCoroutines();
+    }
+
     IEnumerator RunLevelLogic()
     {
-        // ... (Giữ nguyên logic lặp qua các waves)
         for (int i = 0; i < waves.Count; i++)
         {
-            // ... Logic spawn ...
+            // CHỜ NẾU ĐANG PAUSE
+            while (isWavePaused) yield return null;
+
+            Debug.Log("--- BẮT ĐẦU WAVE " + (i + 1) + " ---");
             yield return StartCoroutine(SpawnWave(waves[i]));
 
-            // ... Logic chờ quái chết ...
-            yield return new WaitUntil(() => GameObject.FindGameObjectsWithTag("Enemy").Length == 0);
+            // CHỜ DIỆT HẾT QUÁI (VÀ CHỜ NẾU ĐANG PAUSE)
+            yield return new WaitUntil(() => GameObject.FindGameObjectsWithTag("Enemy").Length == 0 && !isWavePaused);
 
             yield return new WaitForSeconds(timeBetweenWaves);
         }
-        // Lưu ý: Logic "Victory" ở đây sẽ không dùng nữa, 
-        // vì GameManager sẽ quyết định thắng thua dựa trên thời gian.
     }
 
     IEnumerator SpawnWave(WaveData waveData)
@@ -45,6 +56,9 @@ public class WaveSpawner : MonoBehaviour
         {
             for (int i = 0; i < group.count; i++)
             {
+                // CHỜ NẾU ĐANG PAUSE
+                while (isWavePaused) yield return null;
+
                 SpawnEnemy(group.enemyPrefab);
                 yield return new WaitForSeconds(group.rate);
             }
@@ -53,17 +67,14 @@ public class WaveSpawner : MonoBehaviour
 
     void SpawnEnemy(GameObject enemyPrefab)
     {
+        if (spawnPoints.Length == 0) return;
+
         int randomIndex = Random.Range(0, spawnPoints.Length);
         Transform spawnPoint = spawnPoints[randomIndex];
-        Vector3 randomOffset = Random.insideUnitCircle * 0.5f;
-        Instantiate(enemyPrefab, spawnPoint.position + randomOffset, Quaternion.identity);
-    }
 
-    // --- HÀM MỚI: DỪNG SPAWN NGAY LẬP TỨC ---
-    public void StopSpawning()
-    {
-        // Dừng tất cả các Coroutine đang chạy (RunLevelLogic, SpawnWave...)
-        StopAllCoroutines();
-        Debug.Log("WaveSpawner: Đã dừng spawn quái do hết giờ!");
+        // Random offset để tránh quái bị trùng nhau
+        Vector3 randomOffset = Random.insideUnitCircle * 0.5f;
+
+        Instantiate(enemyPrefab, spawnPoint.position + randomOffset, Quaternion.identity);
     }
 }

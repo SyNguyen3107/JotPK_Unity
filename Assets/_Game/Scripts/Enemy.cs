@@ -77,23 +77,19 @@ public class Enemy : MonoBehaviour
     // Logic va chạm chung: Cứ chạm Player là Player chết
     protected void OnCollisionEnter2D(Collision2D collision)
     {
-        // Kiểm tra xem cái va vào có phải Player không
         if (collision.gameObject.CompareTag("Player"))
         {
-            // Debug để biết va chạm ĐÃ hoạt động
-            Debug.Log("Va chạm với Player!");
+            // Kiểm tra xem Player có đang bất tử không
+            PlayerController player = collision.gameObject.GetComponent<PlayerController>();
 
-            // Gọi GameManager
-            if (GameManager.Instance != null)
+            if (player != null && player.IsInvincible())
             {
-                GameManager.Instance.PlayerDied();
-            }
-            else
-            {
-                Debug.LogError("Không tìm thấy GameManager Instance!");
+                // Nếu Player bất tử -> Không làm gì cả (đi xuyên qua hoặc bị đẩy ra)
+                return;
             }
 
-            // Tiêu diệt Enemy
+            // Nếu không bất tử -> Giết như thường
+            if (GameManager.Instance != null) GameManager.Instance.PlayerDied();
             Destroy(gameObject);
         }
     }
