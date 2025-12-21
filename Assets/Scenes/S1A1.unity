@@ -967,7 +967,6 @@ MonoBehaviour:
   livesText: {fileID: 1180953882}
   coinsText: {fileID: 879094490}
   timerBarFill: {fileID: 1700675345}
-  levelDuration: 180
   areaIcons:
   - {fileID: 1085791198}
   - {fileID: 1221050559}
@@ -2997,7 +2996,7 @@ CompositeCollider2D:
   m_Enabled: 1
   serializedVersion: 3
   m_Density: 1
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: 5cc2fea21f00ce2409a3e48cb9a4177e, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -7082,8 +7081,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GameManager
   startLives: 3
   respawnDelay: 5
+  levelDuration: 180
+  timerNormalColor: {r: 0.60784316, g: 0.8156863, b: 0.14509805, a: 1}
+  timerCriticalColor: {r: 0.69182384, g: 0.032633115, b: 0.032633115, a: 1}
   totalAreasPassed: 0
   gameOverPanel: {fileID: 0}
+  playerObject: {fileID: 0}
 --- !u!4 &2108805347 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7422949553761277314, guid: 8d8b2a4ab0a3ff84ba238dc87d20bf85, type: 3}
@@ -7229,9 +7232,45 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 138545162816829149, guid: 8d8b2a4ab0a3ff84ba238dc87d20bf85, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -7
+      objectReference: {fileID: 0}
     - target: {fileID: 294786342044838573, guid: 8d8b2a4ab0a3ff84ba238dc87d20bf85, type: 3}
       propertyPath: m_Name
       value: SpawnPoints
+      objectReference: {fileID: 0}
+    - target: {fileID: 785938246104921868, guid: 8d8b2a4ab0a3ff84ba238dc87d20bf85, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 849486184275842040, guid: 8d8b2a4ab0a3ff84ba238dc87d20bf85, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -7
+      objectReference: {fileID: 0}
+    - target: {fileID: 900365380105726318, guid: 8d8b2a4ab0a3ff84ba238dc87d20bf85, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 1670592978509926100, guid: 8d8b2a4ab0a3ff84ba238dc87d20bf85, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 5684401925683557479, guid: 8d8b2a4ab0a3ff84ba238dc87d20bf85, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 7011624257631496032, guid: 8d8b2a4ab0a3ff84ba238dc87d20bf85, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 7422949553761277314, guid: 8d8b2a4ab0a3ff84ba238dc87d20bf85, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -7
+      objectReference: {fileID: 0}
+    - target: {fileID: 7490756225055550564, guid: 8d8b2a4ab0a3ff84ba238dc87d20bf85, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -7
       objectReference: {fileID: 0}
     - target: {fileID: 7673104776043192911, guid: 8d8b2a4ab0a3ff84ba238dc87d20bf85, type: 3}
       propertyPath: m_LocalPosition.x
@@ -7272,6 +7311,18 @@ PrefabInstance:
     - target: {fileID: 7673104776043192911, guid: 8d8b2a4ab0a3ff84ba238dc87d20bf85, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7705675893415712611, guid: 8d8b2a4ab0a3ff84ba238dc87d20bf85, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -7
+      objectReference: {fileID: 0}
+    - target: {fileID: 8346769698458358087, guid: 8d8b2a4ab0a3ff84ba238dc87d20bf85, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -7
+      objectReference: {fileID: 0}
+    - target: {fileID: 8510242468397017991, guid: 8d8b2a4ab0a3ff84ba238dc87d20bf85, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 7
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

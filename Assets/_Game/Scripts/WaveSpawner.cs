@@ -5,68 +5,65 @@ using System.Collections;
 public class WaveSpawner : MonoBehaviour
 {
     [Header("Spawn Settings")]
-    public Transform[] spawnPoints;   // Kéo 4 điểm spawn vào đây
-    public List<WaveData> waves;      // Danh sách các Wave của Level này (Wave 1, Wave 2...)
-    public float timeBetweenWaves = 3f; // Thời gian nghỉ giữa các đợt
+    public Transform[] spawnPoints;
+    public List<WaveData> waves;
+    public float timeBetweenWaves = 3f;
 
-    private int currentWaveIndex = 0;
-    private bool isSpawning = false;
+    // Biến tham chiếu để GameManager có thể gọi
+    public static WaveSpawner Instance;
+
+    void Awake()
+    {
+        Instance = this;
+    }
 
     void Start()
     {
-        // Bắt đầu chạy Wave đầu tiên
         StartCoroutine(RunLevelLogic());
     }
 
     IEnumerator RunLevelLogic()
     {
-        // Duyệt qua từng Wave trong danh sách
+        // ... (Giữ nguyên logic lặp qua các waves)
         for (int i = 0; i < waves.Count; i++)
         {
-            currentWaveIndex = i;
-            Debug.Log("--- BẮT ĐẦU WAVE " + (i + 1) + " ---");
-
-            // 1. Sinh quái của Wave hiện tại
+            // ... Logic spawn ...
             yield return StartCoroutine(SpawnWave(waves[i]));
 
-            // 2. Chờ cho đến khi người chơi giết sạch quái của Wave này
-            // (Kiểm tra mỗi 1 giây xem còn quái nào không)
+            // ... Logic chờ quái chết ...
             yield return new WaitUntil(() => GameObject.FindGameObjectsWithTag("Enemy").Length == 0);
 
-            Debug.Log("Wave " + (i + 1) + " Hoàn thành!");
-
-            // 3. Nghỉ một chút trước khi sang Wave mới
             yield return new WaitForSeconds(timeBetweenWaves);
         }
-
-        Debug.Log("CHÚC MỪNG! ĐÃ HOÀN THÀNH LEVEL!");
-        // Sau này sẽ gọi GameManager.Instance.Victory(); tại đây
+        // Lưu ý: Logic "Victory" ở đây sẽ không dùng nữa, 
+        // vì GameManager sẽ quyết định thắng thua dựa trên thời gian.
     }
 
     IEnumerator SpawnWave(WaveData waveData)
     {
-        isSpawning = true;
-
-        // Duyệt qua từng nhóm quái trong Wave (Ví dụ: Nhóm Orc xong đến nhóm Imp)
         foreach (var group in waveData.enemyGroups)
         {
             for (int i = 0; i < group.count; i++)
             {
                 SpawnEnemy(group.enemyPrefab);
-                // Chờ một chút mới sinh con tiếp theo
                 yield return new WaitForSeconds(group.rate);
             }
         }
-
-        isSpawning = false;
     }
 
     void SpawnEnemy(GameObject enemyPrefab)
     {
-        // Chọn ngẫu nhiên 1 trong 4 điểm spawn
         int randomIndex = Random.Range(0, spawnPoints.Length);
         Transform spawnPoint = spawnPoints[randomIndex];
+        Vector3 randomOffset = Random.insideUnitCircle * 0.5f;
+        Instantiate(enemyPrefab, spawnPoint.position + randomOffset, Quaternion.identity);
+    }
 
-        Instantiate(enemyPrefab, spawnPoint.position, Quaternion.identity);
+    // --- HÀM MỚI: DỪNG SPAWN NGAY LẬP TỨC ---
+    public void StopSpawning()
+    {
+        // Dừng tất cả các Coroutine đang chạy (RunLevelLogic, SpawnWave...)
+        StopAllCoroutines();
+        Debug.Log("WaveSpawner: Đã dừng spawn quái do hết giờ!");
     }
 }

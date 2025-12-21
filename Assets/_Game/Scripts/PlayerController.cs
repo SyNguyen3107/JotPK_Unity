@@ -42,37 +42,60 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
+        
+        bool isMoving = moveInput.magnitude > 0.1f;
         // --- 1. MOVEMENT INPUT ---
         float moveX = Input.GetAxisRaw("Horizontal");
         float moveY = Input.GetAxisRaw("Vertical");
         moveInput = new Vector2(moveX, moveY).normalized;
 
-        // --- 2. SHOOTING INPUT ---
-        bool isShootingFrame = false;
-        Vector2 shootDir = Vector2.zero;
-        Vector2 inputShootDir = Vector2.zero;
-        bool attemptedToShoot = false;
+        // --- 2. SHOOTING INPUT (ĐÃ SỬA) ---
+        float shootX = 0f;
+        float shootY = 0f;
 
-        // Kiểm tra nhấn nút bắn (Single shot logic)
-        if (Input.GetKeyDown(KeyCode.UpArrow)) { inputShootDir = Vector2.up; attemptedToShoot = true; }
-        else if (Input.GetKeyDown(KeyCode.DownArrow)) { inputShootDir = Vector2.down; attemptedToShoot = true; }
-        else if (Input.GetKeyDown(KeyCode.LeftArrow)) { inputShootDir = Vector2.left; attemptedToShoot = true; }
-        else if (Input.GetKeyDown(KeyCode.RightArrow)) { inputShootDir = Vector2.right; attemptedToShoot = true; }
+        // Nhóm 1: Kiểm tra trục Dọc (Y)
+        if (Input.GetKey(KeyCode.UpArrow))
+        {
+            shootY = 1f;
+        }
+        else if (Input.GetKey(KeyCode.DownArrow))
+        {
+            shootY = -1f;
+        }
+
+        // Nhóm 2: Kiểm tra trục Ngang (X) - Dùng IF mới, không dùng ELSE IF nối tiếp nhóm trên
+        if (Input.GetKey(KeyCode.LeftArrow))
+        {
+            shootX = -1f;
+        }
+        else if (Input.GetKey(KeyCode.RightArrow))
+        {
+            shootX = 1f;
+        }
+
+        // Kiểm tra xem có đang cố bắn không (Chỉ cần X hoặc Y khác 0)
+        bool attemptedToShoot = (shootX != 0 || shootY != 0);
+        bool isHoldingShootKey = attemptedToShoot;
 
         // Logic bắn đạn + Cooldown
         if (attemptedToShoot && Time.time >= nextFireTime)
         {
-            Shoot(inputShootDir);
+            // Tạo vector từ 2 trục đã thu thập được
+            Vector2 inputShootDir = new Vector2(shootX, shootY);
+
+            // normalized giúp vector chéo (1, 1) trở thành (0.7, 0.7) -> độ dài = 1
+            Shoot(inputShootDir.normalized);
+
             nextFireTime = Time.time + fireDelay;
-            shootDir = inputShootDir;
-            isShootingFrame = true;
+
+            // Lưu lại hướng bắn để chỉnh Sprite Body
+            // (Lưu ý: inputShootDir ở đây có thể là chéo, nhưng hàm UpdateActiveModel sẽ tự ưu tiên Y)
+            UpdateActiveModel(isMoving, inputShootDir);
         }
 
         // --- 3. STATE & VISUALS ---
-        bool isHoldingShootKey = Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.DownArrow) ||
-                                 Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.RightArrow);
+        // Logic xác định đang giữ phím
 
-        bool isMoving = moveInput.magnitude > 0.1f;
 
         // Logic chuyển đổi Idle/Active
         if (!isMoving && !isHoldingShootKey)
@@ -83,26 +106,14 @@ public class PlayerController : MonoBehaviour
         {
             SetVisualState(isIdle: false);
 
-            // --- LOGIC HƯỚNG BODY (Đã chỉnh sửa) ---
-            Vector2 targetBodyDir = Vector2.zero;
-
-            // Ưu tiên 1: Nếu vừa bắn -> Hướng theo đạn
-            if (isShootingFrame)
+            // Nếu KHÔNG bắn, nhưng ĐANG di chuyển -> Update hướng theo nút di chuyển
+            // (Nếu đang bắn thì ở trên đã gọi UpdateActiveModel rồi)
+            if (!attemptedToShoot)
             {
-                targetBodyDir = shootDir;
+                // Bạn có thể dùng moveInput để xoay người khi đi bộ mà không bắn
+                UpdateActiveModel(isMoving, moveInput);
             }
-            // Ưu tiên 2: Nếu đang giữ nút bắn (nhưng đang cooldown) -> Hướng theo nút giữ
-            else if (Input.GetKey(KeyCode.UpArrow)) targetBodyDir = Vector2.up;
-            else if (Input.GetKey(KeyCode.DownArrow)) targetBodyDir = Vector2.down;
-            else if (Input.GetKey(KeyCode.LeftArrow)) targetBodyDir = Vector2.left;
-            else if (Input.GetKey(KeyCode.RightArrow)) targetBodyDir = Vector2.right;
 
-            // QUAN TRỌNG: Đã xóa dòng "else if (isMoving)..."
-            // Nếu không bắn, targetBodyDir sẽ là Zero -> Hàm UpdateActiveModel sẽ giữ nguyên sprite cũ.
-
-            UpdateActiveModel(isMoving, targetBodyDir);
-
-            // Xử lý âm thanh bước chân
             HandleFootsteps(isMoving);
         }
     }

@@ -131,7 +131,7 @@ BoxCollider2D:
   m_Enabled: 1
   serializedVersion: 3
   m_Density: 1
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: 5cc2fea21f00ce2409a3e48cb9a4177e, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -201,7 +201,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 495088e6fb04ce54d89c575840edc8a8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Orc
-  moveSpeed: 1.5
+  moveSpeed: 2
   health: 1
   damageToPlayer: 1
   deathEffectPrefab: {fileID: 5037848369709413691, guid: 6050a5da9c530a14999645b9819b5d75, type: 3}

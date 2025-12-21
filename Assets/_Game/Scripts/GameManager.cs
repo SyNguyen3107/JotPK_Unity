@@ -1,141 +1,179 @@
 ﻿using UnityEngine;
-using UnityEngine.SceneManagement; // Thư viện để reload lại màn chơi
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
-    public static GameManager Instance; // Singleton
+    public static GameManager Instance;
 
     [Header("Game Settings")]
-    public int startLives = 3;       // Số mạng ban đầu
-    public float respawnDelay = 1f;  // Thời gian chờ hồi sinh
+    public int startLives = 3;
+    public float respawnDelay = 2f;
+
+    [Header("Level Settings")]
+    public float levelDuration = 180f; // Thời gian màn chơi (3 phút)
+
+    [Header("Timer Colors")] // --- MỚI THÊM ---
+    public Color timerNormalColor = Color.green; // Màu bình thường (Mặc định Xanh)
+    public Color timerCriticalColor = Color.red; // Màu khi sắp hết giờ (Mặc định Đỏ)
 
     [Header("Progress Settings")]
-    public int totalAreasPassed = 0; // Biến đếm tổng số màn đã qua (Start = 0)
+    public int totalAreasPassed = 0;
 
     [Header("References")]
-    public GameObject gameOverPanel; // Panel Game Over
+    public GameObject gameOverPanel;
+    public GameObject playerObject;
 
-    // Biến trạng thái (Private)
+    // Biến nội bộ
+    private float currentTime;
+    private bool isTimerRunning = false;
+    private bool isWaitingForClear = false;
     private int currentLives;
     private bool isGameOver = false;
 
     void Awake()
     {
-        // Setup Singleton
-        if (Instance == null)
-        {
-            Instance = this;
-            // Nếu bạn muốn giữ GameManager khi chuyển Scene (ví dụ sang Forest), hãy dùng:
-            DontDestroyOnLoad(gameObject); 
-            // Nhưng hiện tại ta đang làm mọi thứ trong 1 Scene nên chưa cần dòng trên.
-        }
-        else
-        {
-            Destroy(gameObject);
-        }
+        if (Instance == null) Instance = this;
+        else Destroy(gameObject);
     }
 
     void Start()
     {
         currentLives = startLives;
         isGameOver = false;
+        isWaitingForClear = false;
 
-        // 1. Cập nhật UI Mạng & Tiền
+        // --- SETUP TIMER ---
+        currentTime = levelDuration;
+        isTimerRunning = true;
+
+        // 1. Áp dụng màu "Bình thường" ngay khi bắt đầu
+        if (UIManager.Instance != null)
+            UIManager.Instance.SetTimerColor(timerNormalColor);
+
+        // Tìm Player
+        if (playerObject == null)
+            playerObject = GameObject.FindGameObjectWithTag("Player");
+
+        // Cập nhật UI ban đầu
         if (UIManager.Instance != null)
         {
             UIManager.Instance.UpdateLives(currentLives);
-            UIManager.Instance.UpdateCoins(0); // Tạm thời là 0
-
-            // 2. Cập nhật UI Area Indicator
-            // Mới vào game, totalAreasPassed = 0 -> Ẩn hết icon
+            UIManager.Instance.UpdateCoins(0);
             UIManager.Instance.UpdateAreaIndicator(totalAreasPassed);
+            UIManager.Instance.UpdateTimer(currentTime, levelDuration);
         }
 
-        // 3. Ẩn bảng Game Over
-        if (gameOverPanel != null)
-            gameOverPanel.SetActive(false);
-
+        if (gameOverPanel != null) gameOverPanel.SetActive(false);
         Time.timeScale = 1f;
     }
 
     void Update()
     {
-        // Nếu Game Over, cho phép nhấn R để chơi lại
-        if (isGameOver && Input.GetKeyDown(KeyCode.R))
+        if (isGameOver)
         {
-            RestartLevel();
+            if (Input.GetKeyDown(KeyCode.R)) RestartLevel();
+            return;
         }
 
-        // --- TEST NHANH (Xóa khi build thật) ---
-        // Nhấn phím P để giả lập việc qua màn
-        if (Input.GetKeyDown(KeyCode.P))
+        // --- LOGIC 1: ĐẾM NGƯỢC THỜI GIAN ---
+        if (isTimerRunning)
         {
-            CompleteCurrentArea();
+            currentTime -= Time.deltaTime;
+
+            if (UIManager.Instance != null)
+            {
+                // Cập nhật độ dài thanh
+                UIManager.Instance.UpdateTimer(currentTime, levelDuration);
+
+                // --- LOGIC ĐỔI MÀU (Đã cập nhật) ---
+                // Nếu thời gian còn <= 10%
+                if (currentTime <= levelDuration / 10f)
+                {
+                    UIManager.Instance.SetTimerColor(timerCriticalColor);
+                }
+                else
+                {
+                    // Nếu thời gian > 10%, giữ màu bình thường
+                    // (Cần set lại mỗi frame đề phòng trường hợp hồi máu/hồi giờ sau này)
+                    UIManager.Instance.SetTimerColor(timerNormalColor);
+                }
+            }
+
+            // Hết giờ!
+            if (currentTime <= 0)
+            {
+                currentTime = 0;
+                HandleTimeUp();
+            }
+        }
+
+        // --- LOGIC 2: CHỜ DIỆT HẾT QUÁI ---
+        if (isWaitingForClear)
+        {
+            int enemyCount = GameObject.FindGameObjectsWithTag("Enemy").Length;
+            if (enemyCount == 0)
+            {
+                isWaitingForClear = false;
+                CompleteCurrentArea();
+            }
         }
     }
 
-    // --- LOGIC GAMEPLAY ---
+    void HandleTimeUp()
+    {
+        Debug.Log("Hết giờ! Dừng spawn và chờ diệt quái...");
+        isTimerRunning = false;
 
-    // Gọi hàm này khi tiêu diệt hết quái trong WaveSpawner
+        // 1. Dừng Spawn quái
+        if (WaveSpawner.Instance != null)
+        {
+            WaveSpawner.Instance.StopSpawning();
+        }
+
+        // 2. Chờ dọn dẹp
+        isWaitingForClear = true;
+    }
+
     public void CompleteCurrentArea()
     {
         totalAreasPassed++;
-        Debug.Log("Đã vượt qua Area! Tổng số màn đã qua: " + totalAreasPassed);
+        Debug.Log("AREA CLEARED! Tổng số màn: " + totalAreasPassed);
 
-        // Cập nhật UI hiện thêm 1 icon mới
         if (UIManager.Instance != null)
-        {
             UIManager.Instance.UpdateAreaIndicator(totalAreasPassed);
-        }
-
-        // Logic mở cổng hoặc chuyển cảnh sẽ thêm ở đây...
     }
 
-    // Gọi hàm này khi Player chạm vào Enemy
     public void PlayerDied()
     {
         if (isGameOver) return;
-
         currentLives--;
-
-        if (UIManager.Instance != null)
-        {
-            UIManager.Instance.UpdateLives(currentLives);
-        }
+        if (UIManager.Instance != null) UIManager.Instance.UpdateLives(currentLives);
 
         if (currentLives > 0)
         {
-            Debug.Log("Player chết! Còn " + currentLives + " mạng.");
-            Invoke("RespawnPlayer", respawnDelay); // Dùng Invoke để delay hồi sinh
+            if (playerObject != null) playerObject.SetActive(false);
+            Invoke("RespawnPlayer", respawnDelay);
         }
         else
         {
+            if (playerObject != null) playerObject.SetActive(false);
             GameOver();
         }
     }
 
     void RespawnPlayer()
     {
-        GameObject player = GameObject.FindGameObjectWithTag("Player");
-        if (player != null)
+        if (playerObject != null)
         {
-            player.transform.position = Vector3.zero; // Về giữa map
-            player.SetActive(true); // Đảm bảo player được bật lại nếu bị tắt
-
-            // Trigger hiệu ứng bất tử nếu có
+            playerObject.transform.position = Vector3.zero;
+            playerObject.SetActive(true);
         }
     }
 
     void GameOver()
     {
         isGameOver = true;
-        Debug.Log("GAME OVER!");
-
-        if (gameOverPanel != null)
-        {
-            gameOverPanel.SetActive(true);
-        }
-
+        if (gameOverPanel != null) gameOverPanel.SetActive(true);
         Time.timeScale = 0f;
     }
 
