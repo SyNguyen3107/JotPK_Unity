@@ -15,8 +15,8 @@ TagManager:
   - UI
   - Enemy
   - Gate
-  - 
-  - 
+  - Item
+  - FX
   - 
   - 
   - 
@@ -42,6 +42,9 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: FX
+    uniqueID: 2803408787
     locked: 0
   m_RenderingLayers:
   - Default

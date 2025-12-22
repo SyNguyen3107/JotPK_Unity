@@ -18,6 +18,7 @@ public class GameManager : MonoBehaviour
 
     [Header("Level Settings")]
     public float levelDuration = 180f; // Thời gian màn chơi
+
     [Header("Timer Colors")]
     public Color timerNormalColor = Color.green;
     public Color timerCriticalColor = Color.red;
@@ -28,6 +29,9 @@ public class GameManager : MonoBehaviour
 
     [Header("Progress Settings")]
     public int totalAreasPassed = 0;
+
+    [Header("Game State")]
+    public int currentCoins = 0; // Biến lưu tiền hiện tại
 
     [Header("References")]
     public GameObject gameOverPanel;
@@ -226,5 +230,26 @@ public class GameManager : MonoBehaviour
     {
         if (allowedDrops.Count == 0) return null;
         return allowedDrops[Random.Range(0, allowedDrops.Count)];
+    }
+    public void AddCoin(int amount)
+    {
+        currentCoins += amount;
+        Debug.Log("Nhặt được tiền: " + amount + ". Tổng: " + currentCoins);
+
+        // Cập nhật UI
+        if (UIManager.Instance != null)
+            UIManager.Instance.UpdateCoins(currentCoins);
+    }
+
+    public void AddLife(int amount)
+    {
+        currentLives += amount;
+        Debug.Log("Thêm mạng! Tổng: " + currentLives);
+
+        // Cập nhật UI
+        if (UIManager.Instance != null)
+            UIManager.Instance.UpdateLives(currentLives);
+
+        // Có thể thêm âm thanh 1-up ở đây nếu muốn
     }
 }

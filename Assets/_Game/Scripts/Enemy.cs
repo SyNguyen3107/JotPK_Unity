@@ -49,24 +49,22 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    protected virtual void Die()
+    public virtual void Die(bool shouldDrop = true)
     {
         isDead = true;
         // Drop Item Logic
-        float roll = Random.Range(0f, 100f);
-        if (GameManager.Instance != null && roll <= GameManager.Instance.dropChance)
+        if (shouldDrop)
         {
-            // 2. Lấy item ngẫu nhiên
-            PowerUpData dropData = GameManager.Instance.GetRandomDrop();
-
-            if (dropData != null && itemPrefab != null)
+            float roll = Random.Range(0f, 100f);
+            if (GameManager.Instance != null && roll <= GameManager.Instance.dropChance)
             {
-                // 3. Spawn Item
-                GameObject itemObj = Instantiate(itemPrefab, transform.position, Quaternion.identity);
-
-                // 4. Setup dữ liệu cho item đó
-                ItemPickup pickup = itemObj.GetComponent<ItemPickup>();
-                if (pickup != null) pickup.Setup(dropData);
+                PowerUpData dropData = GameManager.Instance.GetRandomDrop();
+                if (dropData != null && itemPrefab != null)
+                {
+                    GameObject itemObj = Instantiate(itemPrefab, transform.position, Quaternion.identity);
+                    ItemPickup pickup = itemObj.GetComponent<ItemPickup>();
+                    if (pickup != null) pickup.Setup(dropData);
+                }
             }
         }
 

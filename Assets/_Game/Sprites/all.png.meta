@@ -5459,7 +5459,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_237
+      name: explosion0
       rect:
         serializedVersion: 2
         x: 335
@@ -5481,7 +5481,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_238
+      name: explosion
       rect:
         serializedVersion: 2
         x: 351
@@ -5503,7 +5503,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_239
+      name: explosion2
       rect:
         serializedVersion: 2
         x: 367
@@ -5525,7 +5525,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_240
+      name: explosion3
       rect:
         serializedVersion: 2
         x: 383
@@ -5547,7 +5547,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_241
+      name: explosion4
       rect:
         serializedVersion: 2
         x: 399
@@ -6648,11 +6648,6 @@ TextureImporter:
       all_234: 245718128
       all_235: -1653596620
       all_236: 329094666
-      all_237: 581015631
-      all_238: -141378192
-      all_239: 400557543
-      all_240: -1237053869
-      all_241: -1498965742
       all_242: -1491798909
       all_243: 439877838
       all_244: -1782895192
@@ -6730,6 +6725,12 @@ TextureImporter:
       enemy_death3: -42638469294066109
       enemy_death4: -6139412105589590082
       enemy_death5: 6145285355638961928
+      explosion: -141378192
+      explosion0: 581015631
+      explosion1: -141378192
+      explosion2: 400557543
+      explosion3: -1237053869
+      explosion4: -1498965742
       forest0: -2249631188897383861
       forest1: 5125949765403844629
       forest10: 7057210770157347612

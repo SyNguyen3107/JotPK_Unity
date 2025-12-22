@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 6002823793736818104}
   - component: {fileID: 2884378054186104815}
   m_Layer: 0
-  m_Name: PickupItem
+  m_Name: Coin1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -81,7 +81,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 7482667652216324306, guid: ac867712b180a5741aed5e9bfa5c382c, type: 3}
+  m_Sprite: {fileID: 1471693645, guid: 226a2dd9665e9e9408a1469427cf02a8, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -104,7 +104,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 236a7d8fc08397f428c6d8030ff1ddb9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ItemPickup
-  itemData: {fileID: 0}
+  itemData: {fileID: 11400000, guid: a7d17e702a6382e419073fd04476e9f4, type: 2}
 --- !u!61 &2884378054186104815
 BoxCollider2D:
   m_ObjectHideFlags: 0

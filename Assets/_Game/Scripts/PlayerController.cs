@@ -16,6 +16,20 @@ public class PlayerController : MonoBehaviour
     [Header("Upgrades / Power-ups")]
     public bool enableAutoFire = false;
 
+    [Header("Power-Ups State")]
+    public PowerUpData heldItem; // Item đang giữ trong ô đỏ
+    private Coroutine activePowerUpCoroutine; // Để quản lý việc tắt hiệu ứng cũ
+
+    [Header("Nuke Settings")]
+    public GameObject explosionFXPrefab; // Kéo Prefab vụ nổ vào đây
+    public int explosionCount = 15;      // Số lượng vụ nổ muốn hiển thị
+    public float nukeDuration = 2f;      // Thời gian diễn ra hiệu ứng
+
+    // Giới hạn vùng sân đấu để nổ không lấn ra ngoài tường
+    // Bạn hãy chỉnh số này khớp với kích thước map của bạn (Ví dụ: -6 đến 6)
+    public Vector2 mapBoundsMin = new Vector2(-6f, -5f);
+    public Vector2 mapBoundsMax = new Vector2(6f, 5f);
+
     [Header("Visual References")]
     public GameObject idleStateObject;
     public GameObject activeStateObject;
@@ -36,10 +50,6 @@ public class PlayerController : MonoBehaviour
     public Sprite bodyLeft;
     public Sprite bodyRight;
 
-    [Header("Power-Ups State")]
-    public PowerUpData heldItem; // Item đang giữ trong ô đỏ
-    private Coroutine activePowerUpCoroutine; // Để quản lý việc tắt hiệu ứng cũ
-
     // Các chỉ số gốc (để reset)
     private float defaultFireDelay;
     private float defaultMoveSpeed;
@@ -48,18 +58,22 @@ public class PlayerController : MonoBehaviour
     [Header("Audio")]
     public AudioSource gunAudioSource;
     public AudioSource footstepAudioSource;
+    public AudioSource itemsPickupAudioSource;
+    public AudioSource itemsActivateAudioSource;
     public AudioClip shootClip;
     public AudioClip footstepClip;
+    public AudioClip itemPickupClip;
     public float stepDelay = 0.3f;
     private float nextStepTime = 0f;
-
 
     // State Variables
     private Vector2 moveInput;
     private bool isDead = false;
     private bool isInvincible = false;
-
+    private bool isShotgunActive = false; // Bắn chùm 3 tia
+    private bool isWheelActive = false;   // Bắn 8 hướng
     private Vector2 lastShootDir = Vector2.zero;
+
     private float lastShootTime = 0f;
     void Start()
     {
@@ -125,8 +139,8 @@ public class PlayerController : MonoBehaviour
         {
             SetVisualState(isIdle: false);
 
-            //if (!attemptedToShoot)
-            //    UpdateActiveModel(isMoving, moveInput); // Update hướng theo di chuyển
+            if (!attemptedToShoot)
+                UpdateActiveModel(isMoving, moveInput); // Update hướng theo di chuyển
 
             HandleFootsteps(isMoving);
         }
@@ -143,17 +157,65 @@ public class PlayerController : MonoBehaviour
     // --- HELPER FUNCTIONS ---
     void Shoot(Vector2 dir)
     {
-        Vector3 spawnPos = transform.position + (Vector3)(dir * bulletOffset);
-        if (firePoint != null) spawnPos = firePoint.position;
-        GameObject bullet = Instantiate(bulletPrefab, spawnPos, Quaternion.identity);
+        // Kịch bản 1: Wagon Wheel (Bắn 8 hướng)
+        // Lưu ý: Wheel được ưu tiên cao nhất, nếu vừa có Wheel vừa có Shotgun thì bắn Wheel
+        if (isWheelActive)
+        {
+            // Bắn 8 viên xung quanh (cách nhau 45 độ)
+            for (int i = 0; i < 8; i++)
+            {
+                float angle = i * 45f;
 
-        // (Giả sử Bullet script của bạn có hàm Setup)
-        var bulletScript = bullet.GetComponent<Bullet>();
-        if (bulletScript) bulletScript.Setup(dir);
+                // Tạo Quaternion xoay
+                Quaternion rotation = Quaternion.Euler(0, 0, angle);
 
+                // Xoay vector hướng mặc định (ví dụ hướng lên hoặc hướng phải)
+                // Vector2.up là (0,1). Xoay nó đi các góc sẽ ra vòng tròn.
+                Vector2 wheelDir = rotation * Vector2.up;
+
+                SpawnBullet(wheelDir);
+            }
+        }
+        // Kịch bản 2: Shotgun (Bắn 3 tia hình nón)
+        else if (isShotgunActive)
+        {
+            // Viên 1: Chính giữa
+            SpawnBullet(dir);
+
+            // Viên 2: Lệch trái 15 độ
+            Vector2 leftDir = Quaternion.Euler(0, 0, 15f) * dir;
+            SpawnBullet(leftDir);
+
+            // Viên 3: Lệch phải 15 độ (hoặc -15)
+            Vector2 rightDir = Quaternion.Euler(0, 0, -15f) * dir;
+            SpawnBullet(rightDir);
+        }
+        // Kịch bản 3: Bắn thường
+        else
+        {
+            SpawnBullet(dir);
+        }
+
+        // Âm thanh (Chỉ phát 1 lần dù bắn ra bao nhiêu đạn)
         if (gunAudioSource && shootClip) gunAudioSource.PlayOneShot(shootClip);
     }
+    // Hàm phụ trợ để sinh ra viên đạn (Tránh code lặp lại trong hàm Shoot)
+    void SpawnBullet(Vector2 dir)
+    {
+        Vector3 spawnPos = transform.position + (Vector3)(dir * bulletOffset);
+        if (firePoint != null) spawnPos = firePoint.position; // Nếu dùng firePoint cố định thì Shotgun sẽ hơi lạ, nên tính toán offset theo dir thì đẹp hơn
 
+        // --- TÍNH TOÁN LẠI SPAWN POS CHO CHUẨN ---
+        // Nếu không dùng FirePoint, ta cộng offset theo hướng bắn của từng viên đạn
+        if (firePoint == null)
+        {
+            spawnPos = transform.position + (Vector3)(dir.normalized * bulletOffset);
+        }
+
+        GameObject bullet = Instantiate(bulletPrefab, spawnPos, Quaternion.identity);
+        var bulletScript = bullet.GetComponent<Bullet>();
+        if (bulletScript) bulletScript.Setup(dir);
+    }
     void HandleFootsteps(bool isMoving)
     {
         if (isMoving && Time.time >= nextStepTime)
@@ -183,46 +245,114 @@ public class PlayerController : MonoBehaviour
     // --- HÀM NHẶT ITEM (Gọi từ ItemPickup) ---
     public void PickUpItem(PowerUpData newItem)
     {
-        // 1. Xử lý item Tiêu thụ ngay (Coin, Mạng)
+        // === NHÓM 1: ĂN NGAY LẬP TỨC (Coin, Life) ===
+        // Các item này không đi vào túi đồ (heldItem) mà cộng thẳng vào chỉ số
+
         if (newItem.type == PowerUpType.Coin)
         {
-            // Cộng tiền (Logic giả định)
-            Debug.Log("Nhặt tiền: " + newItem.valueAmount);
-            // GameManager.Instance.AddCoin((int)newItem.valueAmount);
+            if (GameManager.Instance != null)
+            {
+                GameManager.Instance.AddCoin((int)newItem.valueAmount);
+                if (itemsPickupAudioSource != null)
+                    itemsPickupAudioSource.PlayOneShot(newItem.activateSound);
+            }
             return;
         }
         if (newItem.type == PowerUpType.Life)
         {
-            Debug.Log("Thêm mạng!");
-            // GameManager.Instance.AddLife();
+            if (GameManager.Instance != null)
+            {
+                GameManager.Instance.AddLife(1); // Mặc định là thêm 1 mạng
+                if (itemsPickupAudioSource != null)
+                    itemsPickupAudioSource.PlayOneShot(newItem.activateSound);
+            }
+
             return;
         }
 
-        // 2. Xử lý item Power-up (Cầm nắm)
-        // YÊU CẦU CỦA BẠN: "Nếu nhặt item mới khi đang giữ item -> Kích hoạt item MỚI ngay lập tức"
+        // === NHÓM 2: POWER-UPS CẦM NẮM ===
+        // Logic: Nếu đang giữ đồ -> Kích hoạt cái MỚI ngay lập tức
         if (heldItem != null)
         {
-            Debug.Log("Đang giữ " + heldItem.itemName + " nhưng nhặt " + newItem.itemName + " -> Kích hoạt cái mới luôn!");
-            ActivateItem(newItem); // Kích hoạt luôn cái mới nhặt
-            // Item cũ trong túi (heldItem) vẫn giữ nguyên hay mất?
-            // Theo logic game gốc: Nhặt cái mới thì cái mới ĐÈ LÊN cái cũ trong túi. 
-            // Nhưng theo yêu cầu của bạn: "item mới sẽ ngay lập tức được kích hoạt".
-            // Tôi sẽ làm theo ý bạn: Kích hoạt cái mới nhặt, cái trong túi giữ nguyên.
+            Debug.Log("Túi đầy! Kích hoạt ngay item mới: " + newItem.itemName);
+            ActivateItem(newItem);
+            if (itemsActivateAudioSource != null && newItem.activateSound!= null)
+            {
+                itemsActivateAudioSource.PlayOneShot(newItem.activateSound);
+            }
         }
         else
         {
-            // Nếu túi rỗng -> Nhặt vào túi
+            // Túi rỗng -> Nhặt vào túi
             heldItem = newItem;
             if (UIManager.Instance != null) UIManager.Instance.UpdateItem(heldItem.icon);
+            if (itemsPickupAudioSource != null && itemPickupClip!= null)
+            {
+                itemsActivateAudioSource.PlayOneShot(itemPickupClip);
+            }
+
         }
     }
 
     // --- HÀM KÍCH HOẠT ITEM ---
+    // --- 2. ÁP DỤNG HIỆU ỨNG ---
+    void ApplyEffect(PowerUpData item)
+    {
+        switch (item.type)
+        {
+            // --- HEAVY MACHINE GUN ---
+            // Tác dụng: Bắn siêu nhanh + Tự động bắn (giữ nút)
+            case PowerUpType.HeavyMachineGun:
+                fireDelay = 0.1f;    // Tốc độ bắn cực nhanh
+                enableAutoFire = true; // Cho phép giữ nút để sấy
+
+                break;
+            // --- COFFEE ---
+            case PowerUpType.Coffee:
+                // Cộng thêm tốc độ (Ví dụ: 5 + 2 = 7)
+                // newItem.valueAmount nên set là khoảng 2 hoặc 3 trong Inspector
+                moveSpeed = defaultMoveSpeed + item.valueAmount;
+                // Làm animation chân khua nhanh hơn cho kịch tính
+                if (legsAnimator != null) legsAnimator.speed = 2f;
+                break;
+            // --- SHOTGUN ---
+            case PowerUpType.Shotgun:
+                fireDelay = 0.5f;      // Bắn chậm hơn (0.5s)
+                enableAutoFire = false; // Vẫn phải nhấp tay (trừ khi có upgrade gốc)
+                isShotgunActive = true; // Bật cờ Shotgun
+                break;
+            // --- WAGON WHEEL ---
+            case PowerUpType.WagonWheel:
+                // Tốc bắn giữ nguyên (hoặc theo default)
+                enableAutoFire = false;
+                isWheelActive = true;   // Bật cờ Wheel
+                break;
+            // --- SHERIFF BADGE ---
+            case PowerUpType.SheriffBadge:
+                moveSpeed = defaultMoveSpeed + item.valueAmount;
+                if (legsAnimator != null) legsAnimator.speed = 2f;
+
+                fireDelay = 0.1f;       // Siêu nhanh (Ghi đè cái chậm của Shotgun)
+                enableAutoFire = true;
+
+                // 3. Hình nón (Shotgun)
+                isShotgunActive = true;
+                break;
+            case PowerUpType.ScreenNuke:
+                StartCoroutine(NukeRoutine()); // Gọi Coroutine mới
+                break;
+        }
+        if (item.duration > 0 && item.type != PowerUpType.ScreenNuke) // Nuke tự quản lý thời gian
+        {
+            activePowerUpCoroutine = StartCoroutine(PowerUpRoutine(item));
+        }
+        Debug.Log("Đã kích hoạt Buff: " + item.itemName);
+    }
     void ActivateItem(PowerUpData item)
     {
         // Phát âm thanh
-        if (item.activateSound != null && gunAudioSource != null)
-            gunAudioSource.PlayOneShot(item.activateSound);
+        if (item.activateSound != null)
+            itemsActivateAudioSource.PlayOneShot(item.activateSound);
 
         // Reset hiệu ứng cũ trước khi áp dụng cái mới (Ghi đè)
         ResetPowerUpEffects();
@@ -231,8 +361,8 @@ public class PlayerController : MonoBehaviour
         switch (item.type)
         {
             case PowerUpType.ScreenNuke:
-                KillAllEnemies();
-                return; // Nuke xong là hết, không có duration
+                StartCoroutine(NukeRoutine()); // Gọi Coroutine mới
+                break;
 
             case PowerUpType.SmokeBomb:
                 TeleportRandomly();
@@ -246,6 +376,23 @@ public class PlayerController : MonoBehaviour
             activePowerUpCoroutine = StartCoroutine(PowerUpRoutine(item));
         }
     }
+    // --- 3. RESET HIỆU ỨNG (Sửa lại hàm ResetPowerUpEffects) ---
+    void ResetPowerUpEffects()
+    {
+        if (activePowerUpCoroutine != null) StopCoroutine(activePowerUpCoroutine);
+
+        // Reset chỉ số cơ bản
+        fireDelay = defaultFireDelay;
+        enableAutoFire = false;
+        moveSpeed = defaultMoveSpeed;
+        if (legsAnimator != null) legsAnimator.speed = 1f;
+
+        // Reset các cờ súng đạn đặc biệt
+        isShotgunActive = false;
+        isWheelActive = false;
+
+        Debug.Log("Hết giờ! Trở về trạng thái bình thường.");
+    }
 
     IEnumerator PowerUpRoutine(PowerUpData item)
     {
@@ -258,56 +405,50 @@ public class PlayerController : MonoBehaviour
         // 3. HẾT GIỜ -> RESET VỀ BÌNH THƯỜNG
         ResetPowerUpEffects();
     }
-
-    void ApplyEffect(PowerUpData item)
+    IEnumerator NukeRoutine()
     {
-        switch (item.type)
+        Debug.Log("NUKE ACTIVATED!");
+
+        // 1. Tiêu diệt TẤT CẢ quái ngay lập tức (Không rơi đồ)
+        GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
+        foreach (var e in enemies)
         {
-            case PowerUpType.HeavyMachineGun:
-                fireDelay = 0.1f; // Bắn siêu nhanh
-                enableAutoFire = true;
-                break;
-            case PowerUpType.Shotgun:
-                // Cần logic bắn Shotgun ở hàm Shoot (sẽ làm sau)
-                // Tạm thời set flag
-                break;
-            case PowerUpType.Coffee:
-                moveSpeed = defaultMoveSpeed + item.valueAmount; // Tăng tốc
-                legsAnimator.speed = 2f; // Chân khua nhanh hơn
-                break;
-            case PowerUpType.SheriffBadge:
-                fireDelay = 0.1f;
-                enableAutoFire = true;
-                moveSpeed = defaultMoveSpeed + 2f; // Shotgun + MG + Speed
-                // Thêm logic Shotgun sau
-                break;
-            case PowerUpType.WagonWheel:
-                // Logic bắn 8 hướng
-                break;
+            var enemyScript = e.GetComponent<Enemy>();
+            if (enemyScript != null)
+            {
+                enemyScript.Die(false); // false = Không rơi đồ
+            }
+            else
+            {
+                Destroy(e);
+            }
         }
-        Debug.Log("Đã kích hoạt: " + item.itemName);
+
+        // 2. Tạo hiệu ứng nổ rải rác trong 2 giây
+        // Chúng ta sẽ chia nhỏ thời gian để nổ trông tự nhiên
+        int explosionsSpawned = 0;
+
+        while (explosionsSpawned < explosionCount)
+        {
+            // Sinh vị trí ngẫu nhiên trong sân
+            float randomX = Random.Range(mapBoundsMin.x, mapBoundsMax.x);
+            float randomY = Random.Range(mapBoundsMin.y, mapBoundsMax.y);
+            Vector3 explosionPos = new Vector3(randomX, randomY, 0);
+
+            // Tạo Prefab nổ
+            if (explosionFXPrefab != null)
+            {
+                Instantiate(explosionFXPrefab, explosionPos, Quaternion.identity);
+            }
+
+            explosionsSpawned++;
+
+            // Chờ một chút ngẫu nhiên trước khi nổ quả tiếp theo
+            // Tính toán: Tổng thời gian / Tổng số nổ (có random nhẹ)
+            float waitTime = (nukeDuration / explosionCount) * Random.Range(0.5f, 1.5f);
+            yield return new WaitForSeconds(waitTime);
+        }
     }
-
-    void ResetPowerUpEffects()
-    {
-        // Nếu đang có hiệu ứng chạy dở -> Dừng nó lại
-        if (activePowerUpCoroutine != null) StopCoroutine(activePowerUpCoroutine);
-
-        // Trả lại chỉ số gốc
-        fireDelay = defaultFireDelay;
-        moveSpeed = defaultMoveSpeed;
-        enableAutoFire = false;
-        bulletPrefab = defaultBulletPrefab;
-
-        if (legsAnimator != null) legsAnimator.speed = 1f;
-
-        // Reset các flag súng ống (sẽ thêm sau)
-        // isShotgunActive = false;
-        // isWheelActive = false;
-
-        Debug.Log("Đã Reset hiệu ứng!");
-    }
-
     // --- CÁC HÀM HỖ TRỢ ---
     void KillAllEnemies()
     {
