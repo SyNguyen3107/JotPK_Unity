@@ -14,6 +14,9 @@ public class Enemy : MonoBehaviour
     [Header("Base References")]
     public Rigidbody2D rb;
 
+    [Header("Drop")]
+    public GameObject itemPrefab;
+
     // Protected để các class con (Orc, Imp) có thể truy cập được
     protected Transform playerTarget;
     protected bool isDead = false;
@@ -49,6 +52,23 @@ public class Enemy : MonoBehaviour
     protected virtual void Die()
     {
         isDead = true;
+        // Drop Item Logic
+        float roll = Random.Range(0f, 100f);
+        if (GameManager.Instance != null && roll <= GameManager.Instance.dropChance)
+        {
+            // 2. Lấy item ngẫu nhiên
+            PowerUpData dropData = GameManager.Instance.GetRandomDrop();
+
+            if (dropData != null && itemPrefab != null)
+            {
+                // 3. Spawn Item
+                GameObject itemObj = Instantiate(itemPrefab, transform.position, Quaternion.identity);
+
+                // 4. Setup dữ liệu cho item đó
+                ItemPickup pickup = itemObj.GetComponent<ItemPickup>();
+                if (pickup != null) pickup.Setup(dropData);
+            }
+        }
 
         // 1. Tạo hiệu ứng chết
         if (deathEffectPrefab != null)

@@ -1,6 +1,7 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.SceneManagement;
-using System.Collections;
 
 public class GameManager : MonoBehaviour
 {
@@ -20,6 +21,10 @@ public class GameManager : MonoBehaviour
     [Header("Timer Colors")]
     public Color timerNormalColor = Color.green;
     public Color timerCriticalColor = Color.red;
+
+    [Header("Drop System")]
+    public List<PowerUpData> allowedDrops; // Kéo tất cả 11 item vào đây trong Inspector
+    [Range(0f, 100f)] public float dropChance = 5f; // Tỷ lệ rơi (ví dụ 5%)
 
     [Header("Progress Settings")]
     public int totalAreasPassed = 0;
@@ -216,5 +221,10 @@ public class GameManager : MonoBehaviour
     void RestartLevel()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
+    public PowerUpData GetRandomDrop()
+    {
+        if (allowedDrops.Count == 0) return null;
+        return allowedDrops[Random.Range(0, allowedDrops.Count)];
     }
 }
