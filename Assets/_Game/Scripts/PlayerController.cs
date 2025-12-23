@@ -303,7 +303,7 @@ public class PlayerController : MonoBehaviour
             // --- HEAVY MACHINE GUN ---
             // Tác dụng: Bắn siêu nhanh + Tự động bắn (giữ nút)
             case PowerUpType.HeavyMachineGun:
-                fireDelay = 0.1f;    // Tốc độ bắn cực nhanh
+                fireDelay = 0.05f;    // Tốc độ bắn cực nhanh
                 enableAutoFire = true; // Cho phép giữ nút để sấy
 
                 break;

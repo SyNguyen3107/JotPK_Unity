@@ -8,10 +8,10 @@ public class Orc : Enemy
     {
         // Gọi hàm của cha (nếu cha có logic gì đó). Ở đây cha rỗng nên ko cần base.FixedUpdate();
 
-        if (isDead || playerTarget == null) return;
+        if (isDead || playerTransform == null) return;
 
         // --- LOGIC DI CHUYỂN CỦA ORC: Đi thẳng về phía Player ---
-        Vector2 direction = (playerTarget.position - transform.position).normalized;
+        Vector2 direction = (playerTransform.position - transform.position).normalized;
         rb.MovePosition(rb.position + direction * moveSpeed * Time.fixedDeltaTime);
     }
 }

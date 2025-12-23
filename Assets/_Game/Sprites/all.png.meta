@@ -1653,7 +1653,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_59
+      name: orc_white
       rect:
         serializedVersion: 2
         x: 223
@@ -1675,7 +1675,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_60
+      name: butterfly_white
       rect:
         serializedVersion: 2
         x: 239
@@ -1697,7 +1697,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_61
+      name: ogre_white
       rect:
         serializedVersion: 2
         x: 255
@@ -1719,7 +1719,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_62
+      name: mummy_white
       rect:
         serializedVersion: 2
         x: 271
@@ -1741,7 +1741,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_63
+      name: imp_white
       rect:
         serializedVersion: 2
         x: 287
@@ -1763,7 +1763,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_64
+      name: mushroom_white
       rect:
         serializedVersion: 2
         x: 303
@@ -2313,7 +2313,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_89
+      name: butterfly0
       rect:
         serializedVersion: 2
         x: 255
@@ -2335,7 +2335,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_90
+      name: butterfly1
       rect:
         serializedVersion: 2
         x: 271
@@ -2357,7 +2357,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_91
+      name: ogre0
       rect:
         serializedVersion: 2
         x: 287
@@ -2379,7 +2379,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_92
+      name: ogre1
       rect:
         serializedVersion: 2
         x: 303
@@ -2401,7 +2401,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_93
+      name: mummy0
       rect:
         serializedVersion: 2
         x: 319
@@ -2423,7 +2423,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_94
+      name: mummy1
       rect:
         serializedVersion: 2
         x: 335
@@ -2445,7 +2445,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_95
+      name: imp0
       rect:
         serializedVersion: 2
         x: 351
@@ -2467,7 +2467,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_96
+      name: imp1
       rect:
         serializedVersion: 2
         x: 367
@@ -2489,7 +2489,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_97
+      name: mushroom0
       rect:
         serializedVersion: 2
         x: 383
@@ -2511,7 +2511,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_98
+      name: mushroom1
       rect:
         serializedVersion: 2
         x: 399
@@ -2599,7 +2599,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_102
+      name: fector0
       rect:
         serializedVersion: 2
         x: 463
@@ -2621,7 +2621,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_103
+      name: fector1
       rect:
         serializedVersion: 2
         x: 479
@@ -2643,7 +2643,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_104
+      name: fector2
       rect:
         serializedVersion: 2
         x: 495
@@ -4469,7 +4469,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_189
+      name: fector_laugh0
       rect:
         serializedVersion: 2
         x: 463
@@ -4491,7 +4491,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_190
+      name: fector_laugh1
       rect:
         serializedVersion: 2
         x: 479
@@ -4513,7 +4513,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_191
+      name: fector_laugh2
       rect:
         serializedVersion: 2
         x: 495
@@ -6513,9 +6513,6 @@ TextureImporter:
       all_1: 7057801135558962131
       all_100: 1949128863
       all_101: -865044210
-      all_102: -1264286004
-      all_103: -2122689124
-      all_104: -1066306206
       all_105: -1547024356
       all_106: -855505763
       all_107: 1538238822
@@ -6597,10 +6594,7 @@ TextureImporter:
       all_186: 435620056
       all_187: 656844150
       all_188: -268256630
-      all_189: 1783473938
       all_19: -5325716740117269564
-      all_190: 1068959923
-      all_191: -930131383
       all_192: 2075844290
       all_193: 1692363259
       all_194: -1739615998
@@ -6685,12 +6679,6 @@ TextureImporter:
       all_56: -8516139111674596268
       all_57: -4351274396387659724
       all_58: 7289564452149313754
-      all_59: 4945819037667684097
-      all_60: -2958205467540611984
-      all_61: -6471681559913686642
-      all_62: 8711120730607595667
-      all_63: 4469793694533463491
-      all_64: 5861527811375031867
       all_65: 8018687567259348686
       all_66: -8438291159918940483
       all_67: -4977160037485911365
@@ -6707,17 +6695,10 @@ TextureImporter:
       all_84: 1096283802
       all_85: 248269607
       all_86: -969015850
-      all_89: 974319259
-      all_90: -1282451064
-      all_91: 1358583071
-      all_92: 80625723
-      all_93: -1391460391
-      all_94: 1671139568
-      all_95: 378442679
-      all_96: 223370836
-      all_97: -1443817589
-      all_98: 24513268
       all_99: -333824154
+      butterfly0: 974319259
+      butterfly1: -1282451064
+      butterfly_white: -2958205467540611984
       default_bullet: -921384764
       enemy_death0: -3652837159399745591
       enemy_death1: 4989539969749133908
@@ -6731,6 +6712,12 @@ TextureImporter:
       explosion2: 400557543
       explosion3: -1237053869
       explosion4: -1498965742
+      fector0: -1264286004
+      fector1: -2122689124
+      fector2: -1066306206
+      fector_laugh0: 1783473938
+      fector_laugh1: 1068959923
+      fector_laugh2: -930131383
       forest0: -2249631188897383861
       forest1: 5125949765403844629
       forest10: 7057210770157347612
@@ -6753,6 +6740,9 @@ TextureImporter:
       graveyard7: 713856207502405296
       graveyard8: -5061710873365931121
       graveyard9: 2139653220974686133
+      imp0: 378442679
+      imp1: 223370836
+      imp_white: 4469793694533463491
       item_1_coin: 1471693645
       item_1_up: 1628065189
       item_5_coins: 612721429
@@ -6764,8 +6754,18 @@ TextureImporter:
       item_smoke_bomb: 646514586
       item_tombstone: 1581388313
       item_wagon_wheel: -1524350651
+      mummy0: -1391460391
+      mummy1: 1671139568
+      mummy_white: 8711120730607595667
+      mushroom0: -1443817589
+      mushroom1: 24513268
+      mushroom_white: 5861527811375031867
+      ogre0: 1358583071
+      ogre1: 80625723
+      ogre_white: -6471681559913686642
       orc0: -1285178484
       orc1: -593301100
+      orc_white: 4945819037667684097
       player_death0: 1871118192
       player_death1: -605275257
       player_death2: 796493990

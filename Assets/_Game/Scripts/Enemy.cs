@@ -1,15 +1,27 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
     [Header("Base Stats")]
     public float moveSpeed = 2f;
-    public int health = 3;
+    public int maxHealth = 3;
+    private int currentHealth;
     public int damageToPlayer = 1; // Sát thương gây ra khi chạm vào Player
 
     [Header("Death Settings")]
     public GameObject deathEffectPrefab; // Kéo Prefab EnemyDeathFX vào đây
     public AudioClip[] deathSounds;
+
+    [Header("Visuals")]
+    public Sprite whiteSprite; // Kéo Sprite trắng tương ứng của quái vào đây
+    private SpriteRenderer sr;
+    private Animator animator;
+    private bool isFlashing = false;
+
+    [Header("Audio")]
+    public AudioSource audioSource;
+    public AudioClip hitSound;
 
     [Header("Base References")]
     public Rigidbody2D rb;
@@ -18,21 +30,39 @@ public class Enemy : MonoBehaviour
     public GameObject itemPrefab;
 
     // Protected để các class con (Orc, Imp) có thể truy cập được
-    protected Transform playerTarget;
+    protected Transform playerTransform;
     protected bool isDead = false;
 
     // Virtual: Cho phép class con ghi đè nếu muốn (ví dụ Boss lúc Start sẽ gầm lên)
     protected virtual void Start()
     {
+        sr = GetComponent<SpriteRenderer>();
+        animator = GetComponent<Animator>();
+        currentHealth = maxHealth;
         GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
+
+        // Tự động tìm AudioSource nếu quên gán
+        if (audioSource == null)
+        {
+            audioSource = GetComponent<AudioSource>();
+        }
         if (playerObj != null)
         {
-            playerTarget = playerObj.transform;
+            playerTransform = playerObj.transform;
         }
     }
 
     // Virtual: Để class con tự quyết định cách di chuyển (FixedUpdate)
     // Ở đây ta để trống, vì Orc đi thẳng, Imp đi lượn sóng, Boss đứng yên...
+    void Update()
+    {
+        if (playerTransform != null)
+        {
+            transform.position = Vector2.MoveTowards(transform.position, playerTransform.position, moveSpeed * Time.deltaTime);
+            if (playerTransform.position.x < transform.position.x) sr.flipX = true;
+            else sr.flipX = false;
+        }
+    }
     protected virtual void FixedUpdate()
     {
         // Mặc định không làm gì cả
@@ -41,10 +71,27 @@ public class Enemy : MonoBehaviour
     public void TakeDamage(int damage)
     {
         if (isDead) return;
+        currentHealth -= damage;
 
-        health -= damage;
-        if (health <= 0)
+
+        // 1. Kích hoạt Flash Trắng (Nếu có sprite trắng)
+        if (whiteSprite != null)
         {
+            StartCoroutine(FlashRoutine());
+        }
+
+        // 2. Kiểm tra chết
+        if (currentHealth > 0)
+        {
+            // Chỉ phát tiếng Hit nếu chưa chết
+            if (audioSource != null && hitSound != null)
+            {
+                audioSource.PlayOneShot(hitSound);
+            }
+        }
+        else
+        {
+            // Nếu hết máu -> Chết
             Die();
         }
     }
@@ -110,5 +157,40 @@ public class Enemy : MonoBehaviour
             if (GameManager.Instance != null) GameManager.Instance.PlayerDied();
             Destroy(gameObject);
         }
+    }
+    IEnumerator FlashRoutine()
+    {
+        // Nếu đang flash rồi thì không làm gì (tránh lỗi chồng chéo)
+        if (isFlashing) yield break;
+        isFlashing = true;
+
+        // A. Lưu trạng thái cũ
+        bool wasAnimEnabled = false;
+        Sprite originalSprite = sr.sprite; // Lưu sprite hiện tại (để trả lại nếu ko có animator)
+
+        // B. Tắt Animator (quan trọng: nếu không tắt, Animator sẽ ghi đè sprite trắng ngay lập tức)
+        if (animator != null)
+        {
+            wasAnimEnabled = animator.enabled;
+            animator.enabled = false;
+        }
+
+        // C. Đổi sang Sprite Trắng
+        sr.sprite = whiteSprite;
+
+        // D. Chờ 0.1 giây
+        yield return new WaitForSeconds(0.1f);
+
+        // E. Khôi phục trạng thái
+        if (animator != null)
+        {
+            animator.enabled = wasAnimEnabled; // Bật lại Animator -> Nó sẽ tự cập nhật sprite đúng
+        }
+        else
+        {
+            sr.sprite = originalSprite; // Trả lại hình cũ
+        }
+
+        isFlashing = false;
     }
 }
