@@ -29,6 +29,10 @@ public class Enemy : MonoBehaviour
     [Header("Drop")]
     public GameObject itemPrefab;
 
+    [Header("Stun Visuals")]
+    public GameObject questionMarkObject; // Kéo GameObject chứa Text "?" vào đây
+    private float originalSpeed;
+
     // Protected để các class con (Orc, Imp) có thể truy cập được
     protected Transform playerTransform;
     protected bool isDead = false;
@@ -40,7 +44,7 @@ public class Enemy : MonoBehaviour
         animator = GetComponent<Animator>();
         currentHealth = maxHealth;
         GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
-
+        originalSpeed = moveSpeed;
         // Tự động tìm AudioSource nếu quên gán
         if (audioSource == null)
         {
@@ -49,6 +53,10 @@ public class Enemy : MonoBehaviour
         if (playerObj != null)
         {
             playerTransform = playerObj.transform;
+        }
+        if (GameManager.Instance != null && GameManager.Instance.isSmokeBombActive)
+        {
+            SetStunState(true);
         }
     }
 
@@ -192,5 +200,20 @@ public class Enemy : MonoBehaviour
         }
 
         isFlashing = false;
+    }
+    public void SetStunState(bool isStunned)
+    {
+        if (isStunned)
+        {
+            moveSpeed = 0; // Đứng im
+            if (animator != null) animator.speed = 0; // Dừng animation (đóng băng hình ảnh)
+            if (questionMarkObject != null) questionMarkObject.SetActive(true); // Hiện dấu hỏi
+        }
+        else
+        {
+            moveSpeed = originalSpeed; // Trả lại tốc độ cũ (nhớ là Enemy phải có biến originalSpeed lưu ở Start)
+            if (animator != null) animator.speed = 1; // Animation chạy lại
+            if (questionMarkObject != null) questionMarkObject.SetActive(false); // Ẩn dấu hỏi
+        }
     }
 }

@@ -37,6 +37,9 @@ public class GameManager : MonoBehaviour
     public GameObject gameOverPanel;
     public GameObject playerObject;
 
+    [Header("Smoke Bomb Settings")]
+    public bool isSmokeBombActive = false; // Cờ kiểm tra trạng thái khói
+
     // State Variables
     private float currentTime;
     private bool isTimerRunning = false;
@@ -249,7 +252,37 @@ public class GameManager : MonoBehaviour
         // Cập nhật UI
         if (UIManager.Instance != null)
             UIManager.Instance.UpdateLives(currentLives);
+    }
+    public void ActivateGlobalStun(float duration)
+    {
+        StartCoroutine(GlobalStunRoutine(duration));
+    }
+    IEnumerator GlobalStunRoutine(float duration)
+    {
+        isSmokeBombActive = true;
 
-        // Có thể thêm âm thanh 1-up ở đây nếu muốn
+        // 1. Tìm tất cả quái ĐANG CÓ và làm choáng ngay lập tức
+        GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
+        foreach (var e in enemies)
+        {
+            var enemyScript = e.GetComponent<Enemy>();
+            if (enemyScript != null) enemyScript.SetStunState(true);
+        }
+
+        // 2. Chờ hết thời gian tác dụng
+        yield return new WaitForSeconds(duration);
+
+        // 3. Kết thúc hiệu ứng
+        isSmokeBombActive = false;
+
+        // 4. Tìm lại tất cả quái (cả cũ lẫn mới sinh ra trong lúc chờ) và giải phóng
+        enemies = GameObject.FindGameObjectsWithTag("Enemy");
+        foreach (var e in enemies)
+        {
+            var enemyScript = e.GetComponent<Enemy>();
+            if (enemyScript != null) enemyScript.SetStunState(false);
+        }
+
+        Debug.Log("Hết khói! Quái hoạt động lại.");
     }
 }

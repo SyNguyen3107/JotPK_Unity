@@ -281,7 +281,7 @@ Animator:
   m_GameObject: {fileID: 3572758538740655530}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 6d13f155f03e9644d933a9c9fec78cdd, type: 2}
+  m_Controller: {fileID: 9100000, guid: 4aa5b2c61fcf8ba4da10a16abf75ec28, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -488,7 +488,7 @@ MonoBehaviour:
   bulletPrefab: {fileID: 4803697644789391034, guid: 246aeb5273441ff4db9666ee7ea1e9ca, type: 3}
   firePoint: {fileID: 0}
   bulletOffset: 0.5
-  fireDelay: 0.3
+  fireDelay: 0.5
   enableAutoFire: 0
   heldItem: {fileID: 0}
   explosionFXPrefab: {fileID: 6860427870915328847, guid: 9866ea63508d8c540861ce7e7268c133, type: 3}

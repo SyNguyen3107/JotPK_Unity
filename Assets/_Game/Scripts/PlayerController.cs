@@ -25,6 +25,12 @@ public class PlayerController : MonoBehaviour
     public int explosionCount = 15;      // Số lượng vụ nổ muốn hiển thị
     public float nukeDuration = 2f;      // Thời gian diễn ra hiệu ứng
 
+    [Header("Smoke Bomb VFX")]
+    public GameObject smokeCloudPrefab; // Kéo Prefab Animation Khói vào đây
+    public LayerMask obstacleLayer; // Layer của Tường/Chướng ngại vật để tránh teleport vào
+    public int smokeCount = 4;
+    public float smokeBombDuration = 4f; // <--- MỚI: Thời gian stun quái (độc lập với PowerUpData)
+
     // Giới hạn vùng sân đấu để nổ không lấn ra ngoài tường
     // Bạn hãy chỉnh số này khớp với kích thước map của bạn (Ví dụ: -6 đến 6)
     public Vector2 mapBoundsMin = new Vector2(-6f, -5f);
@@ -276,7 +282,7 @@ public class PlayerController : MonoBehaviour
         {
             Debug.Log("Túi đầy! Kích hoạt ngay item mới: " + newItem.itemName);
             ActivateItem(newItem);
-            if (itemsActivateAudioSource != null && newItem.activateSound!= null)
+            if (itemsActivateAudioSource != null && newItem.activateSound != null)
             {
                 itemsActivateAudioSource.PlayOneShot(newItem.activateSound);
             }
@@ -286,7 +292,7 @@ public class PlayerController : MonoBehaviour
             // Túi rỗng -> Nhặt vào túi
             heldItem = newItem;
             if (UIManager.Instance != null) UIManager.Instance.UpdateItem(heldItem.icon);
-            if (itemsPickupAudioSource != null && itemPickupClip!= null)
+            if (itemsPickupAudioSource != null && itemPickupClip != null)
             {
                 itemsActivateAudioSource.PlayOneShot(itemPickupClip);
             }
@@ -341,8 +347,11 @@ public class PlayerController : MonoBehaviour
             case PowerUpType.ScreenNuke:
                 StartCoroutine(NukeRoutine()); // Gọi Coroutine mới
                 break;
+            case PowerUpType.SmokeBomb:
+                // Đã xử lý ở ActivateItem, không cần làm gì ở đây
+                break;
         }
-        if (item.duration > 0 && item.type != PowerUpType.ScreenNuke) // Nuke tự quản lý thời gian
+        if (item.duration > 0 && item.type != PowerUpType.ScreenNuke && item.type != PowerUpType.SmokeBomb)
         {
             activePowerUpCoroutine = StartCoroutine(PowerUpRoutine(item));
         }
@@ -365,13 +374,21 @@ public class PlayerController : MonoBehaviour
                 break;
 
             case PowerUpType.SmokeBomb:
-                TeleportRandomly();
-                // Khói mù có thể kéo dài 1 chút để che mắt quái (nếu muốn)
+                // 1. Kích hoạt Stun toàn bản đồ thông qua GameManager
+                if (GameManager.Instance != null)
+                {
+                    // Dùng biến public trong Inspector thay vì item.duration
+                    GameManager.Instance.ActivateGlobalStun(smokeBombDuration);
+                }
+
+                // 2. Dịch chuyển an toàn + Hiệu ứng khói
+                TeleportAndSmoke();
                 break;
         }
 
         // Nếu item có thời gian tác dụng -> Chạy Coroutine đếm ngược
-        if (item.duration > 0)
+        // Lưu ý: SmokeBomb cũng không chạy PowerUpRoutine vì nó đã xử lý xong (Stun thì GM lo)
+        if (item.duration > 0 && item.type != PowerUpType.SmokeBomb)
         {
             activePowerUpCoroutine = StartCoroutine(PowerUpRoutine(item));
         }
@@ -457,11 +474,55 @@ public class PlayerController : MonoBehaviour
         Debug.Log("NUKE! Đã diệt " + enemies.Length + " quái.");
     }
 
-    void TeleportRandomly()
+    void TeleportAndSmoke()
     {
-        // Dịch chuyển đến vị trí ngẫu nhiên trong map (tránh tường)
-        // Tạm thời để random đơn giản
-        transform.position = new Vector3(Random.Range(-5f, 5f), Random.Range(-5f, 5f), 0);
+        // Tìm vị trí an toàn
+        Vector3 targetPos = FindSafePosition();
+
+        // Dịch chuyển Player
+        transform.position = targetPos;
+
+        // Tạo 3-4 đám khói tại vị trí mới
+        StartCoroutine(SpawnMultipleSmokes(targetPos));
+    }
+
+    Vector3 FindSafePosition()
+    {
+        int maxAttempts = 20; // Thử tối đa 20 lần
+        for (int i = 0; i < maxAttempts; i++)
+        {
+            // Random vị trí trong mapBounds (bạn đã khai báo biến này ở đầu file rồi)
+            float randX = Random.Range(mapBoundsMin.x, mapBoundsMax.x);
+            float randY = Random.Range(mapBoundsMin.y, mapBoundsMax.y);
+            Vector2 candidatePos = new Vector2(randX, randY);
+
+            // Kiểm tra xem vị trí này có va vào Tường hoặc Quái không
+            // Bán kính kiểm tra khoảng 1f (đủ rộng cho người chơi)
+            Collider2D hit = Physics2D.OverlapCircle(candidatePos, 1f, obstacleLayer);
+
+            if (hit == null) // Không va vào gì cả -> An toàn
+            {
+                return candidatePos;
+            }
+        }
+
+        // Nếu đen quá không tìm được chỗ nào thì đứng yên tại chỗ (hoặc về 0,0)
+        return transform.position;
+    }
+    IEnumerator SpawnMultipleSmokes(Vector3 centerPos)
+    {
+        if (smokeCloudPrefab == null) yield break;
+
+
+        for (int i = 0; i < smokeCount; i++)
+        {
+            // Random lệch một chút xung quanh vị trí đứng
+            Vector3 offset = new Vector3(Random.Range(-0.5f, 0.5f), Random.Range(-0.5f, 0.5f), 0);
+            Instantiate(smokeCloudPrefab, centerPos + offset, Quaternion.identity);
+
+            // Chờ xíu xiu giữa các đám khói cho tự nhiên
+            yield return new WaitForSeconds(0.1f);
+        }
     }
 
     // --- DEATH LOGIC ---
