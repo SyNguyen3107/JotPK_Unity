@@ -49,8 +49,17 @@ TagManager:
   - name: Enemy
     uniqueID: 3512102267
     locked: 0
+  - name: Items
+    uniqueID: 2664480889
+    locked: 0
   - name: FX
     uniqueID: 2803408787
+    locked: 0
+  - name: Darkness
+    uniqueID: 4290015889
+    locked: 0
+  - name: Cutscene
+    uniqueID: 431900197
     locked: 0
   m_RenderingLayers:
   - Default

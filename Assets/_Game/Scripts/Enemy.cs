@@ -66,9 +66,46 @@ public class Enemy : MonoBehaviour
     {
         if (playerTransform != null)
         {
-            transform.position = Vector2.MoveTowards(transform.position, playerTransform.position, moveSpeed * Time.deltaTime);
-            if (playerTransform.position.x < transform.position.x) sr.flipX = true;
-            else sr.flipX = false;
+            PlayerController playerScript = playerTransform.GetComponent<PlayerController>();
+            bool isPlayerZombie = (playerScript != null && playerScript.isZombieMode);
+            if (isPlayerZombie)
+            {
+                // --- LOGIC BỎ CHẠY (FLEE) ---
+
+                // 1. Tính hướng TỪ Player ĐẾN Enemy (Hướng chạy trốn)
+                Vector2 fleeDirection = (transform.position - playerTransform.position).normalized;
+
+                // 2. Tính vị trí đích muốn đến
+                Vector2 targetPos = (Vector2)transform.position + fleeDirection * moveSpeed * Time.deltaTime;
+
+                // 3. KẸP VỊ TRÍ (CLAMP) TRONG BẢN ĐỒ
+                // Enemy cần truy cập mapBounds của Player để biết tường ở đâu
+                if (playerScript != null)
+                {
+                    // Lấy biên map từ Player (cộng trừ 1 chút để không đứng sát sạt tường)
+                    float clampX = Mathf.Clamp(targetPos.x, playerScript.mapBoundsMin.x + 0.5f, playerScript.mapBoundsMax.x - 0.5f);
+                    float clampY = Mathf.Clamp(targetPos.y, playerScript.mapBoundsMin.y + 0.5f, playerScript.mapBoundsMax.y - 0.5f);
+
+                    // Cập nhật vị trí mới đã được giới hạn
+                    transform.position = new Vector2(clampX, clampY);
+                }
+
+                // Visual: Lật mặt ngược lại hướng chạy (để trông như đang ngoái lại nhìn hoặc đơn giản là quay đầu chạy)
+                // Nếu chạy sang phải (x > player.x) -> flipX = false (mặt hướng phải)
+                if (transform.position.x > playerTransform.position.x) sr.flipX = false;
+                else sr.flipX = true;
+            }
+            else
+            {
+                // --- LOGIC BÌNH THƯỜNG (CHASE) ---
+                // Chỉ di chuyển nếu KHÔNG BỊ STUN (Code cũ của bạn)
+                if (moveSpeed > 0)
+                {
+                    transform.position = Vector2.MoveTowards(transform.position, playerTransform.position, moveSpeed * Time.deltaTime);
+                    if (playerTransform.position.x < transform.position.x) sr.flipX = true;
+                    else sr.flipX = false;
+                }
+            }
         }
     }
     protected virtual void FixedUpdate()
@@ -155,13 +192,20 @@ public class Enemy : MonoBehaviour
             // Kiểm tra xem Player có đang bất tử không
             PlayerController player = collision.gameObject.GetComponent<PlayerController>();
 
+            if (player != null && player.isZombieMode)
+            {
+                player.KillEnemyOnContact(); // Gọi hàm bên player nếu cần FX
+                Die(true); // true = Vẫn rơi đồ như thường
+                return; // Kết thúc hàm, không gây dame cho player
+            }
+
+            // CASE 2: Player đang bất tử (Invincible) -> Bỏ qua
             if (player != null && player.IsInvincible())
             {
-                // Nếu Player bất tử -> Không làm gì cả (đi xuyên qua hoặc bị đẩy ra)
                 return;
             }
 
-            // Nếu không bất tử -> Giết như thường
+            // CASE 3: Player thường -> Player chết
             if (GameManager.Instance != null) GameManager.Instance.PlayerDied();
             Destroy(gameObject);
         }

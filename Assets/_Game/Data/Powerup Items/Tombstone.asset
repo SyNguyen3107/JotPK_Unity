@@ -16,5 +16,5 @@ MonoBehaviour:
   type: 7
   icon: {fileID: 1581388313, guid: 226a2dd9665e9e9408a1469427cf02a8, type: 3}
   duration: 10
-  activateSound: {fileID: 8300000, guid: a5162151409cb194a8a4bac8f7deef00, type: 3}
+  activateSound: {fileID: 8300000, guid: d0d138e649a653743999e430d357ab03, type: 3}
   valueAmount: 0

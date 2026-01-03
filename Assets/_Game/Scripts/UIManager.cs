@@ -38,7 +38,18 @@ public class UIManager : MonoBehaviour
             timerBarFill.fillAmount = currentTime / maxTime;
         }
     }
+    public void ToggleHUD(bool isActive)
+    {
+        // Giả sử toàn bộ UI của bạn nằm trong 1 Panel chính hoặc Canvas
+        // Nếu chưa có biến reference tới Panel chính, bạn có thể gọi gameObject.SetActive
+        // hoặc duyệt qua các thành phần con.
 
+        // Cách đơn giản nhất: Ẩn/Hiện canvas hiện tại (nếu UIManager gắn trên Canvas)
+        GetComponent<Canvas>().enabled = isActive;
+
+        // Hoặc nếu UIManager quản lý các panel con:
+        // transform.GetChild(0).gameObject.SetActive(isActive); // Ví dụ
+    }
     public void SetTimerColor(Color color)
     {
         if (timerBarFill != null)

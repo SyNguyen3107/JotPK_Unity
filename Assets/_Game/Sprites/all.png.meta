@@ -3523,7 +3523,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_144
+      name: lightning_bolt0
       rect:
         serializedVersion: 2
         x: 239
@@ -3545,7 +3545,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_145
+      name: lightning_bolt1
       rect:
         serializedVersion: 2
         x: 255
@@ -4183,7 +4183,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_174
+      name: player_zombie0
       rect:
         serializedVersion: 2
         x: 223
@@ -4205,7 +4205,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_175
+      name: player_zombie1
       rect:
         serializedVersion: 2
         x: 239
@@ -4227,7 +4227,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_176
+      name: player_struck0
       rect:
         serializedVersion: 2
         x: 255
@@ -4249,7 +4249,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_177
+      name: player_struck1
       rect:
         serializedVersion: 2
         x: 271
@@ -6552,8 +6552,6 @@ TextureImporter:
       all_141: -1567105941
       all_142: 414688423
       all_143: -1123621901
-      all_144: -1730828539
-      all_145: 2112346632
       all_146: 1875051028
       all_147: 1615796000
       all_148: 34521829
@@ -6579,10 +6577,6 @@ TextureImporter:
       all_171: 781696601
       all_172: 1339715386
       all_173: -1696191609
-      all_174: -47956439
-      all_175: -1647572113
-      all_176: 1095552551
-      all_177: -1354847906
       all_178: 2007613764
       all_179: -673885657
       all_18: -3993211317029401747
@@ -6754,6 +6748,8 @@ TextureImporter:
       item_smoke_bomb: 646514586
       item_tombstone: 1581388313
       item_wagon_wheel: -1524350651
+      lightning_bolt0: -1730828539
+      lightning_bolt1: 2112346632
       mummy0: -1391460391
       mummy1: 1671139568
       mummy_white: 8711120730607595667
@@ -6779,7 +6775,11 @@ TextureImporter:
       player_leg2: -1106104690
       player_leg3: 327699318
       player_right: -1415268768
+      player_struck0: 1095552551
+      player_struck1: -1354847906
       player_up: -954812830
+      player_zombie0: -47956439
+      player_zombie1: -1647572113
       prairie0: -6422738598392966244
       prairie1: 19052218466296406
       prairie10: -6004362707538375403
