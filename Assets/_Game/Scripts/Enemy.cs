@@ -6,7 +6,7 @@ public class Enemy : MonoBehaviour
     [Header("Base Stats")]
     public float moveSpeed = 2f;
     public int maxHealth = 3;
-    private int currentHealth;
+    protected int currentHealth;
     public int damageToPlayer = 1; // Sát thương gây ra khi chạm vào Player
 
     [Header("Death Settings")]
@@ -15,7 +15,7 @@ public class Enemy : MonoBehaviour
 
     [Header("Visuals")]
     public Sprite whiteSprite; // Kéo Sprite trắng tương ứng của quái vào đây
-    private SpriteRenderer sr;
+    protected SpriteRenderer sr;
     private Animator animator;
     private bool isFlashing = false;
 

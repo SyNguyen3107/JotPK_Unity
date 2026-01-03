@@ -216,8 +216,44 @@ public class GameManager : MonoBehaviour
         isTimerRunning = false;
         if (WaveSpawner.Instance != null) WaveSpawner.Instance.StopSpawning();
         isWaitingForClear = true;
+        CheckSpikeballEndCondition();
     }
+    void CheckSpikeballEndCondition()
+    {
+        // 1. Tìm tất cả Enemy đang sống
+        GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
 
+        if (enemies.Length == 0) return;
+
+        bool allAreSpikeballs = true;
+        List<Spikeball> spikeballList = new List<Spikeball>();
+
+        // 2. Duyệt qua để xem có con nào KHÔNG PHẢI Spikeball không
+        foreach (GameObject enemyObj in enemies)
+        {
+            Spikeball sb = enemyObj.GetComponent<Spikeball>();
+            if (sb == null)
+            {
+                // Phát hiện một kẻ không phải Spikeball -> Điều kiện sai ngay lập tức
+                allAreSpikeballs = false;
+                break;
+            }
+            else
+            {
+                spikeballList.Add(sb);
+            }
+        }
+
+        // 3. Nếu tất cả đúng là Spikeball -> Giảm máu
+        if (allAreSpikeballs)
+        {
+            Debug.Log("Time Up! Chỉ còn Spikeball -> Giảm máu tất cả về 1.");
+            foreach (Spikeball sb in spikeballList)
+            {
+                sb.Weaken();
+            }
+        }
+    }
     void GameOver()
     {
         isGameOver = true;

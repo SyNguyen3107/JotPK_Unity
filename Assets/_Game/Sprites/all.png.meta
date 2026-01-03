@@ -1785,7 +1785,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_65
+      name: spikeball_white
       rect:
         serializedVersion: 2
         x: 319
@@ -1829,7 +1829,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_67
+      name: Spikeball_deployed_white
       rect:
         serializedVersion: 2
         x: 351
@@ -2533,7 +2533,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_99
+      name: spikeball0
       rect:
         serializedVersion: 2
         x: 415
@@ -2555,7 +2555,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_100
+      name: spikeball1
       rect:
         serializedVersion: 2
         x: 431
@@ -2577,10 +2577,10 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_101
+      name: spikeball_deployed
       rect:
         serializedVersion: 2
-        x: 447
+        x: 446
         y: 97
         width: 16
         height: 16
@@ -2819,7 +2819,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_112
+      name: spikeball_deploying0
       rect:
         serializedVersion: 2
         x: 223
@@ -2841,7 +2841,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_113
+      name: spikeball_deploying1
       rect:
         serializedVersion: 2
         x: 239
@@ -2863,7 +2863,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_114
+      name: spikeball_deploying2
       rect:
         serializedVersion: 2
         x: 255
@@ -6509,10 +6509,9 @@ TextureImporter:
         value: '{"sliceOnImport":false,"gridCellCount":{"x":1.0,"y":1.0},"gridSpriteSize":{"x":16.0,"y":16.0},"gridSpriteOffset":{"x":15.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":1,"keepEmptyRects":false,"isAlternate":false}'
     nameFileIdTable:
       0: 7115054174534175819
+      Spikeball_deployed_white: -4977160037485911365
       all_0: 7160429211405778527
       all_1: 7057801135558962131
-      all_100: 1949128863
-      all_101: -865044210
       all_105: -1547024356
       all_106: -855505763
       all_107: 1538238822
@@ -6520,9 +6519,6 @@ TextureImporter:
       all_109: 1493587115
       all_110: -1774927140
       all_111: -808286055
-      all_112: 1021272011
-      all_113: -212645640
-      all_114: -569145632
       all_115: 747040834
       all_116: -240269120
       all_117: 1115747590
@@ -6673,9 +6669,7 @@ TextureImporter:
       all_56: -8516139111674596268
       all_57: -4351274396387659724
       all_58: 7289564452149313754
-      all_65: 8018687567259348686
       all_66: -8438291159918940483
-      all_67: -4977160037485911365
       all_68: -905626988124345088
       all_75: -3199451140683184690
       all_76: 7500685878400389213
@@ -6689,7 +6683,6 @@ TextureImporter:
       all_84: 1096283802
       all_85: 248269607
       all_86: -969015850
-      all_99: -333824154
       butterfly0: 974319259
       butterfly1: -1282451064
       butterfly_white: -2958205467540611984
@@ -6791,6 +6784,13 @@ TextureImporter:
       prairie7: 4135191756540641772
       prairie8: -1910036368403549788
       prairie9: 6570585464087250507
+      spikeball0: -333824154
+      spikeball1: 1949128863
+      spikeball_deployed: -865044210
+      spikeball_deploying0: 1021272011
+      spikeball_deploying1: -212645640
+      spikeball_deploying2: -569145632
+      spikeball_white: 8018687567259348686
       ui_area_complete_mark: -1331358819
       ui_clock: -279602607
       ui_item_frame: -190451635
