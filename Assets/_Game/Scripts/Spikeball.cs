@@ -12,7 +12,7 @@ public class Spikeball : Enemy
     // Ở đây tôi sẽ viết code hỗ trợ Animator vì nó quản lý State tốt nhất.
 
     private Vector3 targetPosition;
-    private bool isDeployed = false;
+    public bool isDeployed = false;
     private bool isMoving = true;
 
     // Override lại Start để setup máu ban đầu là 2
