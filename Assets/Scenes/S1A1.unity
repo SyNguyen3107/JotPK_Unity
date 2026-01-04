@@ -3087,7 +3087,7 @@ GameObject:
   - component: {fileID: 1815817018}
   - component: {fileID: 1815817017}
   - component: {fileID: 1815817016}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: Obstacles
   m_TagString: Wall
   m_Icon: {fileID: 0}
@@ -7175,8 +7175,9 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 27ff47218ba13ac4c96c45aa4f2aebda, type: 2}
   - {fileID: 11400000, guid: 0f246bd084457b74a980d7103fea57c2, type: 2}
   - {fileID: 11400000, guid: 3dee3e2754317b442948d66843de570b, type: 2}
-  - {fileID: 11400000, guid: c8b7930694a953f4299d96cfd79db745, type: 2}
+  - {fileID: 11400000, guid: 364afae52c36f90458796b2e62cff93a, type: 2}
   timeBetweenWaves: 3
+  mapSize: {x: 7.5, y: 7.5}
 --- !u!4 &2072520589
 Transform:
   m_ObjectHideFlags: 0
@@ -7223,7 +7224,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: cfaccb3d65bf24b408ca26cc0a57152d, type: 2}
   - {fileID: 11400000, guid: b1d64b4fdc2f9da49920f58a3c4dd603, type: 2}
   - {fileID: 11400000, guid: e16c09281b0e4df4faece2db0b0a4baf, type: 2}
-  - {fileID: 11400000, guid: eff9078f9f4a4584b8080926dfe1ec03, type: 2}
+  - {fileID: 11400000, guid: 1883f52b547783147a8d6ec1c3e6dbcb, type: 2}
   dropChance: 10
   totalAreasPassed: 0
   currentCoins: 0
