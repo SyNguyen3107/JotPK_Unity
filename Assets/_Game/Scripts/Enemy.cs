@@ -57,35 +57,63 @@ public class Enemy : MonoBehaviour
             SetStunState(true);
         }
     }
-    void Update()
+    protected virtual void Update()
     {
-        if (playerTransform != null)
+        Transform currentTarget = playerTransform;
+
+        if (Gopher.Instance != null && ShouldChaseGopher())
         {
-            PlayerController playerScript = playerTransform.GetComponent<PlayerController>();
-            bool isPlayerZombie = (playerScript != null && playerScript.isZombieMode);
-            if (isPlayerZombie && ShouldFlee())
-            {
-                Vector2 fleeDirection = (transform.position - playerTransform.position).normalized;
+            currentTarget = Gopher.Instance.transform;
+        }
 
-                Vector2 targetPos = (Vector2)transform.position + fleeDirection * moveSpeed * Time.deltaTime;
+        if (currentTarget != null)
+        {
 
-                if (playerScript != null)
-                {
-                    float clampX = Mathf.Clamp(targetPos.x, playerScript.mapBoundsMin.x + 0.5f, playerScript.mapBoundsMax.x - 0.5f);
-                    float clampY = Mathf.Clamp(targetPos.y, playerScript.mapBoundsMin.y + 0.5f, playerScript.mapBoundsMax.y - 0.5f);
+            PlayerController playerScript = null;
+            if (playerTransform != null) playerScript = playerTransform.GetComponent<PlayerController>();
 
-                    transform.position = new Vector2(clampX, clampY);
-                }
-                if (transform.position.x > playerTransform.position.x) sr.flipX = false;
-                else sr.flipX = true;
-            }
-            else
+            if (Gopher.Instance != null && ShouldChaseGopher())
             {
                 if (moveSpeed > 0)
                 {
-                    transform.position = Vector2.MoveTowards(transform.position, playerTransform.position, moveSpeed * Time.deltaTime);
-                    if (playerTransform.position.x < transform.position.x) sr.flipX = true;
-                    else sr.flipX = false;
+                    transform.position = Vector2.MoveTowards(transform.position, currentTarget.position, moveSpeed * Time.deltaTime);
+                }
+            }
+            // --- TRƯỜNG HỢP 2: TƯƠNG TÁC VỚI PLAYER ---
+            else
+            {
+                bool isPlayerZombie = (playerScript != null && playerScript.isZombieMode);
+
+                // Nếu Player là Zombie VÀ quái này biết sợ (ShouldFlee trả về true)
+                if (isPlayerZombie && ShouldFlee())
+                {
+                    // Logic bỏ chạy (Flee)
+                    Vector2 fleeDirection = (transform.position - playerTransform.position).normalized;
+                    Vector2 targetPos = (Vector2)transform.position + fleeDirection * moveSpeed * Time.deltaTime;
+
+                    // Giới hạn không cho chạy ra khỏi map
+                    if (playerScript != null)
+                    {
+                        float clampX = Mathf.Clamp(targetPos.x, playerScript.mapBoundsMin.x + 0.5f, playerScript.mapBoundsMax.x - 0.5f);
+                        float clampY = Mathf.Clamp(targetPos.y, playerScript.mapBoundsMin.y + 0.5f, playerScript.mapBoundsMax.y - 0.5f);
+                        transform.position = new Vector2(clampX, clampY);
+                    }
+
+                    // Quay mặt ngược hướng Player khi bỏ chạy
+                    if (transform.position.x > playerTransform.position.x) sr.flipX = false;
+                    else sr.flipX = true;
+                }
+                // Nếu bình thường -> Đuổi theo Player
+                else
+                {
+                    if (moveSpeed > 0)
+                    {
+                        transform.position = Vector2.MoveTowards(transform.position, playerTransform.position, moveSpeed * Time.deltaTime);
+
+                        // Quay mặt về phía Player
+                        if (playerTransform.position.x < transform.position.x) sr.flipX = true;
+                        else sr.flipX = false;
+                    }
                 }
             }
         }
@@ -159,6 +187,10 @@ public class Enemy : MonoBehaviour
     {
         return true;
     }
+    protected virtual bool ShouldChaseGopher()
+    {
+        return true;
+    }
     protected virtual void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.CompareTag("Player"))
@@ -213,7 +245,7 @@ public class Enemy : MonoBehaviour
     {
         if (isStunned)
         {
-            moveSpeed = 0; 
+            moveSpeed = 0;
             if (animator != null) animator.speed = 0;
             if (questionMarkObject != null) questionMarkObject.SetActive(true);
         }

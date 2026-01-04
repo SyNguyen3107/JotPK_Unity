@@ -16,6 +16,8 @@ public class Imp : Enemy
     {
         return false;
     }
-
-    // TODO: Sau này khi có Gopher, ta sẽ override thêm hàm ShouldTargetGopher() và trả về false
+    protected override bool ShouldChaseGopher()
+    {
+        return false;
+    }
 }

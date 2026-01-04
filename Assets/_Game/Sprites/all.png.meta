@@ -4271,7 +4271,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_178
+      name: gopher0
       rect:
         serializedVersion: 2
         x: 287
@@ -4293,7 +4293,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_179
+      name: gopher1
       rect:
         serializedVersion: 2
         x: 303
@@ -4315,7 +4315,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_180
+      name: gopher2
       rect:
         serializedVersion: 2
         x: 319
@@ -5283,7 +5283,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_229
+      name: gopher_running0
       rect:
         serializedVersion: 2
         x: 191
@@ -5305,7 +5305,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_230
+      name: gopher_running1
       rect:
         serializedVersion: 2
         x: 207
@@ -5327,7 +5327,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_231
+      name: gopher_running2
       rect:
         serializedVersion: 2
         x: 223
@@ -5349,7 +5349,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_232
+      name: gopher_running3
       rect:
         serializedVersion: 2
         x: 239
@@ -5371,7 +5371,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_233
+      name: gopher_lifting0
       rect:
         serializedVersion: 2
         x: 255
@@ -5393,7 +5393,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_234
+      name: gopher_lifting1
       rect:
         serializedVersion: 2
         x: 271
@@ -5415,7 +5415,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_235
+      name: gopher_lifting2
       rect:
         serializedVersion: 2
         x: 287
@@ -5437,7 +5437,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_236
+      name: gopher_lifting3
       rect:
         serializedVersion: 2
         x: 303
@@ -6573,10 +6573,7 @@ TextureImporter:
       all_171: 781696601
       all_172: 1339715386
       all_173: -1696191609
-      all_178: 2007613764
-      all_179: -673885657
       all_18: -3993211317029401747
-      all_180: -98679731
       all_181: -1473726219
       all_182: 1322560859
       all_184: -1501870304
@@ -6624,14 +6621,6 @@ TextureImporter:
       all_226: 1059489636
       all_227: 435836708
       all_228: 1845047095
-      all_229: -1809607152
-      all_230: -750504050
-      all_231: 2104362070
-      all_232: 1070991485
-      all_233: 1846551610
-      all_234: 245718128
-      all_235: -1653596620
-      all_236: 329094666
       all_242: -1491798909
       all_243: 439877838
       all_244: -1782895192
@@ -6716,6 +6705,17 @@ TextureImporter:
       forest7: 9199022204814979299
       forest8: 3148756186365599686
       forest9: -1210136004823644576
+      gopher0: 2007613764
+      gopher1: -673885657
+      gopher2: -98679731
+      gopher_lifting0: 1846551610
+      gopher_lifting1: 245718128
+      gopher_lifting2: -1653596620
+      gopher_lifting3: 329094666
+      gopher_running0: -1809607152
+      gopher_running1: -750504050
+      gopher_running2: 2104362070
+      gopher_running3: 1070991485
       graveyard0: 7115054174534175819
       graveyard1: 887505566864250341
       graveyard10: 6114320665501869682

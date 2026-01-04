@@ -81,23 +81,45 @@ public class WaveSpawner : MonoBehaviour
             {
                 while (isWavePaused) yield return null;
 
-                SpawnEnemy(group.enemyPrefab);
+                // TÁCH LOGIC: Kiểm tra nếu là Gopher thì gọi hàm riêng
+                if (group.enemyPrefab.GetComponent<Gopher>() != null)
+                {
+                    SpawnGopher(group.enemyPrefab);
+                }
+                else
+                {
+                    // Nếu là quái thường (bao gồm cả Butterfly, Imp...)
+                    SpawnEnemy(group.enemyPrefab);
+                }
+
                 yield return new WaitForSeconds(group.rate);
             }
         }
     }
 
+    // --- HÀM SPAWN GOPHER RIÊNG BIỆT ---
+    void SpawnGopher(GameObject gopherPrefab)
+    {
+        // Gopher luôn spawn ở rìa map giống Butterfly/Imp
+        Vector3 spawnPos = GetRandomEdgePosition();
+        Instantiate(gopherPrefab, spawnPos, Quaternion.identity);
+    }
+
+    // --- HÀM SPAWN ENEMY (Đã loại bỏ check Gopher) ---
     void SpawnEnemy(GameObject enemyPrefab)
     {
         if (spawnPoints.Length == 0) return;
 
-        if (enemyPrefab.GetComponent<Butterfly>() != null || enemyPrefab.GetComponent<Imp>() != null)
+        // Chỉ kiểm tra các quái bay (Butterfly, Imp)
+        if (enemyPrefab.GetComponent<Butterfly>() != null ||
+            enemyPrefab.GetComponent<Imp>() != null)
         {
             Vector3 spawnPos = GetRandomEdgePosition();
             Instantiate(enemyPrefab, spawnPos, Quaternion.identity);
         }
         else
         {
+            // Các quái đi bộ (Orc, Mummy, Ogre, Mushroom...) spawn tại cổng
             int randomIndex = Random.Range(0, spawnPoints.Length);
             Transform spawnPoint = spawnPoints[randomIndex];
             Vector3 randomOffset = Random.insideUnitCircle * 0.5f;
@@ -110,7 +132,7 @@ public class WaveSpawner : MonoBehaviour
     {
         int edge = Random.Range(0, 4);
         float x = 0, y = 0;
-        float offset = 1f;
+        float offset = 0.5f;
 
         switch (edge)
         {
