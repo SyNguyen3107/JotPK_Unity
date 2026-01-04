@@ -91,7 +91,7 @@ public class WaveSpawner : MonoBehaviour
     {
         if (spawnPoints.Length == 0) return;
 
-        if (enemyPrefab.GetComponent<Butterfly>() != null)
+        if (enemyPrefab.GetComponent<Butterfly>() != null || enemyPrefab.GetComponent<Imp>() != null)
         {
             Vector3 spawnPos = GetRandomEdgePosition();
             Instantiate(enemyPrefab, spawnPos, Quaternion.identity);
