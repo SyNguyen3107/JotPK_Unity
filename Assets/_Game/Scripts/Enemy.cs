@@ -33,6 +33,8 @@ public class Enemy : MonoBehaviour
     public GameObject questionMarkObject;
     private float originalSpeed;
 
+    [HideInInspector] public GameObject sourcePrefab;
+
     protected Transform playerTransform;
     protected bool isDead = false;
 

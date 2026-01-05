@@ -15,6 +15,9 @@ public class WaveSpawner : MonoBehaviour
     private float searchCountdown = 1f;
     private bool isWavePaused = false;
 
+    // LIST MỚI: Dùng để lưu trữ các loại quái đang sống khi Player chết
+    private List<GameObject> enemiesToRespawn = new List<GameObject>();
+
     void Awake()
     {
         Instance = this;
@@ -35,6 +38,61 @@ public class WaveSpawner : MonoBehaviour
         StopAllCoroutines();
     }
 
+    // --- LOGIC MỚI: KHI PLAYER CHẾT ---
+    public void OnPlayerDied()
+    {
+        // 1. Tạm dừng tiến độ Wave
+        isWavePaused = true;
+
+        // 2. Dọn sạch danh sách chờ cũ (đề phòng)
+        enemiesToRespawn.Clear();
+
+        // 3. Tìm tất cả Enemy đang hoạt động
+        GameObject[] activeEnemies = GameObject.FindGameObjectsWithTag("Enemy");
+        foreach (GameObject enemyObj in activeEnemies)
+        {
+            Enemy enemyScript = enemyObj.GetComponent<Enemy>();
+
+            // Lưu Prefab gốc của quái vào danh sách để hồi sinh sau này
+            if (enemyScript != null && enemyScript.sourcePrefab != null)
+            {
+                enemiesToRespawn.Add(enemyScript.sourcePrefab);
+            }
+
+            // Xóa quái khỏi màn hình
+            Destroy(enemyObj);
+        }
+
+        // 4. Xóa Gopher (nếu có) - Gopher chết là mất luôn, không lưu lại
+        if (Gopher.Instance != null)
+        {
+            Destroy(Gopher.Instance.gameObject);
+        }
+    }
+
+    // --- LOGIC MỚI: KHI PLAYER HỒI SINH XONG ---
+    public void OnPlayerRespawned()
+    {
+        StartCoroutine(RespawnSavedEnemies());
+    }
+
+    IEnumerator RespawnSavedEnemies()
+    {
+        // Spawn lại toàn bộ quái đã lưu
+        foreach (GameObject enemyPrefab in enemiesToRespawn)
+        {
+            SpawnEnemy(enemyPrefab);
+            // Delay cực ngắn để tránh lag nếu spawn quá nhiều cùng lúc
+            yield return new WaitForSeconds(0.1f);
+        }
+
+        // Xóa danh sách sau khi đã spawn xong
+        enemiesToRespawn.Clear();
+
+        // Tiếp tục chạy Wave
+        isWavePaused = false;
+    }
+
     IEnumerator RunLevelLogic()
     {
         for (int i = 0; i < waves.Count; i++)
@@ -44,7 +102,6 @@ public class WaveSpawner : MonoBehaviour
             Debug.Log("--- WAVE " + (i + 1) + " ---");
             yield return StartCoroutine(SpawnWave(waves[i]));
 
-            // Sử dụng IsWaveCleared để bỏ qua Spikeball còn sót lại
             yield return new WaitUntil(() => IsWaveCleared() && !isWavePaused);
 
             yield return new WaitForSeconds(timeBetweenWaves);
@@ -63,7 +120,6 @@ public class WaveSpawner : MonoBehaviour
 
         foreach (GameObject enemy in enemies)
         {
-            // Nếu còn bất kỳ quái nào KHÔNG phải Spikeball thì chưa xong wave
             if (enemy.GetComponent<Spikeball>() == null)
             {
                 return false;
@@ -79,16 +135,15 @@ public class WaveSpawner : MonoBehaviour
         {
             for (int i = 0; i < group.count; i++)
             {
+                // Khi Player chết, isWavePaused = true, vòng lặp này sẽ đứng yên đợi
                 while (isWavePaused) yield return null;
 
-                // TÁCH LOGIC: Kiểm tra nếu là Gopher thì gọi hàm riêng
                 if (group.enemyPrefab.GetComponent<Gopher>() != null)
                 {
                     SpawnGopher(group.enemyPrefab);
                 }
                 else
                 {
-                    // Nếu là quái thường (bao gồm cả Butterfly, Imp...)
                     SpawnEnemy(group.enemyPrefab);
                 }
 
@@ -97,34 +152,42 @@ public class WaveSpawner : MonoBehaviour
         }
     }
 
-    // --- HÀM SPAWN GOPHER RIÊNG BIỆT ---
     void SpawnGopher(GameObject gopherPrefab)
     {
-        // Gopher luôn spawn ở rìa map giống Butterfly/Imp
         Vector3 spawnPos = GetRandomEdgePosition();
         Instantiate(gopherPrefab, spawnPos, Quaternion.identity);
     }
 
-    // --- HÀM SPAWN ENEMY (Đã loại bỏ check Gopher) ---
+    // --- CẬP NHẬT: Gán sourcePrefab cho Enemy ---
     void SpawnEnemy(GameObject enemyPrefab)
     {
+        GameObject newEnemy = null; // Biến tạm để giữ object mới tạo
+
         if (spawnPoints.Length == 0) return;
 
-        // Chỉ kiểm tra các quái bay (Butterfly, Imp)
         if (enemyPrefab.GetComponent<Butterfly>() != null ||
             enemyPrefab.GetComponent<Imp>() != null)
         {
             Vector3 spawnPos = GetRandomEdgePosition();
-            Instantiate(enemyPrefab, spawnPos, Quaternion.identity);
+            newEnemy = Instantiate(enemyPrefab, spawnPos, Quaternion.identity);
         }
         else
         {
-            // Các quái đi bộ (Orc, Mummy, Ogre, Mushroom...) spawn tại cổng
             int randomIndex = Random.Range(0, spawnPoints.Length);
             Transform spawnPoint = spawnPoints[randomIndex];
             Vector3 randomOffset = Random.insideUnitCircle * 0.5f;
 
-            Instantiate(enemyPrefab, spawnPoint.position + randomOffset, Quaternion.identity);
+            newEnemy = Instantiate(enemyPrefab, spawnPoint.position + randomOffset, Quaternion.identity);
+        }
+
+        // GÁN SOURCE PREFAB: Để hệ thống biết con này là loại gì (Orc/Mummy...) khi Player chết
+        if (newEnemy != null)
+        {
+            Enemy eScript = newEnemy.GetComponent<Enemy>();
+            if (eScript != null)
+            {
+                eScript.sourcePrefab = enemyPrefab;
+            }
         }
     }
 
@@ -157,10 +220,13 @@ public class WaveSpawner : MonoBehaviour
         return new Vector3(x, y, 0);
     }
 
-    // Vẽ khung map trong Scene để dễ căn chỉnh (Optional)
     void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.red;
         Gizmos.DrawWireCube(Vector3.zero, new Vector3(mapSize.x * 2, mapSize.y * 2, 0));
+    }
+    public int GetPendingEnemyCount()
+    {
+        return enemiesToRespawn.Count;
     }
 }
