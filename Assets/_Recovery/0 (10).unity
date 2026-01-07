@@ -7233,6 +7233,10 @@ MonoBehaviour:
   playerObject: {fileID: 317816357}
   isSmokeBombActive: 0
   musicSource: {fileID: 2072520591}
+  mapPrefab: {fileID: 0}
+  currentGate: {fileID: 0}
+  mapHeight: 20
+  transitionTime: 3
 --- !u!82 &2072520591
 AudioSource:
   m_ObjectHideFlags: 0

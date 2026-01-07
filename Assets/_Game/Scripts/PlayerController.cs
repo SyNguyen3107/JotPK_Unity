@@ -100,7 +100,7 @@ public class PlayerController : MonoBehaviour
     private float defaultMoveSpeed;
     private GameObject defaultBulletPrefab;
     private Coroutine activePowerUpCoroutine;
-
+    public bool isInputEnabled = true;
     #endregion
 
     #region Unity Lifecycle
@@ -113,18 +113,26 @@ public class PlayerController : MonoBehaviour
 
         if (legsRenderer != null && legsAnimator == null)
             legsAnimator = legsRenderer.GetComponent<Animator>();
+
+        if (rb == null) rb = GetComponent<Rigidbody2D>();
     }
 
     void FixedUpdate()
     {
         if (isDead) return;
 
-        if (rb != null)
+        // Chỉ di chuyển vật lý khi không bị khóa input và không phải Kinematic (đang cutscene)
+        if (rb != null && !rb.isKinematic)
             rb.MovePosition(rb.position + moveInput * moveSpeed * Time.fixedDeltaTime);
     }
 
     void Update()
     {
+        if (!isInputEnabled)
+        {
+            moveInput = Vector2.zero; // <--- THÊM DÒNG NÀY: Ngắt hoàn toàn tín hiệu di chuyển cũ
+            return;
+        }
         if (isDead)
         {
             moveInput = Vector2.zero;
@@ -271,7 +279,7 @@ public class PlayerController : MonoBehaviour
 
     void UpdateActiveModel(bool isMoving, Vector2 dir)
     {
-        if (legsAnimator) legsAnimator.SetBool("IsMoving", isMoving);
+        if (legsAnimator) legsAnimator.SetBool("IsMoving", isMoving); // Sửa lại IsMoving cho đúng với logic Update
 
         if (bodySpriteDisplay == null) return;
         if (dir.y > 0) bodySpriteDisplay.sprite = bodyUp;
@@ -488,7 +496,7 @@ public class PlayerController : MonoBehaviour
         if (UIManager.Instance != null) UIManager.Instance.ToggleHUD(false);
 
         isDead = true;
-        if (rb != null) rb.linearVelocity = Vector2.zero;
+        if (rb != null) rb.linearVelocity = Vector2.zero; // Unity 6 / 2023.3+ syntax
         if (activeStateObject != null) activeStateObject.SetActive(false);
 
         if (struckFxObject != null) struckFxObject.SetActive(true);
@@ -635,4 +643,44 @@ public class PlayerController : MonoBehaviour
     }
 
     #endregion
+
+    // --- HÀM DI CHUYỂN CUTSCENE (ĐÃ SỬA LỖI TRÔI & VA TƯỜNG) ---
+    public IEnumerator MoveToPosition(Vector3 targetPos, float duration)
+    {
+        isInputEnabled = false; // Khóa điều khiển
+        moveInput = Vector2.zero;
+        // 1. Dừng ngay lập tức mọi quán tính
+        if (rb != null)
+        {
+            rb.linearVelocity = Vector2.zero;
+            // 2. Chuyển sang chế độ Kinematic (Bóng ma)
+            // Để đi xuyên qua tường (Top_Gate) và không bị Physics engine can thiệp
+            rb.isKinematic = true;
+        }
+
+        // Animation đi bộ
+        if (legsAnimator != null) legsAnimator.SetBool("IsMoving", true); // Sửa thành IsMoving viết hoa
+
+        float elapsed = 0f;
+        Vector3 startPos = transform.position;
+
+        while (elapsed < duration)
+        {
+            // Di chuyển mượt mà (Lerp)
+            transform.position = Vector3.Lerp(startPos, targetPos, elapsed / duration);
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+        transform.position = targetPos;
+
+        // 3. Trả lại trạng thái Vật Lý bình thường
+        if (rb != null)
+        {
+            rb.isKinematic = false;
+        }
+
+        if (legsAnimator != null) legsAnimator.SetBool("IsMoving", false);
+
+        // Input sẽ được GameManager bật lại sau
+    }
 }

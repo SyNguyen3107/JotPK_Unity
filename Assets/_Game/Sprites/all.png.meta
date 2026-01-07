@@ -3501,7 +3501,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_143
+      name: arrow
       rect:
         serializedVersion: 2
         x: 223
@@ -6547,7 +6547,6 @@ TextureImporter:
       all_140: 349504490
       all_141: -1567105941
       all_142: 414688423
-      all_143: -1123621901
       all_146: 1875051028
       all_147: 1615796000
       all_148: 34521829
@@ -6672,6 +6671,7 @@ TextureImporter:
       all_84: 1096283802
       all_85: 248269607
       all_86: -969015850
+      arrow: -1123621901
       butterfly0: 974319259
       butterfly1: -1282451064
       butterfly_white: -2958205467540611984

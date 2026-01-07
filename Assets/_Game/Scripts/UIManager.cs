@@ -20,13 +20,13 @@ public class UIManager : MonoBehaviour
     [Header("--- RIGHT PANEL (Area Indicator) ---")]
     public List<Image> areaIcons;
 
+
+    public GameObject exitArrowObject;
     void Awake()
     {
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
     }
-
-    // Xóa hàm Start và Update cũ liên quan đến Timer
 
     // --- CÁC HÀM CẬP NHẬT UI (PUBLIC) ---
 
@@ -93,6 +93,16 @@ public class UIManager : MonoBehaviour
             if (areaIcons[i] == null) continue;
             if (i < areasPassed) areaIcons[i].gameObject.SetActive(true);
             else areaIcons[i].gameObject.SetActive(false);
+        }
+    }
+    public void ToggleExitArrow(bool isActive)
+    {
+        if (exitArrowObject != null)
+        {
+            exitArrowObject.SetActive(isActive);
+
+            // Nếu muốn thêm hiệu ứng nhấp nháy (Animation), bạn có thể xử lý ở đây
+            // Hoặc đơn giản là gắn Animator vào object ExitArrow trên Unity
         }
     }
 }
