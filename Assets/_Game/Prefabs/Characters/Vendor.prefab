@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 4545078166102347308}
   - component: {fileID: 5007567217334006025}
   - component: {fileID: 9171300838806842159}
+  - component: {fileID: -1470181328123032263}
   m_Layer: 0
   m_Name: Vendor
   m_TagString: Untagged
@@ -130,3 +131,20 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &-1470181328123032263
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8070256912491365633}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c9473d187b6b7434cb0511028b7c43c9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VendorController
+  shopTablePrefab: {fileID: 6507091644868678339, guid: aa3f7c6ce281cb6458a1b38f24405286, type: 3}
+  moveSpeed: 3
+  centerY: 0
+  spawnY: 7
+  visuals: {fileID: 5007567217334006025}

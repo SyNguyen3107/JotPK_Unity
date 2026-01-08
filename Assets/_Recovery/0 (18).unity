@@ -436,10 +436,6 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 1934135101723791435, guid: 690f6afd5992dab41b38fe5948311135, type: 3}
-      propertyPath: dropChance
-      value: 15
-      objectReference: {fileID: 0}
-    - target: {fileID: 1934135101723791435, guid: 690f6afd5992dab41b38fe5948311135, type: 3}
       propertyPath: currentCoins
       value: 200
       objectReference: {fileID: 0}
@@ -453,7 +449,7 @@ PrefabInstance:
       objectReference: {fileID: 8070256912491365633, guid: a1f218fa0ab5e1f419f103228258c099, type: 3}
     - target: {fileID: 1934135101723791435, guid: 690f6afd5992dab41b38fe5948311135, type: 3}
       propertyPath: levelsPerShop
-      value: 2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1934135101723791435, guid: 690f6afd5992dab41b38fe5948311135, type: 3}
       propertyPath: currentMapInstance
@@ -461,11 +457,11 @@ PrefabInstance:
       objectReference: {fileID: 251805453}
     - target: {fileID: 1934135101723791435, guid: 690f6afd5992dab41b38fe5948311135, type: 3}
       propertyPath: allLevels.Array.data[0].levelDuration
-      value: 90
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1934135101723791435, guid: 690f6afd5992dab41b38fe5948311135, type: 3}
       propertyPath: allLevels.Array.data[1].levelDuration
-      value: 90
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6329534487482075059, guid: 690f6afd5992dab41b38fe5948311135, type: 3}
       propertyPath: m_Enabled

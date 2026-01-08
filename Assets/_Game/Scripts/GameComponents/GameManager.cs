@@ -46,6 +46,10 @@ public class GameManager : MonoBehaviour
     public List<PowerUpData> allowedDrops;
     [Range(0f, 100f)] public float dropChance = 5f;
 
+    [Header("Shop Settings")]
+    public GameObject vendorPrefab; // Kéo Prefab VendorNPC vào đây
+    public int levelsPerShop = 2;   // Ví dụ: Cứ 2 màn thì gặp Shop 1 lần
+
     [Header("Audio")]
     public AudioSource musicSource;
     #endregion
@@ -59,7 +63,7 @@ public class GameManager : MonoBehaviour
     [Header("Debug Info")]
     [SerializeField] private GameObject currentMapInstance;
     [SerializeField] private float currentTime;
-    [SerializeField] private int currentLives;
+    [SerializeField] public int currentLives;
     [SerializeField] private int currentLevelIndex = 0;
 
     [Header("Game Flags")]
@@ -293,6 +297,34 @@ public class GameManager : MonoBehaviour
 
         if (currentGate != null) currentGate.OpenGate();
         else Debug.LogWarning("Current Gate is NULL!");
+
+        // --- LOGIC MỚI: KIỂM TRA SHOP ---
+
+        // Điều kiện gặp Shop:
+        // 1. Không phải màn đầu tiên (totalAreasPassed > 0)
+        // 2. Chia hết cho levelsPerShop (ví dụ màn 2, 4, 6...)
+        // 3. Chưa có Vendor nào đang đứng đó (tránh spawn chồng)
+        bool shouldSpawnShop = (totalAreasPassed > 0) && (totalAreasPassed % levelsPerShop == 0);
+
+        if (shouldSpawnShop && vendorPrefab != null)
+        {
+            Debug.Log("LEVEL CLEARED! SHOP TIME!");
+
+            // Reset trạng thái mua hàng của Manager để được mua món mới
+            if (UpgradeManager.Instance != null) UpgradeManager.Instance.ResetPurchaseStatus();
+
+            // Spawn NPC Vendor (VendorController sẽ tự chạy logic đi vào -> bán -> đi ra -> gọi lại CompleteCurrentArea)
+            // Lưu ý: Không mở cổng (OpenGate) ở đây nữa! Vendor sẽ mở sau khi đi về.
+            Instantiate(vendorPrefab, Vector3.zero, Quaternion.identity);
+            // Vị trí Vector3.zero chỉ là tạm, VendorController sẽ tự set lại vị trí spawnY trong Start()
+        }
+        else
+        {
+            // Nếu không có Shop -> Mở cổng đi tiếp như bình thường
+            Debug.Log("LEVEL CLEARED! OPENING GATE...");
+            if (currentGate != null) currentGate.OpenGate();
+            else Debug.LogWarning("Current Gate is NULL!");
+        }
     }
 
     public void StartLevelTransition()

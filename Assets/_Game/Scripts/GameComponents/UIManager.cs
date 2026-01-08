@@ -12,6 +12,9 @@ public class UIManager : MonoBehaviour
     public Image itemIconImage;
     public TextMeshProUGUI livesText;
     public TextMeshProUGUI coinsText;
+    public Image slot1Icon; // Icon Giày (Slot 1)
+    public Image slot2Icon; // Icon Súng (Slot 2)
+    public Image slot3Icon; // Icon Đạn (Slot 3)
 
     [Header("--- TOP PANEL (Timer) ---")]
     public Image timerBarFill;
@@ -29,6 +32,12 @@ public class UIManager : MonoBehaviour
     }
 
     // --- CÁC HÀM CẬP NHẬT UI (PUBLIC) ---
+    public void Start()
+    {
+        UpdateUpgradeIcons();
+        UpdateLives(GameManager.Instance != null ? GameManager.Instance.currentLives : 0);
+        UpdateCoins(GameManager.Instance != null ? GameManager.Instance.currentCoins : 0);
+    }
 
     public void UpdateTimer(float currentTime, float maxTime)
     {
@@ -40,15 +49,7 @@ public class UIManager : MonoBehaviour
     }
     public void ToggleHUD(bool isActive)
     {
-        // Giả sử toàn bộ UI của bạn nằm trong 1 Panel chính hoặc Canvas
-        // Nếu chưa có biến reference tới Panel chính, bạn có thể gọi gameObject.SetActive
-        // hoặc duyệt qua các thành phần con.
-
-        // Cách đơn giản nhất: Ẩn/Hiện canvas hiện tại (nếu UIManager gắn trên Canvas)
         GetComponent<Canvas>().enabled = isActive;
-
-        // Hoặc nếu UIManager quản lý các panel con:
-        // transform.GetChild(0).gameObject.SetActive(isActive); // Ví dụ
     }
     public void SetTimerColor(Color color)
     {
@@ -100,9 +101,31 @@ public class UIManager : MonoBehaviour
         if (exitArrowObject != null)
         {
             exitArrowObject.SetActive(isActive);
+        }
+    }
+    public void UpdateUpgradeIcons()
+    {
+        if (UpgradeManager.Instance == null) return;
 
-            // Nếu muốn thêm hiệu ứng nhấp nháy (Animation), bạn có thể xử lý ở đây
-            // Hoặc đơn giản là gắn Animator vào object ExitArrow trên Unity
+        UpdateSingleIcon(slot1Icon, UpgradeManager.Instance.GetPurchasedIcon(1));
+        UpdateSingleIcon(slot2Icon, UpgradeManager.Instance.GetPurchasedIcon(2));
+        UpdateSingleIcon(slot3Icon, UpgradeManager.Instance.GetPurchasedIcon(3));
+    }
+
+    void UpdateSingleIcon(Image img, Sprite icon)
+    {
+        if (img == null) return;
+
+        if (icon != null)
+        {
+            img.sprite = icon;
+            img.color = Color.white; // Hiện rõ
+            img.gameObject.SetActive(true);
+        }
+        else
+        {
+            img.color = new Color(1, 1, 1, 0); // Trong suốt hoặc ẩn đi
+            // img.gameObject.SetActive(false); // Hoặc tắt hẳn
         }
     }
 }

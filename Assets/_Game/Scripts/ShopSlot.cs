@@ -48,4 +48,20 @@ public class ShopSlot : MonoBehaviour
             if (priceText != null) priceText.gameObject.SetActive(false);
         }
     }
+    void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            // Gọi Manager để thử mua hàng
+            bool success = UpgradeManager.Instance.TryPurchaseUpgrade(slotID);
+
+            if (success)
+            {
+                // Nếu mua thành công -> Cập nhật lại hiển thị của bàn (ẩn món vừa mua đi)
+                UpdateSlotDisplay();
+
+                // Các hiệu ứng khác (trừ tiền, animation player) đã được UpgradeManager gọi rồi
+            }
+        }
+    }
 }

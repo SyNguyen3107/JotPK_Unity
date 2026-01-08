@@ -1,9 +1,11 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
-
+using System;
 public class UpgradeManager : MonoBehaviour
 {
     public static UpgradeManager Instance;
+
+    public event Action OnUpgradePurchased;
 
     [Header("Shop Configuration Lists")]
     // Kéo thả các ScriptableObject vào đây theo thứ tự xuất hiện
@@ -86,19 +88,18 @@ public class UpgradeManager : MonoBehaviour
             // 1. Trừ tiền
             GameManager.Instance.AddCoin(-itemToBuy.cost);
 
-            // 2. Tăng tiến trình (Index)
+            // 2. Tăng tiến trình
             AdvanceSlotIndex(slotNumber);
 
             // 3. Đánh dấu đã mua
             hasPurchasedThisRound = true;
 
-            // 4. Áp dụng chỉ số (Sẽ làm ở Bước 3)
-            // ApplyUpgradeEffect(itemToBuy); 
+            // 4. Áp dụng hiệu ứng
+            ApplyUpgradeEffect(itemToBuy);
 
-            // 5. Cập nhật UI ngay lập tức (Sẽ làm ở Bước 3)
-            // if (UIManager.Instance != null) UIManager.Instance.UpdateUpgradeIcons();
+            // 5. PHÁT TÍN HIỆU: "Đã mua xong, dọn hàng thôi!"
+            OnUpgradePurchased?.Invoke(); // <--- THÊM DÒNG NÀY
 
-            Debug.Log($"Mua thành công: {itemToBuy.upgradeName}");
             return true;
         }
         else
@@ -121,5 +122,26 @@ public class UpgradeManager : MonoBehaviour
     public void ResetPurchaseStatus()
     {
         hasPurchasedThisRound = false;
+    }
+    void ApplyUpgradeEffect(UpgradeData data)
+    {
+        // 1. Tìm Player và áp dụng chỉ số
+        PlayerController player = FindAnyObjectByType<PlayerController>();
+        if (player == null) player = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerController>();
+
+        if (player != null)
+        {
+            // Cộng chỉ số
+            player.ApplyPermanentUpgrade(data);
+
+            // Diễn hoạt cảnh giơ tay
+            player.TriggerItemGetAnimation(data.icon);
+        }
+
+        // 2. Cập nhật UI bên trái
+        if (UIManager.Instance != null)
+        {
+            UIManager.Instance.UpdateUpgradeIcons();
+        }
     }
 }

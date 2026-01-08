@@ -15,6 +15,7 @@ public class PlayerController : MonoBehaviour
 
     [Header("Combat Settings")]
     public GameObject bulletPrefab;
+    public int currentBulletDamage = 1;
     public Transform firePoint;
     public float bulletOffset = 0.5f;
     public float fireDelay = 0.4f;
@@ -28,6 +29,7 @@ public class PlayerController : MonoBehaviour
     public AudioClip shootClip;
     public AudioClip footstepClip;
     public AudioClip itemPickupClip;
+    public AudioClip upgradePurchasedClip;
     public float stepDelay = 0.3f;
 
     [Header("Visual References")]
@@ -94,6 +96,10 @@ public class PlayerController : MonoBehaviour
     public AudioClip zombieMusic;
     public float zombieDuration = 8f;
     public float zombieSpeedBoost = 3f;
+
+    [Header("Shop Interactions")]
+    public Sprite handsUpSprite;       // Sprite giơ 2 tay lên trời
+    public SpriteRenderer itemLiftDisplay; // SpriteRenderer con (nằm trên đầu player) để hiện vật phẩm
 
     #endregion
 
@@ -429,7 +435,10 @@ public class PlayerController : MonoBehaviour
 
         GameObject bullet = Instantiate(bulletPrefab, spawnPos, Quaternion.identity);
         var bulletScript = bullet.GetComponent<Bullet>();
-        if (bulletScript) bulletScript.Setup(dir);
+        if (bulletScript)
+        {
+            bulletScript.Setup(dir, currentBulletDamage);
+        }
     }
 
     #endregion
@@ -732,5 +741,85 @@ public class PlayerController : MonoBehaviour
 
         if (rb != null) rb.bodyType = RigidbodyType2D.Dynamic; // Bật lại vật lý
         if (legsAnimator != null) legsAnimator.SetBool("IsMoving", false);
+    }
+
+    public void ApplyPermanentUpgrade(UpgradeData data)
+    {
+        switch (data.type)
+        {
+            case UpgradeType.MoveSpeed:
+                defaultMoveSpeed += data.valueAmount; // Tăng tốc độ gốc
+                moveSpeed = defaultMoveSpeed;         // Cập nhật ngay lập tức
+                break;
+
+            case UpgradeType.FireRate:
+                defaultFireDelay -= data.valueAmount; // Giảm delay (vd: -0.05)
+                fireDelay = defaultFireDelay;
+                break;
+
+            case UpgradeType.AmmoDamage:
+                currentBulletDamage += (int)data.valueAmount;
+                Debug.Log("Bullet Damage Upgraded to: " + currentBulletDamage);
+                break;
+
+            case UpgradeType.ExtraLife:
+                if (GameManager.Instance != null) GameManager.Instance.AddLife(1);
+                break;
+
+            case UpgradeType.SheriffBadge:
+                // Tạo một PowerUpData tạm thời để đưa vào túi
+                PowerUpData badge = ScriptableObject.CreateInstance<PowerUpData>();
+                badge.type = PowerUpType.SheriffBadge;
+                badge.duration = 10f; // Hoặc lấy từ data
+                badge.icon = data.icon;
+                badge.activateSound = itemsPickupAudioSource != null ? itemsPickupAudioSource.clip : null;
+                PickUpItem(badge);
+                break;
+
+            case UpgradeType.SuperGun:
+                // Mở khóa Shotgun vĩnh viễn (nhưng vẫn giữ tốc độ bắn của súng hiện tại)
+                shotgunExpirationTime = float.MaxValue; // Hack: cho thời gian hết hạn là vô cực
+                isShotgunActive = true;
+                break;
+        }
+    }
+    public void TriggerItemGetAnimation(Sprite itemSprite)
+    {
+        StartCoroutine(ItemGetRoutine(itemSprite));
+    }
+
+    IEnumerator ItemGetRoutine(Sprite itemSprite)
+    {
+        // 1. Khóa Input & Dừng di chuyển
+        isInputEnabled = false;
+        moveInput = Vector2.zero;
+        if (rb != null) rb.linearVelocity = Vector2.zero;
+
+        // 2. Đổi Sprite Player sang "Giơ tay"
+        if (bodySpriteDisplay != null && handsUpSprite != null)
+        {
+            bodySpriteDisplay.sprite = handsUpSprite;
+        }
+
+        // 3. Hiện vật phẩm trên đầu
+        if (itemLiftDisplay != null)
+        {
+            itemLiftDisplay.sprite = itemSprite;
+            itemLiftDisplay.gameObject.SetActive(true);
+        }
+
+        // 4. Phát nhạc (nếu có)
+        if (itemsPickupAudioSource != null && upgradePurchasedClip != null)
+            itemsPickupAudioSource.PlayOneShot(upgradePurchasedClip);
+
+        // 5. Chờ 2 giây
+        yield return new WaitForSeconds(2f);
+
+        // 6. Trả lại trạng thái bình thường
+        if (itemLiftDisplay != null) itemLiftDisplay.gameObject.SetActive(false);
+        isInputEnabled = true;
+
+        // Reset visual về Idle để Update loop tự xử lý tiếp
+        if (legsAnimator != null) legsAnimator.Play("Idle");
     }
 }
