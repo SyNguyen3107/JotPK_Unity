@@ -255,6 +255,7 @@ public class GameManager : MonoBehaviour
     // Logic đặc biệt: Nếu chỉ còn Spikeball khi hết giờ thì làm yếu chúng đi
     void CheckSpikeballEndCondition()
     {
+
         GameObject[] enemies = GameObject.FindGameObjectsWithTag(TAG_ENEMY);
         if (enemies.Length == 0) return;
 
