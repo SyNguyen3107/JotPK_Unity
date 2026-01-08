@@ -3387,12 +3387,12 @@ MonoBehaviour:
   currentGate: {fileID: 0}
   mapHeight: 16
   transitionTime: 3
-  startingLevelIndex: 2
+  startingLevelIndex: 0
   allLevels:
   - levelName: S1A1
     mapPrefab: {fileID: 7720983330286798090, guid: 66b519fcda17b6946947087c4878216c, type: 3}
     waves:
-    - {fileID: 11400000, guid: 27ff47218ba13ac4c96c45aa4f2aebda, type: 2}
+    - {fileID: 11400000, guid: 364afae52c36f90458796b2e62cff93a, type: 2}
     - {fileID: 11400000, guid: 0f246bd084457b74a980d7103fea57c2, type: 2}
     - {fileID: 11400000, guid: 3dee3e2754317b442948d66843de570b, type: 2}
     - {fileID: 11400000, guid: 364afae52c36f90458796b2e62cff93a, type: 2}
@@ -3404,14 +3404,6 @@ MonoBehaviour:
     - {fileID: 11400000, guid: 9b86db4885e35a34fbd0e0b5f63dae61, type: 2}
     - {fileID: 11400000, guid: 49919ae021fa0614b827f7c1129565a7, type: 2}
     - {fileID: 11400000, guid: a1f21a2e08765a645bba67fd003a1078, type: 2}
-    levelDuration: 90
-  - levelName: S1A3
-    mapPrefab: {fileID: 7720983330286798090, guid: da5b36df25d2e8c4789e3fddc5339b34, type: 3}
-    waves:
-    - {fileID: 11400000, guid: 2419bbd92ffaef2409eead70052522a3, type: 2}
-    - {fileID: 11400000, guid: e8929db44b032e5488fcf87751d14686, type: 2}
-    - {fileID: 11400000, guid: 62222ce37f6d1ad4e97a399ad113325c, type: 2}
-    - {fileID: 11400000, guid: 583e42e2c78137f45a9faf98683fc302, type: 2}
     levelDuration: 90
   allowedDrops:
   - {fileID: 11400000, guid: a7d17e702a6382e419073fd04476e9f4, type: 2}

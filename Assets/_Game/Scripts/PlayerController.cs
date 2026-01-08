@@ -49,6 +49,7 @@ public class PlayerController : MonoBehaviour
 
     [Header("Power-Up State")]
     public PowerUpData heldItem;
+    private bool isHMGActive = false;
     public bool enableAutoFire = false;
 
     [Header("Skill: Nuke")]
@@ -348,81 +349,136 @@ public class PlayerController : MonoBehaviour
         if (item.activateSound != null)
             itemsActivateAudioSource.PlayOneShot(item.activateSound);
 
-        ResetPowerUpEffects();
+        // --- LOGIC COROUTINE AN TOÀN ---
 
-        switch (item.type)
+        // 1. Những item dạng "Sự kiện tức thời" (Instant) -> Không ảnh hưởng đến vũ khí đang cầm
+        if (item.type == PowerUpType.ScreenNuke || item.type == PowerUpType.SmokeBomb || item.type == PowerUpType.Tombstone)
         {
-            case PowerUpType.ScreenNuke:
-                StartCoroutine(NukeRoutine());
-                break;
-            case PowerUpType.SmokeBomb:
-                if (GameManager.Instance != null)
-                {
-                    GameManager.Instance.ActivateGlobalStun(smokeBombDuration);
-                }
-                TeleportAndSmoke();
-                break;
-            case PowerUpType.Tombstone:
-                StartCoroutine(TombstonePhase1());
-                break;
+            // Chạy logic riêng, KHÔNG RESET vũ khí
+            switch (item.type)
+            {
+                case PowerUpType.ScreenNuke: StartCoroutine(NukeRoutine()); break;
+                case PowerUpType.SmokeBomb:
+                    if (GameManager.Instance != null) GameManager.Instance.ActivateGlobalStun(smokeBombDuration);
+                    TeleportAndSmoke();
+                    break;
+                case PowerUpType.Tombstone: StartCoroutine(TombstonePhase1()); break;
+            }
+            return; // Thoát hàm luôn, không chạy xuống logic vũ khí
         }
 
-        if (item.duration > 0 && item.type != PowerUpType.SmokeBomb)
+        // 2. Những item dạng "Buff Thời Gian" (Coffee, Guns...)
+        if (item.duration > 0)
         {
+            // A. Nếu đang có buff cũ chạy, DỪNG NÓ LẠI ngay lập tức
+            // Để nó không tự động Reset khi hết giờ cũ
+            if (activePowerUpCoroutine != null) StopCoroutine(activePowerUpCoroutine);
+
+            // B. Bắt đầu Coroutine mới
+            // Coroutine này sẽ chờ hết thời gian mới rồi mới Reset TẤT CẢ
             activePowerUpCoroutine = StartCoroutine(PowerUpRoutine(item));
         }
     }
-
-    void ApplyEffect(PowerUpData item)
-    {
-        switch (item.type)
-        {
-            case PowerUpType.HeavyMachineGun:
-                fireDelay = 0.05f;
-                enableAutoFire = true;
-                break;
-            case PowerUpType.Coffee:
-                moveSpeed = defaultMoveSpeed + item.valueAmount;
-                if (legsAnimator != null) legsAnimator.speed = 2f;
-                break;
-            case PowerUpType.Shotgun:
-                fireDelay = 0.5f;
-                enableAutoFire = false;
-                isShotgunActive = true;
-                break;
-            case PowerUpType.WagonWheel:
-                enableAutoFire = false;
-                isWheelActive = true;
-                break;
-            case PowerUpType.SheriffBadge:
-                moveSpeed = defaultMoveSpeed + item.valueAmount;
-                if (legsAnimator != null) legsAnimator.speed = 2f;
-                fireDelay = 0.1f;
-                enableAutoFire = true;
-                isShotgunActive = true;
-                break;
-        }
-        Debug.Log("Activated Buff: " + item.itemName);
-    }
-
-    void ResetPowerUpEffects()
-    {
-        if (activePowerUpCoroutine != null) StopCoroutine(activePowerUpCoroutine);
-
-        fireDelay = defaultFireDelay;
-        enableAutoFire = false;
-        moveSpeed = defaultMoveSpeed;
-        if (legsAnimator != null) legsAnimator.speed = 1f;
-
-        isShotgunActive = false;
-        isWheelActive = false;
-    }
-
     IEnumerator PowerUpRoutine(PowerUpData item)
     {
         ApplyEffect(item);
         yield return new WaitForSeconds(item.duration);
         ResetPowerUpEffects();
+    }
+    void ApplyEffect(PowerUpData item)
+    {
+        switch (item.type)
+        {
+            case PowerUpType.HeavyMachineGun:
+                isHMGActive = true; // Bật cờ
+                break;
+
+            case PowerUpType.Shotgun:
+                isShotgunActive = true; // Bật cờ
+                break;
+
+            case PowerUpType.WagonWheel:
+                isWheelActive = true; // Bật cờ
+                break;
+
+            case PowerUpType.Coffee:
+                // Coffee cộng dồn tốc độ, không cần bật cờ
+                moveSpeed += item.valueAmount;
+                if (legsAnimator != null) legsAnimator.speed = 2f;
+                break;
+
+            case PowerUpType.SheriffBadge:
+                // Sheriff badge xử lý riêng vì nó là trùm
+                moveSpeed += item.valueAmount;
+                if (legsAnimator != null) legsAnimator.speed = 2f;
+                break;
+        }
+
+        // Sau khi bật cờ xong, tính toán lại chỉ số thực tế
+        RecalculateWeaponStats();
+
+        Debug.Log("Activated Buff: " + item.itemName + " | Current Delay: " + fireDelay);
+    }
+    void RecalculateWeaponStats()
+    {
+        // 1. Reset về mặc định trước
+        fireDelay = defaultFireDelay;
+        enableAutoFire = false;
+
+        // 2. Nếu có Coffee hoặc Sheriff, tốc độ chạy đã được cộng dồn ở ApplyEffect nên không cần reset ở đây
+        //    (Trừ khi bạn muốn logic phức tạp hơn, nhưng tạm thời giữ nguyên logic Coffee của bạn)
+
+        // 3. Xử lý logic vũ khí kết hợp
+        // Ưu tiên 1: Sheriff Badge (Mạnh nhất)
+        if (heldItem != null && heldItem.type == PowerUpType.SheriffBadge)
+        {
+            fireDelay = 0.1f;
+            enableAutoFire = true;
+            isShotgunActive = true;
+            return; // Sheriff bao trọn gói rồi nên return luôn
+        }
+
+        // Ưu tiên 2: Heavy Machine Gun (Tốc độ bắn siêu nhanh)
+        if (isHMGActive)
+        {
+            fireDelay = 0.05f;      // Lấy tốc độ của HMG
+            enableAutoFire = true;  // Lấy auto fire của HMG
+                                    // Lưu ý: Không return, để nó chạy tiếp xuống dưới check Shotgun/Wheel
+        }
+
+        // Ưu tiên 3: Shotgun (Nếu KHÔNG có HMG thì dùng tốc độ chậm, có HMG rồi thì giữ tốc độ nhanh ở trên)
+        if (isShotgunActive && !isHMGActive)
+        {
+            fireDelay = 0.7f;
+            enableAutoFire = false;
+        }
+
+        // Ưu tiên 4: Wheel (Tương tự Shotgun)
+        if (isWheelActive && !isHMGActive)
+        {
+            enableAutoFire = false;
+        }
+
+        // TỔNG KẾT:
+        // - Nếu có HMG + Shotgun: fireDelay = 0.05 (nhanh), Auto = true, isShotgun = true (bắn chùm).
+        // - Nếu có HMG + Wheel: fireDelay = 0.05 (nhanh), Auto = true, isWheel = true (bắn 8 hướng).
+    }
+    void ResetPowerUpEffects()
+    {
+        // Dừng Coroutine đếm ngược cũ nếu còn chạy
+        if (activePowerUpCoroutine != null) StopCoroutine(activePowerUpCoroutine);
+
+        // Reset các biến cờ
+        isHMGActive = false;
+        isShotgunActive = false;
+        isWheelActive = false;
+
+        // Reset chỉ số gốc
+        moveSpeed = defaultMoveSpeed;
+        if (legsAnimator != null) legsAnimator.speed = 1f;
+
+        // Tính toán lại (về mặc định)
+        RecalculateWeaponStats();
     }
 
     #endregion

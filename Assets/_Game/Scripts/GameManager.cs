@@ -35,6 +35,10 @@ public class GameManager : MonoBehaviour
     public float mapHeight = 20f;       // Khoảng cách Y tạm thời khi chuyển map
     public float transitionTime = 3f;   // Thời gian di chuyển camera/player
 
+    [Header("Debug / Testing")]
+    // Muốn test màn nào thì điền số index của màn đó vào đây (0 là màn 1, 1 là màn 2...)
+    public int startingLevelIndex = 0;
+
     [Header("Level Management")]
     public List<LevelConfig> allLevels; // Danh sách cấu hình các màn chơi
 
@@ -99,44 +103,84 @@ public class GameManager : MonoBehaviour
         currentLives = startLives;
         isGameOver = false;
         isWaitingForClear = false;
-        currentLevelIndex = 0;
+        currentLevelIndex = startingLevelIndex; // Bắt đầu từ level bạn muốn test
         totalAreasPassed = 0;
 
-        // 1. Setup Level 1 Data
-        if (allLevels.Count > 0)
-        {
-            LevelConfig firstLevel = allLevels[0];
-            levelDuration = firstLevel.levelDuration;
+        // Tìm map "mồi" đang có sẵn trên Scene (S1A1)
+        GameObject existingMap = GameObject.Find(NAME_INITIAL_MAP);
 
-            // Sync Wave Spawner
-            if (WaveSpawner.Instance != null)
+        // --- LOGIC SINH MAP TEST ---
+        if (currentLevelIndex < allLevels.Count)
+        {
+            LevelConfig levelData = allLevels[currentLevelIndex];
+            levelDuration = levelData.levelDuration;
+
+            // Nếu đang test level > 0 (Ví dụ Level 2), ta phải tráo map
+            if (currentLevelIndex > 0)
             {
-                WaveSpawner.Instance.waves = firstLevel.waves;
+                // 1. Xóa map mồi cũ đi
+                if (existingMap != null) Destroy(existingMap);
+
+                // 2. Spawn map cần test vào vị trí (0,0)
+                currentMapInstance = Instantiate(levelData.mapPrefab, Vector3.zero, Quaternion.identity);
+                currentMapInstance.name = "Map_" + levelData.levelName; // Đặt tên cho dễ nhìn
+            }
+            else
+            {
+                // Nếu test level 0, dùng luôn map có sẵn
+                currentMapInstance = existingMap;
+                if (currentMapInstance == null) Debug.LogWarning($"Không tìm thấy Map khởi đầu '{NAME_INITIAL_MAP}'!");
+            }
+
+            // --- TỰ ĐỘNG GÁN DỮ LIỆU (AUTO-WIRE) ---
+            // Phần này giúp bạn KHÔNG CẦN kéo thả SpawnPoint thủ công nữa
+
+            if (currentMapInstance != null)
+            {
+                // 1. Tự tìm Cổng
+                currentGate = currentMapInstance.GetComponentInChildren<Gate>();
+                if (currentGate == null) Debug.LogError("LỖI: Map này thiếu script Gate!");
+
+                // 2. Tự tìm và Gán Spawn Points vào WaveSpawner
+                if (WaveSpawner.Instance != null)
+                {
+                    WaveSpawner.Instance.waves = levelData.waves; // Nạp danh sách quái
+
+                    Transform spawnParent = currentMapInstance.transform.Find(NAME_SPAWN_POINTS);
+                    if (spawnParent != null)
+                    {
+                        Transform[] autoSpawnPoints = new Transform[spawnParent.childCount];
+                        for (int i = 0; i < spawnParent.childCount; i++)
+                        {
+                            autoSpawnPoints[i] = spawnParent.GetChild(i);
+                        }
+
+                        // Cập nhật ngay lập tức cho Spawner
+                        WaveSpawner.Instance.UpdateLevelData(Vector3.zero, levelData.waves, autoSpawnPoints);
+                        Debug.Log($"[Auto-Setup] Đã tự gán {autoSpawnPoints.Length} điểm spawn cho Level {currentLevelIndex}.");
+                    }
+                    else
+                    {
+                        Debug.LogError($"LỖI: Không tìm thấy object '{NAME_SPAWN_POINTS}' trong map hiện tại.");
+                    }
+                }
             }
         }
+        else
+        {
+            Debug.LogError("Starting Level Index vượt quá số lượng màn chơi trong danh sách!");
+        }
+        // ---------------------------
 
-        // 2. Setup State
+        // Setup State
         currentTime = levelDuration;
         isTimerRunning = true;
         Time.timeScale = 1f;
 
-        // 3. Find References
-        // Tìm map đầu tiên (Lưu ý: Tên object trên Scene phải khớp với biến NAME_INITIAL_MAP)
-        currentMapInstance = GameObject.Find(NAME_INITIAL_MAP);
-        if (currentMapInstance != null)
-        {
-            currentGate = currentMapInstance.GetComponentInChildren<Gate>();
-            if (currentGate == null) Debug.LogError("LỖI: Không tìm thấy script Gate trong Map đầu tiên!");
-        }
-        else
-        {
-            Debug.LogWarning($"Không tìm thấy Map khởi đầu tên '{NAME_INITIAL_MAP}'!");
-        }
-
         if (playerObject == null) playerObject = GameObject.FindGameObjectWithTag(TAG_PLAYER);
         if (gameOverPanel != null) gameOverPanel.SetActive(false);
 
-        // 4. Init UI & Audio
+        // Init UI & Audio
         if (UIManager.Instance != null)
         {
             UIManager.Instance.SetTimerColor(timerNormalColor);
@@ -150,6 +194,13 @@ public class GameManager : MonoBehaviour
         {
             musicSource.loop = true;
             musicSource.Play();
+        }
+
+        // Kích hoạt Spawner chạy luôn (nếu test map 2 trở đi thì cần gọi dòng này để nó bắt đầu)
+        if (currentLevelIndex > 0 && WaveSpawner.Instance != null)
+        {
+            WaveSpawner.Instance.SetWavePaused(false);
+            WaveSpawner.Instance.StartNextLevelWaves();
         }
     }
     #endregion

@@ -13,12 +13,9 @@ MonoBehaviour:
   m_Name: S1A2W2
   m_EditorClassIdentifier: Assembly-CSharp::WaveData
   enemyGroups:
-  - enemyPrefab: {fileID: 3655004690988848967, guid: ca7d9cf46320af74fb9ab6821b57f592, type: 3}
-    count: 20
-    rate: 0.75
-  - enemyPrefab: {fileID: 3655004690988848967, guid: ca7d9cf46320af74fb9ab6821b57f592, type: 3}
-    count: 20
-    rate: 0.75
   - enemyPrefab: {fileID: 7489194971870225452, guid: b4251e19bac90a04ba336686cf1383fc, type: 3}
     count: 5
+    rate: 1
+  - enemyPrefab: {fileID: 3655004690988848967, guid: ca7d9cf46320af74fb9ab6821b57f592, type: 3}
+    count: 20
     rate: 1

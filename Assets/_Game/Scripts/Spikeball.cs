@@ -7,6 +7,9 @@ public class Spikeball : Enemy
     public float deployDuration = 1f; // Thời gian biến hình
     public int deployedMaxHealth = 7; // Máu sau khi biến hình
 
+    private float moveTimer = 0f;
+    public float maxMoveTime = 3f;
+
     // Các biến sprite để code tự đổi (nếu bạn không muốn dùng Animator phức tạp)
     // Tuy nhiên dùng Animator cho Deploy 3 sprite sẽ mượt hơn. 
     // Ở đây tôi sẽ viết code hỗ trợ Animator vì nó quản lý State tốt nhất.
@@ -32,6 +35,14 @@ public class Spikeball : Enemy
         // Nếu đang di chuyển đến điểm deploy
         if (isMoving && !isDeployed)
         {
+            moveTimer += Time.deltaTime;
+
+            // Nếu đi quá lâu mà chưa tới -> Deploy luôn
+            if (moveTimer >= maxMoveTime)
+            {
+                StartCoroutine(DeployRoutine());
+                return;
+            }
             // Di chuyển đến targetPosition
             transform.position = Vector3.MoveTowards(transform.position, targetPosition, moveSpeed * Time.deltaTime);
 

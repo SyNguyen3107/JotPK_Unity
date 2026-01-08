@@ -373,7 +373,7 @@ BoxCollider2D:
   m_Enabled: 1
   serializedVersion: 3
   m_Density: 1
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: 5cc2fea21f00ce2409a3e48cb9a4177e, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -434,6 +434,7 @@ MonoBehaviour:
   rb: {fileID: 1216617808180980786}
   itemPrefab: {fileID: 4688020100261846767, guid: 6d3f94549c48af9489a7d7d733e5a5c2, type: 3}
   questionMarkObject: {fileID: 4551291380502779210}
+  sourcePrefab: {fileID: 0}
 --- !u!82 &9137984632305001736
 AudioSource:
   m_ObjectHideFlags: 0
