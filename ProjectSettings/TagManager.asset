@@ -44,6 +44,9 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: Shop
+    uniqueID: 1638806789
+    locked: 0
   - name: Player
     uniqueID: 255625773
     locked: 0
@@ -52,6 +55,9 @@ TagManager:
     locked: 0
   - name: Items
     uniqueID: 2664480889
+    locked: 0
+  - name: Bullet
+    uniqueID: 2122518337
     locked: 0
   - name: FX
     uniqueID: 2803408787

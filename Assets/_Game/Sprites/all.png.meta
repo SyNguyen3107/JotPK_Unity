@@ -2973,7 +2973,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_119
+      name: vendor_walk0
       rect:
         serializedVersion: 2
         x: 335
@@ -2995,7 +2995,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_120
+      name: vendor_walk1
       rect:
         serializedVersion: 2
         x: 351
@@ -3017,7 +3017,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_121
+      name: vendor_front
       rect:
         serializedVersion: 2
         x: 367
@@ -3039,7 +3039,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_122
+      name: vendor_left
       rect:
         serializedVersion: 2
         x: 383
@@ -3061,7 +3061,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_123
+      name: vendor_right
       rect:
         serializedVersion: 2
         x: 399
@@ -3743,13 +3743,13 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_154
+      name: vendor_table
       rect:
         serializedVersion: 2
-        x: 399
-        y: 65
-        width: 16
-        height: 16
+        x: 400
+        y: 49
+        width: 63
+        height: 32
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -3760,72 +3760,6 @@ TextureImporter:
       bones: []
       spriteID: e4e9fac840e38d647b7271f852ec9761
       internalID: 1657673340
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: all_155
-      rect:
-        serializedVersion: 2
-        x: 415
-        y: 65
-        width: 16
-        height: 16
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 91675225c6189924fa126d9fcc99727d
-      internalID: -1644906562
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: all_156
-      rect:
-        serializedVersion: 2
-        x: 431
-        y: 65
-        width: 16
-        height: 16
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 65d0b1a9ebf24104ab1e5abb3d75c940
-      internalID: -1222733631
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: all_157
-      rect:
-        serializedVersion: 2
-        x: 447
-        y: 65
-        width: 16
-        height: 16
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 91a2b8261a3cd4c4fabf347cd59533fd
-      internalID: 1612474274
       vertices: []
       indices: 
       edges: []
@@ -4381,94 +4315,6 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_185
-      rect:
-        serializedVersion: 2
-        x: 399
-        y: 49
-        width: 16
-        height: 16
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 89d013e8fd860684197674ee1a4b47ad
-      internalID: -306779773
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: all_186
-      rect:
-        serializedVersion: 2
-        x: 415
-        y: 49
-        width: 16
-        height: 16
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: a9c136a6ea3b96a44a2fe92601aa6107
-      internalID: 435620056
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: all_187
-      rect:
-        serializedVersion: 2
-        x: 431
-        y: 49
-        width: 16
-        height: 16
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: a976af00c23c4004ca13e7fb4b12d036
-      internalID: 656844150
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: all_188
-      rect:
-        serializedVersion: 2
-        x: 447
-        y: 49
-        width: 16
-        height: 16
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 1079cc8d10ae78c4da4034397f3aac97
-      internalID: -268256630
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
       name: fector_laugh0
       rect:
         serializedVersion: 2
@@ -4733,7 +4579,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_202
+      name: gun_upgrade0
       rect:
         serializedVersion: 2
         x: 191
@@ -4755,7 +4601,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_203
+      name: gun_upgrade1
       rect:
         serializedVersion: 2
         x: 207
@@ -4777,7 +4623,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_204
+      name: gun_upgrade2
       rect:
         serializedVersion: 2
         x: 223
@@ -4799,7 +4645,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_205
+      name: boot_upgrade0
       rect:
         serializedVersion: 2
         x: 239
@@ -4821,7 +4667,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_206
+      name: boot_upgrade1
       rect:
         serializedVersion: 2
         x: 255
@@ -4843,7 +4689,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_207
+      name: oneup_upgrade
       rect:
         serializedVersion: 2
         x: 271
@@ -4865,7 +4711,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_208
+      name: ammo_upgrade0
       rect:
         serializedVersion: 2
         x: 287
@@ -4887,7 +4733,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_209
+      name: ammo_upgrade1
       rect:
         serializedVersion: 2
         x: 303
@@ -4909,7 +4755,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_210
+      name: ammo_upgrade2
       rect:
         serializedVersion: 2
         x: 319
@@ -4931,7 +4777,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_211
+      name: supergun_upgrade
       rect:
         serializedVersion: 2
         x: 335
@@ -6523,11 +6369,6 @@ TextureImporter:
       all_116: -240269120
       all_117: 1115747590
       all_118: 805846955
-      all_119: 1618088638
-      all_120: 1444307439
-      all_121: 499951723
-      all_122: 1376343336
-      all_123: -828312958
       all_124: -935370780
       all_125: 405442480
       all_126: 808674513
@@ -6551,7 +6392,6 @@ TextureImporter:
       all_147: 1615796000
       all_148: 34521829
       all_149: -1455349396
-      all_154: 1657673340
       all_155: -1644906562
       all_156: -1222733631
       all_157: 1612474274
@@ -6592,17 +6432,7 @@ TextureImporter:
       all_2: -709529425693167831
       all_20: 179133888372635544
       all_201: -384114809
-      all_202: 1751564041
-      all_203: -59099763
-      all_204: 1778298448
-      all_205: -1180662988
-      all_206: 2111745279
-      all_207: -2034803064
-      all_208: -2007754524
-      all_209: 218888170
       all_21: -730131288623254124
-      all_210: -1723120981
-      all_211: -1690053254
       all_212: -588141577
       all_213: -1333476936
       all_214: -781575332
@@ -6671,7 +6501,12 @@ TextureImporter:
       all_84: 1096283802
       all_85: 248269607
       all_86: -969015850
+      ammo_upgrade0: -2007754524
+      ammo_upgrade1: 218888170
+      ammo_upgrade2: -1723120981
       arrow: -1123621901
+      boot_upgrade0: -1180662988
+      boot_upgrade1: 2111745279
       butterfly0: 974319259
       butterfly1: -1282451064
       butterfly_white: -2958205467540611984
@@ -6727,6 +6562,9 @@ TextureImporter:
       graveyard7: 713856207502405296
       graveyard8: -5061710873365931121
       graveyard9: 2139653220974686133
+      gun_upgrade0: 1751564041
+      gun_upgrade1: -59099763
+      gun_upgrade2: 1778298448
       imp0: 378442679
       imp1: 223370836
       imp_white: 4469793694533463491
@@ -6752,6 +6590,7 @@ TextureImporter:
       ogre0: 1358583071
       ogre1: 80625723
       ogre_white: -6471681559913686642
+      oneup_upgrade: -2034803064
       orc0: -1285178484
       orc1: -593301100
       orc_white: 4945819037667684097
@@ -6791,9 +6630,16 @@ TextureImporter:
       spikeball_deploying1: -212645640
       spikeball_deploying2: -569145632
       spikeball_white: 8018687567259348686
+      supergun_upgrade: -1690053254
       ui_area_complete_mark: -1331358819
       ui_clock: -279602607
       ui_item_frame: -190451635
+      vendor_front: 499951723
+      vendor_left: 1376343336
+      vendor_right: -828312958
+      vendor_table: 1657673340
+      vendor_walk0: 1618088638
+      vendor_walk1: 1444307439
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

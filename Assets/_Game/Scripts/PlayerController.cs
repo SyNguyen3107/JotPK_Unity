@@ -8,6 +8,7 @@ public class PlayerController : MonoBehaviour
 
     [Header("Movement & Physics")]
     public float moveSpeed = 5f;
+    public float maxSpeed = 8f;
     public Rigidbody2D rb;
     public Vector2 mapBoundsMin = new Vector2(-6f, -5f);
     public Vector2 mapBoundsMax = new Vector2(6f, 5f);
@@ -51,6 +52,20 @@ public class PlayerController : MonoBehaviour
     [Header("Power-Up State")]
     public PowerUpData heldItem;
     public bool enableAutoFire = false;
+
+    [Header("Skill: Coffee")]
+    public float coffeeSpeedBoostAmount = 3f;
+
+    [Header("Skill: Heavy Machine Gun")]
+    public float hmgFireRate = 0.1f;
+
+    [Header("Skill: Shotgun")]
+    public float shotgunSpreadAngle = 15f;
+    public float shotgunFireRate = 0.7f;
+
+    [Header("Skill: Sheriff Badge")]
+    public float sheriffBadgeSpeedBoost = 2f;
+    public float sheriffBadgeFireRate = 0.2f;
 
     [Header("Skill: Nuke")]
     public GameObject explosionFXPrefab;
@@ -96,7 +111,6 @@ public class PlayerController : MonoBehaviour
     private float wheelExpirationTime = 0f;
     private float sheriffExpirationTime = 0f;
     private float coffeeExpirationTime = 0f;
-    private float coffeeSpeedBoostAmount = 0f; // Lưu giá trị boost để cộng lại mỗi frame
 
     // Flags (Được cập nhật tự động mỗi frame dựa trên Timer)
     private bool isHMGActive = false;
@@ -137,7 +151,7 @@ public class PlayerController : MonoBehaviour
         if (isDead) return;
 
         // Chỉ di chuyển vật lý khi không bị khóa input và không phải Kinematic (đang cutscene)
-        if (rb != null && !rb.isKinematic)
+        if (rb != null && rb.bodyType != RigidbodyType2D.Kinematic)
             rb.MovePosition(rb.position + moveInput * moveSpeed * Time.fixedDeltaTime);
     }
 
@@ -225,20 +239,19 @@ public class PlayerController : MonoBehaviour
 
         if (isZombieMode)
         {
-            moveSpeed += zombieSpeedBoost;
+            moveSpeed = Mathf.Min(moveSpeed + zombieSpeedBoost, maxSpeed);
         }
 
         // 2. Tính toán Tốc độ chạy (Cộng dồn)
         if (isCoffeeActive)
         {
-            moveSpeed += coffeeSpeedBoostAmount;
+            moveSpeed = Mathf.Min(moveSpeed + coffeeSpeedBoostAmount, maxSpeed);
             if (legsAnimator != null) legsAnimator.speed = 2f;
         }
 
         if (isSheriffActive)
         {
-            // Sheriff cũng tăng tốc (giả sử +2 giống coffee hoặc lấy từ data nếu lưu)
-            moveSpeed += 2f;
+            moveSpeed = Mathf.Min(moveSpeed + sheriffBadgeSpeedBoost, maxSpeed);
             if (legsAnimator != null) legsAnimator.speed = 2f;
         }
 
@@ -247,7 +260,7 @@ public class PlayerController : MonoBehaviour
         // Cấp 1: Sheriff (Mạnh nhất - Ghi đè tất cả)
         if (isSheriffActive)
         {
-            fireDelay = 0.1f;
+            fireDelay = sheriffBadgeFireRate;
             enableAutoFire = true;
             return; // Sheriff bao gồm cả bắn chùm (xử lý ở hàm Shoot) nên return luôn
         }
@@ -255,7 +268,7 @@ public class PlayerController : MonoBehaviour
         // Cấp 2: HMG (Tốc độ bắn)
         if (isHMGActive)
         {
-            fireDelay = 0.05f;
+            fireDelay = hmgFireRate;
             enableAutoFire = true;
         }
 
@@ -265,7 +278,7 @@ public class PlayerController : MonoBehaviour
 
         if (isShotgunActive && !isHMGActive)
         {
-            fireDelay = 0.7f;
+            fireDelay = shotgunFireRate;
             enableAutoFire = false;
         }
 
@@ -370,7 +383,6 @@ public class PlayerController : MonoBehaviour
 
             case PowerUpType.Coffee:
                 coffeeExpirationTime = Mathf.Max(now, coffeeExpirationTime) + duration;
-                coffeeSpeedBoostAmount = item.valueAmount; // Lưu giá trị boost để dùng mỗi frame
                 break;
         }
         Debug.Log($"Activated Buff: {item.itemName}");
@@ -398,8 +410,8 @@ public class PlayerController : MonoBehaviour
         else if (isShotgunActive || isSheriffActive)
         {
             SpawnBullet(dir);
-            SpawnBullet(Quaternion.Euler(0, 0, 15f) * dir);
-            SpawnBullet(Quaternion.Euler(0, 0, -15f) * dir);
+            SpawnBullet(Quaternion.Euler(0, 0, shotgunSpreadAngle) * dir);
+            SpawnBullet(Quaternion.Euler(0, 0, -1 * shotgunSpreadAngle) * dir);
         }
         else
         {
@@ -702,7 +714,7 @@ public class PlayerController : MonoBehaviour
         if (rb != null)
         {
             rb.linearVelocity = Vector2.zero;
-            rb.isKinematic = true; // Tắt vật lý để đi xuyên tường
+            rb.bodyType = RigidbodyType2D.Kinematic; // Tắt vật lý để đi xuyên tường
         }
 
         if (legsAnimator != null) legsAnimator.SetBool("IsMoving", true);
@@ -718,7 +730,7 @@ public class PlayerController : MonoBehaviour
         }
         transform.position = targetPos;
 
-        if (rb != null) rb.isKinematic = false; // Bật lại vật lý
+        if (rb != null) rb.bodyType = RigidbodyType2D.Dynamic; // Bật lại vật lý
         if (legsAnimator != null) legsAnimator.SetBool("IsMoving", false);
     }
 }
