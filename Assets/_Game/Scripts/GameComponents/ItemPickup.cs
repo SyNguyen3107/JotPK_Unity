@@ -1,10 +1,15 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 
 public class ItemPickup : MonoBehaviour
 {
     public PowerUpData itemData;
     private SpriteRenderer sr;
-    private float lifeTime = 10f; // Item tự biến mất sau 10s nếu không ai nhặt
+
+    [Header("Lifetime Settings")]
+    private float lifeTime = 10f;        // Tổng thời gian tồn tại
+    private float warningTime = 3f;      // Thời gian nhấp nháy cảnh báo
+    private float flashSpeed = 0.2f;     // Tốc độ nhấp nháy (càng nhỏ càng nhanh)
 
     void Start()
     {
@@ -14,10 +19,27 @@ public class ItemPickup : MonoBehaviour
             sr.sprite = itemData.icon;
         }
 
-        // Tự hủy sau một thời gian để tránh rác game
-        Destroy(gameObject, lifeTime);
+        StartCoroutine(LifeCycleRoutine());
     }
+    IEnumerator LifeCycleRoutine()
+    {
+        // 1. Giai đoạn chờ bình thường
+        // (Tổng 10s - 3s cảnh báo = 7s đứng yên)
+        float safeTime = Mathf.Max(0, lifeTime - warningTime);
+        yield return new WaitForSeconds(safeTime);
 
+        // 2. Giai đoạn nhấp nháy (3s cuối)
+        float timer = 0f;
+        while (timer < warningTime)
+        {
+            if (sr != null) sr.enabled = !sr.enabled; // Bật/Tắt hình ảnh
+            yield return new WaitForSeconds(flashSpeed);
+            timer += flashSpeed;
+        }
+
+        // 3. Hết giờ -> Tự hủy
+        Destroy(gameObject);
+    }
     // Hàm này để Enemy gọi khi khởi tạo
     public void Setup(PowerUpData data)
     {

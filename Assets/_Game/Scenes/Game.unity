@@ -1117,6 +1117,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: UpgradeSystem
       objectReference: {fileID: 0}
+    - target: {fileID: 5921811361295696135, guid: 76e14eb2421b8d64abd5b5ad6355a096, type: 3}
+      propertyPath: slot1Index
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5921811361295696135, guid: 76e14eb2421b8d64abd5b5ad6355a096, type: 3}
+      propertyPath: slot3Index
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1193,7 +1201,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1934135101723791435, guid: 690f6afd5992dab41b38fe5948311135, type: 3}
       propertyPath: dropChance
-      value: 15
+      value: 20
       objectReference: {fileID: 0}
     - target: {fileID: 1934135101723791435, guid: 690f6afd5992dab41b38fe5948311135, type: 3}
       propertyPath: playerObject
@@ -1209,11 +1217,11 @@ PrefabInstance:
       objectReference: {fileID: 251805453}
     - target: {fileID: 1934135101723791435, guid: 690f6afd5992dab41b38fe5948311135, type: 3}
       propertyPath: startingLevelIndex
-      value: 0
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 1934135101723791435, guid: 690f6afd5992dab41b38fe5948311135, type: 3}
       propertyPath: allLevels.Array.data[0].levelDuration
-      value: 2
+      value: 90
       objectReference: {fileID: 0}
     - target: {fileID: 1934135101723791435, guid: 690f6afd5992dab41b38fe5948311135, type: 3}
       propertyPath: 'allLevels.Array.data[5].waves.Array.data[0]'
