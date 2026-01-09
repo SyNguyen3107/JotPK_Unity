@@ -288,42 +288,43 @@ public class GameManager : MonoBehaviour
     #region --- LEVEL TRANSITION (ORIGIN SHIFT) ---
     public void CompleteCurrentArea()
     {
-        Debug.Log("LEVEL CLEARED! OPENING GATE...");
+        Debug.Log("LEVEL CLEARED!");
+
+        // Tạm dừng nhạc nền khi hết màn (nếu cần thiết kế âm thanh như vậy)
+        if (musicSource != null) musicSource.Stop();
+
         totalAreasPassed++;
         currentTime = levelDuration;
         isTimerRunning = false;
 
         if (UIManager.Instance != null) UIManager.Instance.UpdateAreaIndicator(totalAreasPassed);
 
+        // --- 1. MỞ CỔNG NGAY LẬP TỨC ---
+        // Người chơi có thể đi qua bất cứ lúc nào, không cần chờ Shop
         if (currentGate != null) currentGate.OpenGate();
         else Debug.LogWarning("Current Gate is NULL!");
 
-        // --- LOGIC MỚI: KIỂM TRA SHOP ---
-
-        // Điều kiện gặp Shop:
-        // 1. Không phải màn đầu tiên (totalAreasPassed > 0)
-        // 2. Chia hết cho levelsPerShop (ví dụ màn 2, 4, 6...)
-        // 3. Chưa có Vendor nào đang đứng đó (tránh spawn chồng)
+        // --- 2. XỬ LÝ SHOP (SONG SONG) ---
+        // Điều kiện: Không phải màn đầu, và chia hết cho số màn quy định
         bool shouldSpawnShop = (totalAreasPassed > 0) && (totalAreasPassed % levelsPerShop == 0);
 
         if (shouldSpawnShop && vendorPrefab != null)
         {
-            Debug.Log("LEVEL CLEARED! SHOP TIME!");
+            Debug.Log("SHOP SPAWNED!");
 
-            // Reset trạng thái mua hàng của Manager để được mua món mới
+            // Reset để được mua món mới
             if (UpgradeManager.Instance != null) UpgradeManager.Instance.ResetPurchaseStatus();
 
-            // Spawn NPC Vendor (VendorController sẽ tự chạy logic đi vào -> bán -> đi ra -> gọi lại CompleteCurrentArea)
-            // Lưu ý: Không mở cổng (OpenGate) ở đây nữa! Vendor sẽ mở sau khi đi về.
-            Instantiate(vendorPrefab, Vector3.zero, Quaternion.identity);
-            // Vị trí Vector3.zero chỉ là tạm, VendorController sẽ tự set lại vị trí spawnY trong Start()
-        }
-        else
-        {
-            // Nếu không có Shop -> Mở cổng đi tiếp như bình thường
-            Debug.Log("LEVEL CLEARED! OPENING GATE...");
-            if (currentGate != null) currentGate.OpenGate();
-            else Debug.LogWarning("Current Gate is NULL!");
+            // Spawn NPC tại vị trí (0,0) - VendorController sẽ tự lo việc đi lại
+            GameObject vendor = Instantiate(vendorPrefab, Vector3.zero, Quaternion.identity);
+
+            // [QUAN TRỌNG] Gán Vendor làm con của Map hiện tại
+            // Để khi Player qua màn -> Map bị Destroy -> Vendor cũng bị Destroy theo
+            // Khắc phục hoàn toàn lỗi Vendor còn sót lại ở màn sau
+            if (currentMapInstance != null)
+            {
+                vendor.transform.SetParent(currentMapInstance.transform);
+            }
         }
     }
 
@@ -425,7 +426,7 @@ public class GameManager : MonoBehaviour
 
         Debug.Log("Transition Done. Waiting 3s...");
         yield return new WaitForSeconds(3f);
-
+        musicSource.Play();
         // Kích hoạt lại game
         pc.isInputEnabled = true;
         isTimerRunning = true;

@@ -6,8 +6,10 @@ public class VendorController : MonoBehaviour
     [Header("Settings")]
     public GameObject shopTablePrefab; // Kéo Prefab cái bàn vào đây
     public float moveSpeed = 3f;
-    public float centerY = 0f; // Toạ độ Y giữa màn hình (nơi NPC dừng lại)
+    public float centerY = 1f; // Toạ độ Y giữa màn hình (nơi NPC dừng lại)
     public float spawnY = 7f;  // Toạ độ Y tại cổng trên (nơi xuất phát/biến mất)
+    public AudioSource footStepAudioSource;
+    public AudioClip footStepClip;
 
     [Header("References")]
     public VendorVisuals visuals; // Script Visuals/Animator ta đã làm ở Bước 2
@@ -19,6 +21,11 @@ public class VendorController : MonoBehaviour
     {
         // Bắt đầu quy trình vào chợ
         StartCoroutine(ShopRoutine());
+        if (footStepAudioSource!= null & footStepClip != null)
+        {
+            footStepAudioSource.clip = footStepClip;
+            footStepAudioSource.loop = true;
+        }       
     }
 
     // Đăng ký lắng nghe sự kiện
@@ -50,7 +57,10 @@ public class VendorController : MonoBehaviour
 
         // 2. Đi xuống giữa map
         if (visuals != null) visuals.SetWalking(true, -1f); // -1 là đi xuống
-
+        if (footStepAudioSource != null && footStepClip != null)
+        {
+            footStepAudioSource.Play();
+        }
         while (transform.position.y > centerY)
         {
             transform.position += Vector3.down * moveSpeed * Time.deltaTime;
@@ -59,14 +69,18 @@ public class VendorController : MonoBehaviour
 
         // 3. Dừng lại & Spawn Bàn
         if (visuals != null) visuals.SetWalking(false, 0f);
+        footStepAudioSource.Stop();
 
         // Spawn bàn ngay trước mặt NPC (lệch xuống 1 chút)
         Vector3 tablePos = transform.position + new Vector3(0, -1.5f, 0);
         if (shopTablePrefab != null)
         {
             currentTable = Instantiate(shopTablePrefab, tablePos, Quaternion.identity);
+            if (transform.parent != null)
+            {
+                currentTable.transform.SetParent(transform.parent);
+            }
         }
-
         // Lúc này Shop đã mở, chờ Player mua...
         // Khi mua xong, hàm HandlePurchaseComplete sẽ được gọi tự động.
     }
@@ -83,14 +97,17 @@ public class VendorController : MonoBehaviour
 
         // 3. NPC Đi ngược về cổng trên
         if (visuals != null) visuals.SetWalking(true, 1f); // 1 là đi lên
-
+        if (footStepAudioSource != null && footStepClip != null)
+        {
+            footStepAudioSource.Play();
+        }
         while (transform.position.y < spawnY)
         {
             transform.position += Vector3.up * moveSpeed * Time.deltaTime;
             yield return null;
         }
         // 4. Về đến nơi -> Kết thúc màn Shop
-
+        footStepAudioSource.Stop();
         // 5. Tự hủy NPC
         Destroy(gameObject);
     }

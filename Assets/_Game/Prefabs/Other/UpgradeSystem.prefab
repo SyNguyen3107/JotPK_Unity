@@ -1,0 +1,71 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &5427165600936097812
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4290083536216476549}
+  - component: {fileID: 5921811361295696135}
+  m_Layer: 0
+  m_Name: UpgradeSystem
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4290083536216476549
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5427165600936097812}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5921811361295696135
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5427165600936097812}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e5a103628bdf2d43bb3bbb5d344c1c7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UpgradeManager
+  slot1Upgrades:
+  - {fileID: 11400000, guid: e4ae1e5ac34137646ab879070d90dc6f, type: 2}
+  - {fileID: 11400000, guid: 2c01df406a0602948a682e66c0eef7d6, type: 2}
+  - {fileID: 11400000, guid: 75467d7799553684fba737d44769b6cc, type: 2}
+  - {fileID: 11400000, guid: 75467d7799553684fba737d44769b6cc, type: 2}
+  - {fileID: 11400000, guid: 75467d7799553684fba737d44769b6cc, type: 2}
+  - {fileID: 11400000, guid: 75467d7799553684fba737d44769b6cc, type: 2}
+  slot2Upgrades:
+  - {fileID: 11400000, guid: ccc8201f9da61b543a8183d22886b771, type: 2}
+  - {fileID: 11400000, guid: 35e0af2ce773b5340904e1f7e75900fc, type: 2}
+  - {fileID: 11400000, guid: 159cc9b9f34910e43ae5a661c18b874e, type: 2}
+  - {fileID: 11400000, guid: 2ffd3e256def9ba40b2773fd6be995e7, type: 2}
+  - {fileID: 11400000, guid: e87ff9ecddb69d74299d01baf7df49ea, type: 2}
+  - {fileID: 11400000, guid: e87ff9ecddb69d74299d01baf7df49ea, type: 2}
+  slot3Upgrades:
+  - {fileID: 11400000, guid: fabd1e79789053e4ab12ec5dc879e1de, type: 2}
+  - {fileID: 11400000, guid: 55561e3e63635a24f90214595eb77094, type: 2}
+  - {fileID: 11400000, guid: e38ff459ce29e0540b77f59b5c762295, type: 2}
+  - {fileID: 11400000, guid: e87ff9ecddb69d74299d01baf7df49ea, type: 2}
+  - {fileID: 11400000, guid: e87ff9ecddb69d74299d01baf7df49ea, type: 2}
+  - {fileID: 11400000, guid: e87ff9ecddb69d74299d01baf7df49ea, type: 2}
+  slot1Index: 0
+  slot2Index: 0
+  slot3Index: 0
+  hasPurchasedThisRound: 0
