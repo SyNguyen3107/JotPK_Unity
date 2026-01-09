@@ -565,6 +565,7 @@ public class PlayerController : MonoBehaviour
     {
         Vector3 targetPos = FindSafePosition();
         transform.position = targetPos;
+        StartCoroutine(InvincibilityRoutine(3f));
         StartCoroutine(SpawnMultipleSmokes(targetPos));
     }
 

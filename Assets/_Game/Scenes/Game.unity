@@ -1065,6 +1065,63 @@ MonoBehaviour:
   m_FirstSelected: {fileID: 0}
   m_sendNavigationEvents: 1
   m_DragThreshold: 10
+--- !u!1001 &1821248404
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 7980904693475128250, guid: 1d877e4da54610b40b66eb75f082509c, type: 3}
+      propertyPath: m_Name
+      value: SheriffBadge
+      objectReference: {fileID: 0}
+    - target: {fileID: 9041365747835386404, guid: 1d877e4da54610b40b66eb75f082509c, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -1.379065
+      objectReference: {fileID: 0}
+    - target: {fileID: 9041365747835386404, guid: 1d877e4da54610b40b66eb75f082509c, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.18176943
+      objectReference: {fileID: 0}
+    - target: {fileID: 9041365747835386404, guid: 1d877e4da54610b40b66eb75f082509c, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9041365747835386404, guid: 1d877e4da54610b40b66eb75f082509c, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 9041365747835386404, guid: 1d877e4da54610b40b66eb75f082509c, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9041365747835386404, guid: 1d877e4da54610b40b66eb75f082509c, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9041365747835386404, guid: 1d877e4da54610b40b66eb75f082509c, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9041365747835386404, guid: 1d877e4da54610b40b66eb75f082509c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9041365747835386404, guid: 1d877e4da54610b40b66eb75f082509c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9041365747835386404, guid: 1d877e4da54610b40b66eb75f082509c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 1d877e4da54610b40b66eb75f082509c, type: 3}
 --- !u!1001 &150173658445558058
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1217,7 +1274,7 @@ PrefabInstance:
       objectReference: {fileID: 251805453}
     - target: {fileID: 1934135101723791435, guid: 690f6afd5992dab41b38fe5948311135, type: 3}
       propertyPath: startingLevelIndex
-      value: 6
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 1934135101723791435, guid: 690f6afd5992dab41b38fe5948311135, type: 3}
       propertyPath: allLevels.Array.data[0].levelDuration
@@ -1255,6 +1312,22 @@ PrefabInstance:
       propertyPath: 'allLevels.Array.data[6].waves.Array.data[3]'
       value: 
       objectReference: {fileID: 11400000, guid: fac8d599c94599448862b99e007de855, type: 2}
+    - target: {fileID: 1934135101723791435, guid: 690f6afd5992dab41b38fe5948311135, type: 3}
+      propertyPath: 'allLevels.Array.data[7].waves.Array.data[0]'
+      value: 
+      objectReference: {fileID: 11400000, guid: df4f87a06270acb4abf0e35ce2f178b3, type: 2}
+    - target: {fileID: 1934135101723791435, guid: 690f6afd5992dab41b38fe5948311135, type: 3}
+      propertyPath: 'allLevels.Array.data[7].waves.Array.data[1]'
+      value: 
+      objectReference: {fileID: 11400000, guid: 355bbba7f3a3ffb49bba761bc4375401, type: 2}
+    - target: {fileID: 1934135101723791435, guid: 690f6afd5992dab41b38fe5948311135, type: 3}
+      propertyPath: 'allLevels.Array.data[7].waves.Array.data[2]'
+      value: 
+      objectReference: {fileID: 11400000, guid: b49c0ee278c6a4e4280ada2500df8f50, type: 2}
+    - target: {fileID: 1934135101723791435, guid: 690f6afd5992dab41b38fe5948311135, type: 3}
+      propertyPath: 'allLevels.Array.data[7].waves.Array.data[3]'
+      value: 
+      objectReference: {fileID: 11400000, guid: c3c5107ce82bbcb47b86a1edfb35bcf9, type: 2}
     - target: {fileID: 5391940436321524276, guid: 690f6afd5992dab41b38fe5948311135, type: 3}
       propertyPath: m_Volume
       value: 0.5
@@ -1665,3 +1738,4 @@ SceneRoots:
   - {fileID: 150173658445558058}
   - {fileID: 982178945}
   - {fileID: 816109809}
+  - {fileID: 1821248404}
