@@ -83,7 +83,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: -782865029
-  m_SortingLayer: 2
+  m_SortingLayer: 3
   m_SortingOrder: 0
   m_Sprite: {fileID: -1285178484, guid: 226a2dd9665e9e9408a1469427cf02a8, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -157,7 +157,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0.031488895, y: 0.00078725815}
+  m_Offset: {x: 0, y: 0}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -167,8 +167,8 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 0.81421375, y: 0.875618}
-  m_EdgeRadius: 0
+  m_Size: {x: 0.5, y: 0.5}
+  m_EdgeRadius: 0.15
 --- !u!95 &8736586511564350363
 Animator:
   serializedVersion: 7
@@ -216,6 +216,7 @@ MonoBehaviour:
   rb: {fileID: 4635532394864102644}
   itemPrefab: {fileID: 4688020100261846767, guid: 6d3f94549c48af9489a7d7d733e5a5c2, type: 3}
   questionMarkObject: {fileID: 9180483279650007586}
+  sourcePrefab: {fileID: 0}
 --- !u!82 &-7401060214184405462
 AudioSource:
   m_ObjectHideFlags: 0

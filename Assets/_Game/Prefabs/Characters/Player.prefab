@@ -106,7 +106,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &42584899970450575
 Transform:
   m_ObjectHideFlags: 0
@@ -1106,7 +1106,7 @@ Rigidbody2D:
   m_LinearDamping: 0
   m_AngularDamping: 0.05
   m_GravityScale: 0
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: 5cc2fea21f00ce2409a3e48cb9a4177e, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -1161,8 +1161,8 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 0.75, y: 0.75}
-  m_EdgeRadius: 0
+  m_Size: {x: 0.33, y: 0.6}
+  m_EdgeRadius: 0.15
 --- !u!114 &3975486461527801427
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1181,6 +1181,7 @@ MonoBehaviour:
   mapBoundsMin: {x: -6.5, y: -6.5}
   mapBoundsMax: {x: 6.5, y: 6.5}
   bulletPrefab: {fileID: 4803697644789391034, guid: 246aeb5273441ff4db9666ee7ea1e9ca, type: 3}
+  currentBulletDamage: 1
   firePoint: {fileID: 0}
   bulletOffset: 0.5
   fireDelay: 0.5
@@ -1191,6 +1192,7 @@ MonoBehaviour:
   shootClip: {fileID: 8300000, guid: 592d843afdb33824e89df639c56a68b5, type: 3}
   footstepClip: {fileID: 8300000, guid: 054035413190eea49bddbc6cae76eb8c, type: 3}
   itemPickupClip: {fileID: 8300000, guid: a5162151409cb194a8a4bac8f7deef00, type: 3}
+  upgradePurchasedClip: {fileID: 0}
   stepDelay: 0.3
   idleStateObject: {fileID: 6588644181978533171}
   activeStateObject: {fileID: 2511348322630318304}
