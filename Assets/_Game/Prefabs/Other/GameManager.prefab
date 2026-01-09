@@ -27,7 +27,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8602648028350720157}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -88,7 +88,7 @@ MonoBehaviour:
   currentGate: {fileID: 0}
   mapHeight: 16
   transitionTime: 3
-  startingLevelIndex: 0
+  startingLevelIndex: 4
   allLevels:
   - levelName: S1A1
     mapPrefab: {fileID: 7720983330286798090, guid: 66b519fcda17b6946947087c4878216c, type: 3}
@@ -122,6 +122,54 @@ MonoBehaviour:
     - {fileID: 11400000, guid: 852ab2ce75102424dada0973437b3ea7, type: 2}
     - {fileID: 11400000, guid: 276fe0bc116e6d940989b4153153af56, type: 2}
     levelDuration: 90
+  - levelName: S2A1
+    mapPrefab: {fileID: 7720983330286798090, guid: b958c94cdf6853b4c84c69441897bbeb, type: 3}
+    waves:
+    - {fileID: 11400000, guid: 29d48e02b750eab4d93fc81a6f9aa09f, type: 2}
+    - {fileID: 11400000, guid: e72b4f13ea2cf8c4692875fa12e7006d, type: 2}
+    - {fileID: 11400000, guid: 68ce6ef4e9848c34faaf92106769ff2c, type: 2}
+    - {fileID: 11400000, guid: f27c974be3e46d14fb1e7e7922fe743e, type: 2}
+    levelDuration: 90
+  - levelName: S2A2
+    mapPrefab: {fileID: 7720983330286798090, guid: 42a2d085b9129c44a8012ea9a6975555, type: 3}
+    waves:
+    - {fileID: 11400000, guid: fa82cee8d4ff7b0478997cb29b3e205c, type: 2}
+    - {fileID: 11400000, guid: bd7719f05c3589a42840d5f9281034ae, type: 2}
+    - {fileID: 11400000, guid: 852ab2ce75102424dada0973437b3ea7, type: 2}
+    - {fileID: 11400000, guid: 276fe0bc116e6d940989b4153153af56, type: 2}
+    levelDuration: 90
+  - levelName: S2A3
+    mapPrefab: {fileID: 7720983330286798090, guid: de5606a341e88174585dc0777ff55113, type: 3}
+    waves:
+    - {fileID: 11400000, guid: fa82cee8d4ff7b0478997cb29b3e205c, type: 2}
+    - {fileID: 11400000, guid: bd7719f05c3589a42840d5f9281034ae, type: 2}
+    - {fileID: 11400000, guid: 852ab2ce75102424dada0973437b3ea7, type: 2}
+    - {fileID: 11400000, guid: 276fe0bc116e6d940989b4153153af56, type: 2}
+    levelDuration: 90
+  - levelName: S3A1
+    mapPrefab: {fileID: 7720983330286798090, guid: 198efa64e213b8e40a758370b2be0c29, type: 3}
+    waves:
+    - {fileID: 11400000, guid: fa82cee8d4ff7b0478997cb29b3e205c, type: 2}
+    - {fileID: 11400000, guid: bd7719f05c3589a42840d5f9281034ae, type: 2}
+    - {fileID: 11400000, guid: 852ab2ce75102424dada0973437b3ea7, type: 2}
+    - {fileID: 11400000, guid: 276fe0bc116e6d940989b4153153af56, type: 2}
+    levelDuration: 90
+  - levelName: S3A2
+    mapPrefab: {fileID: 7720983330286798090, guid: b72d6c08b4288894086e84c44fb3aeff, type: 3}
+    waves:
+    - {fileID: 11400000, guid: fa82cee8d4ff7b0478997cb29b3e205c, type: 2}
+    - {fileID: 11400000, guid: bd7719f05c3589a42840d5f9281034ae, type: 2}
+    - {fileID: 11400000, guid: 852ab2ce75102424dada0973437b3ea7, type: 2}
+    - {fileID: 11400000, guid: 276fe0bc116e6d940989b4153153af56, type: 2}
+    levelDuration: 90
+  - levelName: S3A3
+    mapPrefab: {fileID: 7720983330286798090, guid: 1c2ee899f9402cc41b4ef3df0e4d0859, type: 3}
+    waves:
+    - {fileID: 11400000, guid: fa82cee8d4ff7b0478997cb29b3e205c, type: 2}
+    - {fileID: 11400000, guid: bd7719f05c3589a42840d5f9281034ae, type: 2}
+    - {fileID: 11400000, guid: 852ab2ce75102424dada0973437b3ea7, type: 2}
+    - {fileID: 11400000, guid: 276fe0bc116e6d940989b4153153af56, type: 2}
+    levelDuration: 90
   allowedDrops:
   - {fileID: 11400000, guid: a7d17e702a6382e419073fd04476e9f4, type: 2}
   - {fileID: 11400000, guid: c55bfbd59c3144644b9c7bb780f489bb, type: 2}
@@ -134,7 +182,9 @@ MonoBehaviour:
   - {fileID: 11400000, guid: b1d64b4fdc2f9da49920f58a3c4dd603, type: 2}
   - {fileID: 11400000, guid: e16c09281b0e4df4faece2db0b0a4baf, type: 2}
   - {fileID: 11400000, guid: 1883f52b547783147a8d6ec1c3e6dbcb, type: 2}
-  dropChance: 10
+  dropChance: 15
+  vendorPrefab: {fileID: 8070256912491365633, guid: a1f218fa0ab5e1f419f103228258c099, type: 3}
+  levelsPerShop: 2
   musicSource: {fileID: 5391940436321524276}
   gameOverPanel: {fileID: 0}
   playerObject: {fileID: 0}

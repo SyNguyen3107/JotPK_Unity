@@ -1,6 +1,6 @@
 ﻿using System.Collections;
 using UnityEngine;
-using static UnityEditor.Progress;
+using static UnityEditor.Progress; // Lưu ý: Dòng này có thể không cần thiết nếu không dùng Editor script, nhưng tôi giữ nguyên theo file gốc
 
 public class PlayerController : MonoBehaviour
 {
@@ -18,18 +18,24 @@ public class PlayerController : MonoBehaviour
     public int currentBulletDamage = 1;
     public Transform firePoint;
     public float bulletOffset = 0.5f;
-    public float fireDelay = 0.4f;
+    public float currentFireRate = 0.4f; // Delay giữa các phát bắn (càng nhỏ càng nhanh)
+    public float maxFireRate = 0.05f;    // Giới hạn tốc độ bắn nhanh nhất
 
     [Header("Audio Settings")]
     public AudioSource gunAudioSource;
     public AudioSource footstepAudioSource;
     public AudioSource itemsPickupAudioSource;
-    public AudioSource itemsActivateAudioSource;
+    public AudioSource sfxAudioSource;
+    public AudioSource zombieAudioSource;
 
     public AudioClip shootClip;
     public AudioClip footstepClip;
     public AudioClip itemPickupClip;
     public AudioClip upgradePurchasedClip;
+    public AudioClip playerDeathClip;
+    public AudioClip lightningSound;
+    public AudioClip zombieMusic;
+
     public float stepDelay = 0.3f;
 
     [Header("Visual References")]
@@ -56,18 +62,18 @@ public class PlayerController : MonoBehaviour
     public bool enableAutoFire = false;
 
     [Header("Skill: Coffee")]
-    public float coffeeSpeedBoostAmount = 3f;
+    public float coffeeSpeed = 7f;
 
     [Header("Skill: Heavy Machine Gun")]
-    public float hmgFireRate = 0.1f;
+    public float hmgFireRate = 0.05f; // Sửa lại mặc định cho khớp mô tả (0.05)
 
     [Header("Skill: Shotgun")]
     public float shotgunSpreadAngle = 15f;
-    public float shotgunFireRate = 0.7f;
+    public float shotgunFireRateDecrease = 0.2f; // Cộng thêm vào delay (bắn chậm đi)
 
     [Header("Skill: Sheriff Badge")]
-    public float sheriffBadgeSpeedBoost = 2f;
-    public float sheriffBadgeFireRate = 0.2f;
+    public float sheriffBadgeSpeed = 6.5f;
+    public float sheriffBadgeFireRate = 0.1f; // Sửa lại mặc định cho khớp mô tả (0.1)
 
     [Header("Skill: Nuke")]
     public GameObject explosionFXPrefab;
@@ -86,16 +92,17 @@ public class PlayerController : MonoBehaviour
     public GameObject lightningFxObject;
     public Sprite[] struckSprites;
     public Sprite[] lightningSprites;
-    public AudioClip lightningSound;
     public float flashSpeed = 0.1f;
     public float cutsceneDuration = 3f;
+
 
     [Header("Skill: Tombstone (Zombie Mode)")]
     public GameObject zombieModelObject;
     public Animator zombieAnimator;
-    public AudioClip zombieMusic;
     public float zombieDuration = 8f;
-    public float zombieSpeedBoost = 3f;
+    public float zombieSpeed = 6f;
+    private float zombieTimer = 0f; // Biến đếm ngược thời gian Zombie
+    private Coroutine tombstoneCoroutine;
 
     [Header("Shop Interactions")]
     public Sprite handsUpSprite;       // Sprite giơ 2 tay lên trời
@@ -130,8 +137,8 @@ public class PlayerController : MonoBehaviour
     private bool isInvincible = false;
     [HideInInspector] public bool isZombieMode = false;
 
-    // Defaults for Reset
-    private float defaultFireDelay;
+    // Defaults for Reset (Lưu giá trị gốc + Upgrade)
+    private float defaultFireRate;
     private float defaultMoveSpeed;
     private GameObject defaultBulletPrefab;
 
@@ -142,7 +149,7 @@ public class PlayerController : MonoBehaviour
 
     void Start()
     {
-        defaultFireDelay = fireDelay;
+        defaultFireRate = currentFireRate;
         defaultMoveSpeed = moveSpeed;
         defaultBulletPrefab = bulletPrefab;
 
@@ -199,7 +206,7 @@ public class PlayerController : MonoBehaviour
         {
             Vector2 inputShootDir = new Vector2(shootX, shootY);
             Shoot(inputShootDir.normalized);
-            nextFireTime = Time.time + fireDelay;
+            nextFireTime = Time.time + currentFireRate;
 
             if (!isZombieMode)
             {
@@ -221,7 +228,7 @@ public class PlayerController : MonoBehaviour
 
     #endregion
 
-    #region Core Logic: Buffs & Stats (NEW)
+    #region Core Logic: Buffs & Stats (UPDATED)
 
     // Hàm này kiểm tra xem buff nào còn hạn sử dụng
     void HandleBuffTimers()
@@ -235,60 +242,67 @@ public class PlayerController : MonoBehaviour
     }
 
     // Hàm này tổng hợp tất cả các buff đang active để ra chỉ số cuối cùng
+    // LOGIC: LUÔN LẤY CHỈ SỐ TỐT NHẤT (Max Speed, Min Delay)
     void RecalculateStats()
     {
-        // 1. Reset về mặc định
-        fireDelay = defaultFireDelay;
-        enableAutoFire = false;
-        moveSpeed = defaultMoveSpeed;
-        if (legsAnimator != null) legsAnimator.speed = 1f;
+        // --- 1. TÍNH TOÁN TỐC ĐỘ DI CHUYỂN ---
+        // Bắt đầu từ tốc độ gốc (đã bao gồm nâng cấp Boots)
+        float targetSpeed = defaultMoveSpeed;
 
+        // So sánh với các buff, lấy giá trị lớn nhất (nhanh nhất)
         if (isZombieMode)
         {
-            moveSpeed = Mathf.Min(moveSpeed + zombieSpeedBoost, maxSpeed);
+            targetSpeed = Mathf.Max(targetSpeed, zombieSpeed);
         }
-
-        // 2. Tính toán Tốc độ chạy (Cộng dồn)
         if (isCoffeeActive)
         {
-            moveSpeed = Mathf.Min(moveSpeed + coffeeSpeedBoostAmount, maxSpeed);
-            if (legsAnimator != null) legsAnimator.speed = 2f;
+            targetSpeed = Mathf.Max(targetSpeed, coffeeSpeed);
         }
+        if (isSheriffActive)
+        {
+            targetSpeed = Mathf.Max(targetSpeed, sheriffBadgeSpeed);
+        }
+
+        moveSpeed = targetSpeed;
+
+        // Hiệu ứng visual chạy nhanh (chỉ cần tốc độ > gốc một chút là tính)
+        if (legsAnimator != null)
+        {
+            legsAnimator.speed = (moveSpeed > 5.5f) ? 2f : 1f;
+        }
+
+
+        // --- 2. TÍNH TOÁN TỐC ĐỘ BẮN (FIRE RATE) ---
+        // Bắt đầu từ tốc độ gốc (đã bao gồm nâng cấp Gun)
+        float targetFireRate = defaultFireRate;
+        enableAutoFire = false;
+
+        // A. Xử lý logic Shotgun cơ bản
+        // Shotgun chỉ làm chậm tốc độ nếu KHÔNG CÓ các buff súng xịn hơn (HMG/Sheriff)
+        if (isShotgunActive && !isHMGActive && !isSheriffActive)
+        {
+            targetFireRate += shotgunFireRateDecrease; // Cộng thêm delay (bắn chậm đi)
+        }
+
+        // B. Xử lý các Buff súng xịn (Lấy Min vì delay càng nhỏ bắn càng nhanh)
 
         if (isSheriffActive)
         {
-            moveSpeed = Mathf.Min(moveSpeed + sheriffBadgeSpeedBoost, maxSpeed);
-            if (legsAnimator != null) legsAnimator.speed = 2f;
-        }
-
-        // 3. Tính toán Vũ khí (Ưu tiên)
-
-        // Cấp 1: Sheriff (Mạnh nhất - Ghi đè tất cả)
-        if (isSheriffActive)
-        {
-            fireDelay = sheriffBadgeFireRate;
+            targetFireRate = Mathf.Min(targetFireRate, sheriffBadgeFireRate);
             enableAutoFire = true;
-            return; // Sheriff bao gồm cả bắn chùm (xử lý ở hàm Shoot) nên return luôn
         }
 
-        // Cấp 2: HMG (Tốc độ bắn)
         if (isHMGActive)
         {
-            fireDelay = hmgFireRate;
+            // HMG thường là nhanh nhất (0.05), Min sẽ đảm bảo nó đè được cả Sheriff (0.1)
+            targetFireRate = Mathf.Min(targetFireRate, hmgFireRate);
             enableAutoFire = true;
         }
 
-        // Cấp 3: Shotgun & Wheel (Kiểu bắn)
-        // Lưu ý: Nếu có HMG, tốc độ bắn đã nhanh (0.05), ở đây chỉ check để bật cờ bắn chùm thôi
-        // Nếu KHÔNG có HMG, thì Shotgun/Wheel phải tự set tốc độ chậm của nó
+        currentFireRate = targetFireRate;
 
-        if (isShotgunActive && !isHMGActive)
-        {
-            fireDelay = shotgunFireRate;
-            enableAutoFire = false;
-        }
-
-        if (isWheelActive && !isHMGActive)
+        // C. Xử lý Wheel (chỉ tắt auto fire, tốc độ giữ theo tính toán ở trên)
+        if (isWheelActive && !isHMGActive && !isSheriffActive)
         {
             enableAutoFire = false;
         }
@@ -324,22 +338,22 @@ public class PlayerController : MonoBehaviour
         if (heldItem != null)
         {
             ActivateItem(newItem); // Dùng ngay item mới nhặt
-            if (itemsActivateAudioSource != null && newItem.activateSound != null)
-                itemsActivateAudioSource.PlayOneShot(newItem.activateSound);
+            if (sfxAudioSource != null && newItem.activateSound != null)
+                sfxAudioSource.PlayOneShot(newItem.activateSound);
         }
         else
         {
             heldItem = newItem; // Cất vào túi
             if (UIManager.Instance != null) UIManager.Instance.UpdateItem(heldItem.icon);
             if (itemsPickupAudioSource != null && itemPickupClip != null)
-                itemsActivateAudioSource.PlayOneShot(itemPickupClip);
+                sfxAudioSource.PlayOneShot(itemPickupClip);
         }
     }
 
     void ActivateItem(PowerUpData item)
     {
         if (item.activateSound != null)
-            itemsActivateAudioSource.PlayOneShot(item.activateSound);
+            sfxAudioSource.PlayOneShot(item.activateSound);
 
         // 1. Skill Items (Xử lý riêng)
         if (item.type == PowerUpType.ScreenNuke || item.type == PowerUpType.SmokeBomb || item.type == PowerUpType.Tombstone)
@@ -351,7 +365,15 @@ public class PlayerController : MonoBehaviour
                     if (GameManager.Instance != null) GameManager.Instance.ActivateGlobalStun(smokeBombDuration);
                     TeleportAndSmoke();
                     break;
-                case PowerUpType.Tombstone: StartCoroutine(TombstonePhase1()); break;
+                case PowerUpType.Tombstone:
+                    //RESET HOÀN TOÀN
+                    // Dù đang là người hay Zombie, khi ăn Tombstone mới:
+                    // 1. Ngắt ngay tiến trình cũ
+                    if (tombstoneCoroutine != null) StopCoroutine(tombstoneCoroutine);
+
+                    // 2. Chạy lại quy trình từ đầu (Sét đánh -> Biến hình -> Timer mới)
+                    tombstoneCoroutine = StartCoroutine(TombstoneRoutine());
+                    break;
             }
             return;
         }
@@ -571,21 +593,42 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    IEnumerator TombstonePhase1()
+    IEnumerator TombstoneRoutine()
     {
-        // Pause nhạc nền
+        // ==================================================
+        // PHASE 0: DỌN DẸP & CHUẨN BỊ (QUAN TRỌNG CHO VIỆC RESET)
+        // ==================================================
+
+        // Nếu đang là Zombie mà ăn thêm cái nữa -> Tắt ngay nhạc Zombie cũ đang phát
+        if (zombieAudioSource != null) zombieAudioSource.Stop();
+
+        // Đảm bảo tắt model Zombie (nếu đang hiện) để nhường chỗ cho effect Sét đánh
+        if (zombieModelObject != null) zombieModelObject.SetActive(false);
+
+        // Tạm thời tắt cờ Zombie để Stats tính lại về tốc độ gốc (tránh việc cutscene mà chạy nhanh)
+        isZombieMode = false;
+
+        // ==================================================
+        // PHASE 1: BIẾN HÌNH (CUTSCENE)
+        // ==================================================
+
+        // 1. Pause nhạc nền chính
         if (GameManager.Instance != null && GameManager.Instance.musicSource != null)
-            GameManager.Instance.musicSource.Stop();
+            GameManager.Instance.musicSource.Pause();
 
         if (UIManager.Instance != null) UIManager.Instance.ToggleHUD(false);
 
-        isDead = true;
+        // 2. Setup hiệu ứng sét đánh
+        isDead = true; // Khoá input
         if (rb != null) rb.linearVelocity = Vector2.zero;
+
+        // Ẩn model người thường
         if (activeStateObject != null) activeStateObject.SetActive(false);
 
         if (struckFxObject != null) struckFxObject.SetActive(true);
         if (lightningFxObject != null) lightningFxObject.SetActive(true);
 
+        // Tạo màn đêm
         GameObject darkness = null;
         if (darknessPrefab != null)
         {
@@ -594,17 +637,19 @@ public class PlayerController : MonoBehaviour
             darkness.transform.localPosition = new Vector3(0, 0, 10);
         }
 
-        if (itemsActivateAudioSource != null && lightningSound != null)
-            itemsActivateAudioSource.PlayOneShot(lightningSound);
+        // Âm thanh sét (Chạy đè lên mọi âm thanh khác)
+        if (zombieAudioSource != null && lightningSound != null)
+            zombieAudioSource.PlayOneShot(lightningSound);
 
         if (GameManager.Instance != null)
             GameManager.Instance.ActivateGlobalStun(cutsceneDuration);
 
-        float timer = 0f;
+        // Hiệu ứng nhấp nháy
+        float cutsceneTimer = 0f;
         SpriteRenderer struckSR = struckFxObject.GetComponent<SpriteRenderer>();
         SpriteRenderer[] boltSRs = lightningFxObject.GetComponentsInChildren<SpriteRenderer>();
 
-        while (timer < cutsceneDuration)
+        while (cutsceneTimer < cutsceneDuration)
         {
             if (struckSprites.Length > 0 && struckSR != null)
                 struckSR.sprite = struckSprites[Random.Range(0, struckSprites.Length)];
@@ -618,43 +663,68 @@ public class PlayerController : MonoBehaviour
                 }
             }
             yield return new WaitForSeconds(flashSpeed);
-            timer += flashSpeed;
+            cutsceneTimer += flashSpeed;
         }
 
+        // Dọn dẹp Phase 1
         if (struckFxObject != null) struckFxObject.SetActive(false);
         if (lightningFxObject != null) lightningFxObject.SetActive(false);
         if (darkness != null) Destroy(darkness);
-
         if (UIManager.Instance != null) UIManager.Instance.ToggleHUD(true);
-        StartCoroutine(TombstonePhase2());
-    }
 
-    IEnumerator TombstonePhase2()
-    {
+        // ==================================================
+        // PHASE 2: ZOMBIE MODE
+        // ==================================================
+
         isZombieMode = true;
-        isDead = false;
+        isDead = false; // Mở lại input
 
+        // Đổi Model
         if (activeStateObject != null) activeStateObject.SetActive(false);
         if (idleStateObject != null) idleStateObject.SetActive(false);
         if (zombieModelObject != null) zombieModelObject.SetActive(true);
 
-        if (rb != null) rb.linearVelocity = Vector2.zero;
+        // Cập nhật stats ngay để lấy tốc độ zombie
+        RecalculateStats();
 
-        if (itemsActivateAudioSource != null && zombieMusic != null)
-            itemsActivateAudioSource.PlayOneShot(zombieMusic);
+        // PHÁT NHẠC ZOMBIE
+        if (zombieAudioSource != null && zombieMusic != null)
+            zombieAudioSource.PlayOneShot(zombieMusic);
 
-        yield return new WaitForSeconds(zombieDuration);
+        // --- TIMER LOOP ---
+        zombieTimer = zombieDuration;
+
+        while (zombieTimer > 0)
+        {
+            zombieTimer -= Time.deltaTime;
+
+            if (GameManager.Instance.currentLives <= 0)
+            {
+                break;
+            }
+
+            yield return null;
+        }
+
+        // ==================================================
+        // KẾT THÚC: RESET
+        // ==================================================
 
         isZombieMode = false;
 
+        // Reset Visual
         if (zombieModelObject != null) zombieModelObject.SetActive(false);
         if (activeStateObject != null) activeStateObject.SetActive(true);
         if (bodyRenderer != null) bodyRenderer.enabled = true;
         if (legsAnimator != null) legsAnimator.Play("Idle");
 
-        // Unpause nhạc nền
+        // Unpause nhạc nền chính
         if (GameManager.Instance != null && GameManager.Instance.musicSource != null)
-            GameManager.Instance.musicSource.Play();
+        {
+            GameManager.Instance.musicSource.UnPause();
+        }
+
+        tombstoneCoroutine = null;
     }
 
     public void KillEnemyOnContact() { }
@@ -666,6 +736,9 @@ public class PlayerController : MonoBehaviour
     public void TriggerDeathAnimation()
     {
         isDead = true;
+        if (sfxAudioSource != null && playerDeathClip != null)
+            sfxAudioSource.PlayOneShot(playerDeathClip);
+
         moveInput = Vector2.zero;
         if (rb != null)
         {
@@ -730,10 +803,26 @@ public class PlayerController : MonoBehaviour
 
         float elapsed = 0f;
         Vector3 startPos = transform.position;
+        float cutsceneStepTimer = 0f;
 
         while (elapsed < duration)
         {
             transform.position = Vector3.Lerp(startPos, targetPos, elapsed / duration);
+
+            if (Time.time >= cutsceneStepTimer)
+            {
+                if (footstepAudioSource && footstepClip)
+                {
+                    // nên chỉ cần PlayOneShot là nó tự dùng Volume đã chỉnh trong Inspector.
+                    footstepAudioSource.PlayOneShot(footstepClip);
+                }
+                // Cập nhật lần phát tiếp theo dựa trên stepDelay
+                cutsceneStepTimer = Time.time + stepDelay;
+            }
+
+            elapsed += Time.deltaTime;
+            yield return null;
+
             elapsed += Time.deltaTime;
             yield return null;
         }
@@ -748,13 +837,15 @@ public class PlayerController : MonoBehaviour
         switch (data.type)
         {
             case UpgradeType.MoveSpeed:
-                defaultMoveSpeed += data.valueAmount; // Tăng tốc độ gốc
-                moveSpeed = defaultMoveSpeed;         // Cập nhật ngay lập tức
+                defaultMoveSpeed += data.valueAmount; // Tăng base speed
+                moveSpeed = defaultMoveSpeed;         // Cập nhật ngay
                 break;
 
             case UpgradeType.FireRate:
-                defaultFireDelay -= data.valueAmount; // Giảm delay (vd: -0.05)
-                fireDelay = defaultFireDelay;
+                // Giảm base delay (bắn nhanh hơn)
+                // Lưu ý: Đảm bảo không giảm quá sâu (ví dụ không dưới 0.05)
+                defaultFireRate = Mathf.Max(maxFireRate, defaultFireRate - data.valueAmount);
+                currentFireRate = defaultFireRate;
                 break;
 
             case UpgradeType.AmmoDamage:
@@ -767,18 +858,16 @@ public class PlayerController : MonoBehaviour
                 break;
 
             case UpgradeType.SheriffBadge:
-                // Tạo một PowerUpData tạm thời để đưa vào túi
                 PowerUpData badge = ScriptableObject.CreateInstance<PowerUpData>();
                 badge.type = PowerUpType.SheriffBadge;
-                badge.duration = 10f; // Hoặc lấy từ data
+                badge.duration = 10f;
                 badge.icon = data.icon;
                 badge.activateSound = itemsPickupAudioSource != null ? itemsPickupAudioSource.clip : null;
                 PickUpItem(badge);
                 break;
 
             case UpgradeType.SuperGun:
-                // Mở khóa Shotgun vĩnh viễn (nhưng vẫn giữ tốc độ bắn của súng hiện tại)
-                shotgunExpirationTime = float.MaxValue; // Hack: cho thời gian hết hạn là vô cực
+                shotgunExpirationTime = float.MaxValue;
                 isShotgunActive = true;
                 break;
         }
@@ -790,36 +879,29 @@ public class PlayerController : MonoBehaviour
 
     IEnumerator ItemGetRoutine(Sprite itemSprite)
     {
-        // 1. Khóa Input & Dừng di chuyển
         isInputEnabled = false;
         moveInput = Vector2.zero;
         if (rb != null) rb.linearVelocity = Vector2.zero;
 
-        // 2. Đổi Sprite Player sang "Giơ tay"
         if (bodySpriteDisplay != null && handsUpSprite != null)
         {
             bodySpriteDisplay.sprite = handsUpSprite;
         }
 
-        // 3. Hiện vật phẩm trên đầu
         if (itemLiftDisplay != null)
         {
             itemLiftDisplay.sprite = itemSprite;
             itemLiftDisplay.gameObject.SetActive(true);
         }
 
-        // 4. Phát nhạc (nếu có)
         if (itemsPickupAudioSource != null && upgradePurchasedClip != null)
             itemsPickupAudioSource.PlayOneShot(upgradePurchasedClip);
 
-        // 5. Chờ 2 giây
         yield return new WaitForSeconds(2f);
 
-        // 6. Trả lại trạng thái bình thường
         if (itemLiftDisplay != null) itemLiftDisplay.gameObject.SetActive(false);
         isInputEnabled = true;
 
-        // Reset visual về Idle để Update loop tự xử lý tiếp
         if (legsAnimator != null) legsAnimator.Play("Idle");
     }
 }

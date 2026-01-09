@@ -8,11 +8,10 @@ public class GameManager : MonoBehaviour
     public static GameManager Instance;
 
     #region --- CONSTANTS (STRING REFERENCES) ---
-    // Định nghĩa các chuỗi tên/tag ở đây để tránh gõ sai chính tả sau này
     private const string TAG_PLAYER = "Player";
     private const string TAG_ENEMY = "Enemy";
     private const string TAG_DEATH_FX = "DeathFX";
-    private const string NAME_INITIAL_MAP = "S1A1"; // Tên map có sẵn trên Scene lúc đầu
+    private const string NAME_INITIAL_MAP = "S1A1";
     private const string NAME_SPAWN_POINTS = "SpawnPoints";
     #endregion
 
@@ -31,24 +30,31 @@ public class GameManager : MonoBehaviour
     public float invincibilityDuration = 3f;
 
     [Header("Transition Settings")]
-    public Gate currentGate;            // Cổng của map hiện tại
-    public float mapHeight = 20f;       // Khoảng cách Y tạm thời khi chuyển map
-    public float transitionTime = 3f;   // Thời gian di chuyển camera/player
+    public Gate currentGate;
+    public float mapHeight = 20f;
+    public float transitionTime = 3f;
 
     [Header("Debug / Testing")]
-    // Muốn test màn nào thì điền số index của màn đó vào đây (0 là màn 1, 1 là màn 2...)
     public int startingLevelIndex = 0;
 
     [Header("Level Management")]
-    public List<LevelConfig> allLevels; // Danh sách cấu hình các màn chơi
+    public List<LevelConfig> allLevels;
+
+    [Header("Economy Balance")]
+    public int minCoinsPerLevel = 10;
+    public int maxCoinsPerLevel = 30;
+
+    private int currentLevelCoinsSpawned = 0;
+    private int targetCoinsForThisLevel = 0;
 
     [Header("Drop System")]
+    public PowerUpData coinData; // --- MỚI: Kéo thả Coin Data vào đây để làm "Bảo hiểm" ---
     public List<PowerUpData> allowedDrops;
-    [Range(0f, 100f)] public float dropChance = 5f;
+    [Range(0f, 100f)] public float dropChance = 30f; // Tăng mặc định lên chút cho dễ test
 
     [Header("Shop Settings")]
-    public GameObject vendorPrefab; // Kéo Prefab VendorNPC vào đây
-    public int levelsPerShop = 2;   // Ví dụ: Cứ 2 màn thì gặp Shop 1 lần
+    public GameObject vendorPrefab;
+    public int levelsPerShop = 2;
 
     [Header("Audio")]
     public AudioSource musicSource;
@@ -59,7 +65,6 @@ public class GameManager : MonoBehaviour
     public GameObject gameOverPanel;
     public GameObject playerObject;
 
-    // [SerializeField] giúp hiện biến private lên Inspector để Debug
     [Header("Debug Info")]
     [SerializeField] private GameObject currentMapInstance;
     [SerializeField] private float currentTime;
@@ -107,10 +112,12 @@ public class GameManager : MonoBehaviour
         currentLives = startLives;
         isGameOver = false;
         isWaitingForClear = false;
-        currentLevelIndex = startingLevelIndex; // Bắt đầu từ level bạn muốn test
+        currentLevelIndex = startingLevelIndex;
         totalAreasPassed = 0;
 
-        // Tìm map "mồi" đang có sẵn trên Scene (S1A1)
+        // --- MỚI: Reset kinh tế ngay khi bắt đầu game ---
+        ResetLevelEconomy();
+
         GameObject existingMap = GameObject.Find(NAME_INITIAL_MAP);
 
         // --- LOGIC SINH MAP TEST ---
@@ -119,36 +126,27 @@ public class GameManager : MonoBehaviour
             LevelConfig levelData = allLevels[currentLevelIndex];
             levelDuration = levelData.levelDuration;
 
-            // Nếu đang test level > 0 (Ví dụ Level 2), ta phải tráo map
             if (currentLevelIndex > 0)
             {
-                // 1. Xóa map mồi cũ đi
                 if (existingMap != null) Destroy(existingMap);
-
-                // 2. Spawn map cần test vào vị trí (0,0)
                 currentMapInstance = Instantiate(levelData.mapPrefab, Vector3.zero, Quaternion.identity);
-                currentMapInstance.name = "Map_" + levelData.levelName; // Đặt tên cho dễ nhìn
+                currentMapInstance.name = "Map_" + levelData.levelName;
             }
             else
             {
-                // Nếu test level 0, dùng luôn map có sẵn
                 currentMapInstance = existingMap;
                 if (currentMapInstance == null) Debug.LogWarning($"Không tìm thấy Map khởi đầu '{NAME_INITIAL_MAP}'!");
             }
 
-            // --- TỰ ĐỘNG GÁN DỮ LIỆU (AUTO-WIRE) ---
-            // Phần này giúp bạn KHÔNG CẦN kéo thả SpawnPoint thủ công nữa
-
+            // --- AUTO-WIRE SPAWN POINTS ---
             if (currentMapInstance != null)
             {
-                // 1. Tự tìm Cổng
                 currentGate = currentMapInstance.GetComponentInChildren<Gate>();
                 if (currentGate == null) Debug.LogError("LỖI: Map này thiếu script Gate!");
 
-                // 2. Tự tìm và Gán Spawn Points vào WaveSpawner
                 if (WaveSpawner.Instance != null)
                 {
-                    WaveSpawner.Instance.waves = levelData.waves; // Nạp danh sách quái
+                    WaveSpawner.Instance.waves = levelData.waves;
 
                     Transform spawnParent = currentMapInstance.transform.Find(NAME_SPAWN_POINTS);
                     if (spawnParent != null)
@@ -158,8 +156,6 @@ public class GameManager : MonoBehaviour
                         {
                             autoSpawnPoints[i] = spawnParent.GetChild(i);
                         }
-
-                        // Cập nhật ngay lập tức cho Spawner
                         WaveSpawner.Instance.UpdateLevelData(Vector3.zero, levelData.waves, autoSpawnPoints);
                         Debug.Log($"[Auto-Setup] Đã tự gán {autoSpawnPoints.Length} điểm spawn cho Level {currentLevelIndex}.");
                     }
@@ -174,7 +170,6 @@ public class GameManager : MonoBehaviour
         {
             Debug.LogError("Starting Level Index vượt quá số lượng màn chơi trong danh sách!");
         }
-        // ---------------------------
 
         // Setup State
         currentTime = levelDuration;
@@ -200,7 +195,6 @@ public class GameManager : MonoBehaviour
             musicSource.Play();
         }
 
-        // Kích hoạt Spawner chạy luôn (nếu test map 2 trở đi thì cần gọi dòng này để nó bắt đầu)
         if (currentLevelIndex > 0 && WaveSpawner.Instance != null)
         {
             WaveSpawner.Instance.SetWavePaused(false);
@@ -256,10 +250,8 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    // Logic đặc biệt: Nếu chỉ còn Spikeball khi hết giờ thì làm yếu chúng đi
     void CheckSpikeballEndCondition()
     {
-
         GameObject[] enemies = GameObject.FindGameObjectsWithTag(TAG_ENEMY);
         if (enemies.Length == 0) return;
 
@@ -290,7 +282,6 @@ public class GameManager : MonoBehaviour
     {
         Debug.Log("LEVEL CLEARED!");
 
-        // Tạm dừng nhạc nền khi hết màn (nếu cần thiết kế âm thanh như vậy)
         if (musicSource != null) musicSource.Stop();
 
         totalAreasPassed++;
@@ -299,28 +290,18 @@ public class GameManager : MonoBehaviour
 
         if (UIManager.Instance != null) UIManager.Instance.UpdateAreaIndicator(totalAreasPassed);
 
-        // --- 1. MỞ CỔNG NGAY LẬP TỨC ---
-        // Người chơi có thể đi qua bất cứ lúc nào, không cần chờ Shop
         if (currentGate != null) currentGate.OpenGate();
         else Debug.LogWarning("Current Gate is NULL!");
 
-        // --- 2. XỬ LÝ SHOP (SONG SONG) ---
-        // Điều kiện: Không phải màn đầu, và chia hết cho số màn quy định
+        // --- SPAWN SHOP ---
         bool shouldSpawnShop = (totalAreasPassed > 0) && (totalAreasPassed % levelsPerShop == 0);
 
         if (shouldSpawnShop && vendorPrefab != null)
         {
             Debug.Log("SHOP SPAWNED!");
-
-            // Reset để được mua món mới
             if (UpgradeManager.Instance != null) UpgradeManager.Instance.ResetPurchaseStatus();
 
-            // Spawn NPC tại vị trí (0,0) - VendorController sẽ tự lo việc đi lại
             GameObject vendor = Instantiate(vendorPrefab, Vector3.zero, Quaternion.identity);
-
-            // [QUAN TRỌNG] Gán Vendor làm con của Map hiện tại
-            // Để khi Player qua màn -> Map bị Destroy -> Vendor cũng bị Destroy theo
-            // Khắc phục hoàn toàn lỗi Vendor còn sót lại ở màn sau
             if (currentMapInstance != null)
             {
                 vendor.transform.SetParent(currentMapInstance.transform);
@@ -335,7 +316,6 @@ public class GameManager : MonoBehaviour
 
     IEnumerator TransitionRoutine()
     {
-        // 1. Chuẩn bị dữ liệu Level tiếp theo
         currentLevelIndex++;
         if (currentLevelIndex >= allLevels.Count)
         {
@@ -345,56 +325,39 @@ public class GameManager : MonoBehaviour
 
         LevelConfig nextLevelData = allLevels[currentLevelIndex];
 
-        // 2. SPAWN MAP MỚI (Tại vị trí tạm thời Offset -20)
         Vector3 offsetPosition = new Vector3(0, -mapHeight, 0);
         GameObject newMap = Instantiate(nextLevelData.mapPrefab, offsetPosition, Quaternion.identity);
-        newMap.name = "Map_" + nextLevelData.levelName; // Đặt tên map mới cho dễ debug
+        newMap.name = "Map_" + nextLevelData.levelName;
 
-        // 3. CUTSCENE DI CHUYỂN
+        // --- MỚI: Reset kinh tế cho level mới ---
+        ResetLevelEconomy();
+
         PlayerController pc = playerObject.GetComponent<PlayerController>();
-
-        // Chạy Camera song song
         StartCoroutine(MoveCamera(offsetPosition, transitionTime));
-
-        // Chờ Player đi bộ xong (PlayerController sẽ tự lo việc Kinematic/Input)
         yield return StartCoroutine(pc.MoveToPosition(offsetPosition, transitionTime));
 
-        // ====================================================
-        // GIAI ĐOẠN "DỊCH CHUYỂN TỨC THỜI" (ORIGIN SHIFT)
-        // ====================================================
-
-        // A. Xóa Map cũ (Kèm cơ chế bảo vệ GameManager)
+        // ORIGIN SHIFT
         if (currentMapInstance != null)
         {
-            // Nếu GameManager lỡ làm con của Map cũ, tự tách ra để không bị Destroy
             if (transform.IsChildOf(currentMapInstance.transform))
             {
-                Debug.LogError("[Critical] GameManager đang nằm trong Map cũ! Đang tự tách parent...");
                 transform.SetParent(null);
             }
             Destroy(currentMapInstance);
         }
 
-        // B. Dọn dẹp Effect chết chóc còn sót lại
         ClearLeftoverEffects();
 
-        // C. Dời mọi thứ về toạ độ gốc (0,0)
         newMap.transform.position = Vector3.zero;
         playerObject.transform.position = Vector3.zero;
         Camera.main.transform.position = new Vector3(0, 0, -10);
 
-        // Cập nhật vật lý ngay lập tức để tránh lỗi xuyên tường
         Physics2D.SyncTransforms();
-
-        // D. Cập nhật tham chiếu
         currentMapInstance = newMap;
 
-        // ====================================================
-
-        // 4. SETUP MAP MỚI
+        // SETUP MAP MỚI
         Gate newGate = newMap.GetComponentInChildren<Gate>();
 
-        // Cập nhật Spawner cho map mới
         if (WaveSpawner.Instance != null)
         {
             Transform spawnParent = newMap.transform.Find(NAME_SPAWN_POINTS);
@@ -408,16 +371,9 @@ public class GameManager : MonoBehaviour
                     newSpawnPoints[i] = spawnParent.GetChild(i);
                 }
             }
-            else
-            {
-                Debug.LogError($"LỖI: Không tìm thấy object '{NAME_SPAWN_POINTS}' trong prefab {newMap.name}");
-            }
-
-            // Gửi dữ liệu: Toạ độ 0, Wave mới, Điểm spawn mới
             WaveSpawner.Instance.UpdateLevelData(Vector3.zero, nextLevelData.waves, newSpawnPoints);
         }
 
-        // 5. FINALIZE & START GAME
         levelDuration = nextLevelData.levelDuration;
         currentTime = levelDuration;
 
@@ -427,7 +383,7 @@ public class GameManager : MonoBehaviour
         Debug.Log("Transition Done. Waiting 3s...");
         yield return new WaitForSeconds(3f);
         musicSource.Play();
-        // Kích hoạt lại game
+
         pc.isInputEnabled = true;
         isTimerRunning = true;
 
@@ -440,7 +396,6 @@ public class GameManager : MonoBehaviour
 
     void ClearLeftoverEffects()
     {
-        // Tìm và xóa các FX còn sót (Yêu cầu Prefab FX phải có Tag đúng)
         GameObject[] fxList = GameObject.FindGameObjectsWithTag(TAG_DEATH_FX);
         foreach (var fx in fxList)
         {
@@ -487,7 +442,6 @@ public class GameManager : MonoBehaviour
 
     IEnumerator RespawnSequence()
     {
-        // Giai đoạn 1: Dừng & Animation chết
         isTimerRunning = false;
         if (musicSource != null) musicSource.Stop();
         if (WaveSpawner.Instance != null) WaveSpawner.Instance.OnPlayerDied();
@@ -497,14 +451,12 @@ public class GameManager : MonoBehaviour
 
         yield return new WaitForSeconds(deathAnimationDuration);
 
-        // Giai đoạn 2: Biến mất
         if (playerObject != null) playerObject.SetActive(false);
         yield return new WaitForSeconds(deathDuration);
 
-        // Giai đoạn 3: Hồi sinh tại (0,0)
         if (playerObject != null)
         {
-            playerObject.transform.position = Vector3.zero; // Luôn đúng vì logic Origin Shift
+            playerObject.transform.position = Vector3.zero;
             playerObject.SetActive(true);
             if (pc != null) pc.ResetState();
         }
@@ -512,7 +464,6 @@ public class GameManager : MonoBehaviour
         if (pc != null) pc.TriggerRespawnInvincibility(invincibilityDuration);
         yield return new WaitForSeconds(invincibilityDuration);
 
-        // Giai đoạn 4: Resume
         if (WaveSpawner.Instance != null) WaveSpawner.Instance.OnPlayerRespawned();
 
         if (currentTime > 0) isTimerRunning = true;
@@ -526,12 +477,43 @@ public class GameManager : MonoBehaviour
     }
     #endregion
 
-    #region --- DROPS & ITEMS ---
-    public PowerUpData GetRandomDrop()
+    #region --- DROPS & ITEMS (CẬP NHẬT) ---
+
+    // 1. Hàm chính để Enemy gọi khi muốn rơi đồ
+    public PowerUpData GetDropItemLogic()
     {
-        if (allowedDrops.Count == 0) return null;
-        return allowedDrops[Random.Range(0, allowedDrops.Count)];
+        return GetWeightedRandomItem();
     }
+
+    // 2. Thuật toán chọn item theo Trọng số (Weight)
+    private PowerUpData GetWeightedRandomItem()
+    {
+        if (allowedDrops == null || allowedDrops.Count == 0) return null;
+
+        // Tính tổng trọng số
+        int totalWeight = 0;
+        foreach (var item in allowedDrops)
+        {
+            totalWeight += item.dropWeight;
+        }
+
+        // Random
+        int randomValue = Random.Range(0, totalWeight);
+
+        // Duyệt tìm item
+        foreach (var item in allowedDrops)
+        {
+            randomValue -= item.dropWeight;
+            if (randomValue < 0)
+            {
+                return item;
+            }
+        }
+
+        return allowedDrops[0]; // Fallback
+    }
+
+    // --- Các hàm quản lý Coin/Economy ---
 
     public void AddCoin(int amount)
     {
@@ -543,6 +525,19 @@ public class GameManager : MonoBehaviour
     {
         currentLives += amount;
         if (UIManager.Instance != null) UIManager.Instance.UpdateLives(currentLives);
+    }
+
+    public void ResetLevelEconomy()
+    {
+        currentLevelCoinsSpawned = 0;
+        targetCoinsForThisLevel = Random.Range(minCoinsPerLevel, maxCoinsPerLevel + 1);
+        Debug.Log($"Level Start: Target Coins to spawn = {targetCoinsForThisLevel}");
+    }
+
+
+    public void RegisterCoinSpawn()
+    {
+        currentLevelCoinsSpawned++;
     }
 
     public void ActivateGlobalStun(float duration)

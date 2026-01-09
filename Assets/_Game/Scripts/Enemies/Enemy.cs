@@ -27,7 +27,7 @@ public class Enemy : MonoBehaviour
     public Rigidbody2D rb;
 
     [Header("Drop")]
-    public GameObject itemPrefab;
+    public GameObject itemPrefab; // Prefab chung (cái hòm/túi) chứa item
 
     [Header("Stun Visuals")]
     public GameObject questionMarkObject;
@@ -59,6 +59,7 @@ public class Enemy : MonoBehaviour
             SetStunState(true);
         }
     }
+
     protected virtual void Update()
     {
         Transform currentTarget = playerTransform;
@@ -120,6 +121,7 @@ public class Enemy : MonoBehaviour
             }
         }
     }
+
     protected virtual void FixedUpdate()
     {
     }
@@ -147,24 +149,40 @@ public class Enemy : MonoBehaviour
         }
     }
 
+    // --- LOGIC MỚI: RƠI ĐỒ THEO TRỌNG SỐ & BẢO HIỂM ---
     public virtual void Die(bool shouldDrop = true)
     {
         isDead = true;
 
-        if (shouldDrop)
+        if (shouldDrop && GameManager.Instance != null)
         {
+            PowerUpData dropData = null;
             float roll = Random.Range(0f, 100f);
-            if (GameManager.Instance != null && roll <= GameManager.Instance.dropChance)
+            if (roll <= GameManager.Instance.dropChance)
             {
-                PowerUpData dropData = GameManager.Instance.GetRandomDrop();
-                if (dropData != null && itemPrefab != null)
+                dropData = GameManager.Instance.GetDropItemLogic();
+            }
+
+
+            // 3. Spawn Item
+            if (dropData != null && itemPrefab != null)
+            {
+                GameObject itemObj = Instantiate(itemPrefab, transform.position, Quaternion.identity);
+                ItemPickup pickup = itemObj.GetComponent<ItemPickup>();
+                if (pickup != null)
                 {
-                    GameObject itemObj = Instantiate(itemPrefab, transform.position, Quaternion.identity);
-                    ItemPickup pickup = itemObj.GetComponent<ItemPickup>();
-                    if (pickup != null) pickup.Setup(dropData);
+                    pickup.Setup(dropData);
+                }
+
+                // Nếu rơi ra Coin -> Báo cáo lại cho Manager
+                if (dropData.type == PowerUpType.Coin)
+                {
+                    GameManager.Instance.RegisterCoinSpawn();
                 }
             }
         }
+
+        // --- HẾT LOGIC RƠI ĐỒ ---
 
         if (deathEffectPrefab != null)
         {
@@ -172,9 +190,7 @@ public class Enemy : MonoBehaviour
 
             if (deathSounds.Length > 0)
             {
-
                 AudioClip randomClip = deathSounds[Random.Range(0, deathSounds.Length)];
-
                 DeathEffect deathScript = fx.GetComponent<DeathEffect>();
                 if (deathScript != null)
                 {
@@ -185,6 +201,7 @@ public class Enemy : MonoBehaviour
 
         Destroy(gameObject);
     }
+
     protected virtual bool ShouldFlee()
     {
         return true;
@@ -214,6 +231,7 @@ public class Enemy : MonoBehaviour
             Destroy(gameObject);
         }
     }
+
     IEnumerator FlashRoutine()
     {
         if (isFlashing) yield break;
@@ -243,6 +261,7 @@ public class Enemy : MonoBehaviour
 
         isFlashing = false;
     }
+
     public void SetStunState(bool isStunned)
     {
         if (isStunned)

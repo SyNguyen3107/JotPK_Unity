@@ -421,7 +421,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 156b26a7448977d4db605a159547ad5e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Enemy
-  moveSpeed: 5
+  moveSpeed: 3
   maxHealth: 2
   damageToPlayer: 1
   deathEffectPrefab: {fileID: 5037848369709413691, guid: 6050a5da9c530a14999645b9819b5d75, type: 3}

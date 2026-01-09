@@ -13,8 +13,9 @@ MonoBehaviour:
   m_Name: Shotgun
   m_EditorClassIdentifier: Assembly-CSharp::PowerUpData
   itemName: Shotgun
-  type: 1
   icon: {fileID: -435741865, guid: 226a2dd9665e9e9408a1469427cf02a8, type: 3}
+  type: 4
+  valueAmount: 0
   duration: 12
   activateSound: {fileID: 8300000, guid: 83c67f222297f80408a2f0eaaffa31b3, type: 3}
-  valueAmount: 0
+  dropWeight: 30

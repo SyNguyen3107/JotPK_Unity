@@ -13,8 +13,9 @@ MonoBehaviour:
   m_Name: SheriffBadge
   m_EditorClassIdentifier: Assembly-CSharp::PowerUpData
   itemName: Sheriff Badge
-  type: 4
   icon: {fileID: 1681397586, guid: 226a2dd9665e9e9408a1469427cf02a8, type: 3}
+  type: 6
+  valueAmount: 3
   duration: 24
   activateSound: {fileID: 8300000, guid: 83c67f222297f80408a2f0eaaffa31b3, type: 3}
-  valueAmount: 3
+  dropWeight: 10

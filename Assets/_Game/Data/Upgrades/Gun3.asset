@@ -17,4 +17,4 @@ MonoBehaviour:
   description: 
   cost: 10
   type: 1
-  valueAmount: 0.05
+  valueAmount: 0.1
