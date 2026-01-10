@@ -1807,7 +1807,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_66
+      name: fector_white
       rect:
         serializedVersion: 2
         x: 335
@@ -1851,7 +1851,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_68
+      name: cowboy_white
       rect:
         serializedVersion: 2
         x: 367
@@ -3171,13 +3171,13 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_128
+      name: fector_dialog
       rect:
         serializedVersion: 2
         x: 479
-        y: 81
-        width: 16
-        height: 16
+        y: 65
+        width: 32
+        height: 32
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -3188,28 +3188,6 @@ TextureImporter:
       bones: []
       spriteID: 8b4265ddfa0276e4593d7b9569e1a0ce
       internalID: -1826199920
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: all_129
-      rect:
-        serializedVersion: 2
-        x: 495
-        y: 81
-        width: 16
-        height: 16
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: f6f9feccaf939c944b38b0a8382e72ae
-      internalID: -951540098
       vertices: []
       indices: 
       edges: []
@@ -3782,50 +3760,6 @@ TextureImporter:
       bones: []
       spriteID: 6916f2aa65e29c748afb5d521d21fc93
       internalID: -279602607
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: all_159
-      rect:
-        serializedVersion: 2
-        x: 479
-        y: 65
-        width: 16
-        height: 16
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 788c0d0cd02155741a0f24d0e3682faa
-      internalID: -574211763
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: all_160
-      rect:
-        serializedVersion: 2
-        x: 495
-        y: 65
-        width: 16
-        height: 16
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: c889081e367929e4fbf1765aab675a5c
-      internalID: 899344486
       vertices: []
       indices: 
       edges: []
@@ -4799,7 +4733,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_212
+      name: trophy1
       rect:
         serializedVersion: 2
         x: 367
@@ -4821,7 +4755,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_213
+      name: trophy0
       rect:
         serializedVersion: 2
         x: 383
@@ -4843,7 +4777,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_214
+      name: trophy2
       rect:
         serializedVersion: 2
         x: 399
@@ -4865,7 +4799,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_215
+      name: cowboy_idle0
       rect:
         serializedVersion: 2
         x: 431
@@ -4887,7 +4821,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_216
+      name: cowboy_idle1
       rect:
         serializedVersion: 2
         x: 447
@@ -4909,7 +4843,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_217
+      name: cowboy_shooting0
       rect:
         serializedVersion: 2
         x: 463
@@ -4931,7 +4865,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_218
+      name: cowboy_shooting1
       rect:
         serializedVersion: 2
         x: 479
@@ -5327,7 +5261,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: explosion
+      name: explosion1
       rect:
         serializedVersion: 2
         x: 351
@@ -5459,13 +5393,13 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_244
+      name: cowboy_dialoge0
       rect:
         serializedVersion: 2
         x: 447
-        y: 17
-        width: 16
-        height: 16
+        y: 1
+        width: 32
+        height: 32
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -5481,35 +5415,13 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_245
-      rect:
-        serializedVersion: 2
-        x: 463
-        y: 17
-        width: 16
-        height: 16
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 52642ef4a3104f34baa5a864ebdaf472
-      internalID: 1863895450
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: all_246
+      name: cowboy_dialoge1
       rect:
         serializedVersion: 2
         x: 479
-        y: 17
-        width: 16
-        height: 16
+        y: 1
+        width: 32
+        height: 32
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -5520,28 +5432,6 @@ TextureImporter:
       bones: []
       spriteID: ce64752575987dd4d8ca2f76dbfad2e7
       internalID: -943832697
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: all_247
-      rect:
-        serializedVersion: 2
-        x: 495
-        y: 17
-        width: 16
-        height: 16
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: a39450c12639a0e4f99e0d5eed472778
-      internalID: -2115220771
       vertices: []
       indices: 
       edges: []
@@ -6097,94 +5987,6 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_273
-      rect:
-        serializedVersion: 2
-        x: 447
-        y: 1
-        width: 16
-        height: 16
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 2aca45ac115a5834f83239f66f5617a5
-      internalID: -596569770
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: all_274
-      rect:
-        serializedVersion: 2
-        x: 463
-        y: 1
-        width: 16
-        height: 16
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 23494cdb39e50f746bee9ac263751168
-      internalID: -474228127
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: all_275
-      rect:
-        serializedVersion: 2
-        x: 479
-        y: 1
-        width: 16
-        height: 16
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 78433b9344df77f498b48695be4c2ee4
-      internalID: 500523321
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: all_276
-      rect:
-        serializedVersion: 2
-        x: 495
-        y: 1
-        width: 16
-        height: 16
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: ab4a49ad900db4942aea23b3135add73
-      internalID: -748085816
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
       name: all_277
       rect:
         serializedVersion: 2
@@ -6338,6 +6140,28 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
+    - serializedVersion: 2
+      name: enemy_bullet
+      rect:
+        serializedVersion: 2
+        x: 394
+        y: 60
+        width: 5
+        height: 5
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9ab8f13c66261894cb6d5ce7ccb3a20e
+      internalID: -1454284637
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     customData: 
     physicsShape: []
@@ -6356,6 +6180,7 @@ TextureImporter:
     nameFileIdTable:
       0: 7115054174534175819
       Spikeball_deployed_white: -4977160037485911365
+      a: -1782895192
       all_0: 7160429211405778527
       all_1: 7057801135558962131
       all_105: -1547024356
@@ -6373,7 +6198,6 @@ TextureImporter:
       all_125: 405442480
       all_126: 808674513
       all_127: 1002424784
-      all_128: -1826199920
       all_129: -951540098
       all_130: -572308852
       all_131: -223515592
@@ -6433,13 +6257,6 @@ TextureImporter:
       all_20: 179133888372635544
       all_201: -384114809
       all_21: -730131288623254124
-      all_212: -588141577
-      all_213: -1333476936
-      all_214: -781575332
-      all_215: 1470654384
-      all_216: -559268227
-      all_217: 412346009
-      all_218: 1463831557
       all_219: -1590997314
       all_220: 303519900
       all_221: 1284842373
@@ -6452,9 +6269,7 @@ TextureImporter:
       all_228: 1845047095
       all_242: -1491798909
       all_243: 439877838
-      all_244: -1782895192
       all_245: 1863895450
-      all_246: -943832697
       all_247: -2115220771
       all_248: -680587051
       all_249: 1514579448
@@ -6487,8 +6302,6 @@ TextureImporter:
       all_56: -8516139111674596268
       all_57: -4351274396387659724
       all_58: 7289564452149313754
-      all_66: -8438291159918940483
-      all_68: -905626988124345088
       all_75: -3199451140683184690
       all_76: 7500685878400389213
       all_77: 4822682242369061572
@@ -6510,14 +6323,21 @@ TextureImporter:
       butterfly0: 974319259
       butterfly1: -1282451064
       butterfly_white: -2958205467540611984
+      cowboy_dialoge0: -1782895192
+      cowboy_dialoge1: -943832697
+      cowboy_idle0: 1470654384
+      cowboy_idle1: -559268227
+      cowboy_shooting0: 412346009
+      cowboy_shooting1: 1463831557
+      cowboy_white: -905626988124345088
       default_bullet: -921384764
+      enemy_bullet: -1454284637
       enemy_death0: -3652837159399745591
       enemy_death1: 4989539969749133908
       enemy_death2: 8042245624533656797
       enemy_death3: -42638469294066109
       enemy_death4: -6139412105589590082
       enemy_death5: 6145285355638961928
-      explosion: -141378192
       explosion0: 581015631
       explosion1: -141378192
       explosion2: 400557543
@@ -6526,9 +6346,11 @@ TextureImporter:
       fector0: -1264286004
       fector1: -2122689124
       fector2: -1066306206
+      fector_dialog: -1826199920
       fector_laugh0: 1783473938
       fector_laugh1: 1068959923
       fector_laugh2: -930131383
+      fector_white: -8438291159918940483
       forest0: -2249631188897383861
       forest1: 5125949765403844629
       forest10: 7057210770157347612
@@ -6631,6 +6453,9 @@ TextureImporter:
       spikeball_deploying2: -569145632
       spikeball_white: 8018687567259348686
       supergun_upgrade: -1690053254
+      trophy0: -1333476936
+      trophy1: -588141577
+      trophy2: -781575332
       ui_area_complete_mark: -1331358819
       ui_clock: -279602607
       ui_item_frame: -190451635

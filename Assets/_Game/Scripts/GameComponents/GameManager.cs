@@ -40,15 +40,10 @@ public class GameManager : MonoBehaviour
     [Header("Level Management")]
     public List<LevelConfig> allLevels;
 
-    [Header("Economy Balance")]
-    public int minCoinsPerLevel = 10;
-    public int maxCoinsPerLevel = 30;
-
     private int currentLevelCoinsSpawned = 0;
     private int targetCoinsForThisLevel = 0;
 
     [Header("Drop System")]
-    public PowerUpData coinData; // --- MỚI: Kéo thả Coin Data vào đây để làm "Bảo hiểm" ---
     public List<PowerUpData> allowedDrops;
     [Range(0f, 100f)] public float dropChance = 30f; // Tăng mặc định lên chút cho dễ test
 
@@ -114,9 +109,6 @@ public class GameManager : MonoBehaviour
         isWaitingForClear = false;
         currentLevelIndex = startingLevelIndex;
         totalAreasPassed = 0;
-
-        // --- MỚI: Reset kinh tế ngay khi bắt đầu game ---
-        ResetLevelEconomy();
 
         GameObject existingMap = GameObject.Find(NAME_INITIAL_MAP);
 
@@ -329,9 +321,6 @@ public class GameManager : MonoBehaviour
         GameObject newMap = Instantiate(nextLevelData.mapPrefab, offsetPosition, Quaternion.identity);
         newMap.name = "Map_" + nextLevelData.levelName;
 
-        // --- MỚI: Reset kinh tế cho level mới ---
-        ResetLevelEconomy();
-
         PlayerController pc = playerObject.GetComponent<PlayerController>();
         StartCoroutine(MoveCamera(offsetPosition, transitionTime));
         yield return StartCoroutine(pc.MoveToPosition(offsetPosition, transitionTime));
@@ -526,14 +515,6 @@ public class GameManager : MonoBehaviour
         currentLives += amount;
         if (UIManager.Instance != null) UIManager.Instance.UpdateLives(currentLives);
     }
-
-    public void ResetLevelEconomy()
-    {
-        currentLevelCoinsSpawned = 0;
-        targetCoinsForThisLevel = Random.Range(minCoinsPerLevel, maxCoinsPerLevel + 1);
-        Debug.Log($"Level Start: Target Coins to spawn = {targetCoinsForThisLevel}");
-    }
-
 
     public void RegisterCoinSpawn()
     {
