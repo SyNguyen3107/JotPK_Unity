@@ -40,6 +40,9 @@ public class GameManager : MonoBehaviour
     [Header("Level Management")]
     public List<LevelConfig> allLevels;
 
+    [Header("Boss Logic")]
+    public Vector3? overrideRespawnPosition = null;
+
     private int currentLevelCoinsSpawned = 0;
     private int targetCoinsForThisLevel = 0;
 
@@ -214,7 +217,10 @@ public class GameManager : MonoBehaviour
             HandleTimeUp();
         }
     }
-
+    public void SetTimerRunning(bool isRunning)
+    {
+        isTimerRunning = isRunning;
+    }
     void HandleTimeUp()
     {
         if (isWaitingForClear) return;
@@ -431,6 +437,7 @@ public class GameManager : MonoBehaviour
 
     IEnumerator RespawnSequence()
     {
+        // --- GIAI ĐOẠN 1: DỪNG GAME & ANIMATION ---
         isTimerRunning = false;
         if (musicSource != null) musicSource.Stop();
         if (WaveSpawner.Instance != null) WaveSpawner.Instance.OnPlayerDied();
@@ -440,22 +447,46 @@ public class GameManager : MonoBehaviour
 
         yield return new WaitForSeconds(deathAnimationDuration);
 
+        // --- GIAI ĐOẠN 2: ẨN PLAYER & CHỜ ---
         if (playerObject != null) playerObject.SetActive(false);
         yield return new WaitForSeconds(deathDuration);
 
+        // --- GIAI ĐOẠN 3: HỒI SINH & ĐẶT VỊ TRÍ ---
         if (playerObject != null)
         {
-            playerObject.transform.position = Vector3.zero;
+            // LOGIC MỚI: ƯU TIÊN VỊ TRÍ CUSTOM (CHO BOSS)
+            if (overrideRespawnPosition.HasValue)
+            {
+                playerObject.transform.position = overrideRespawnPosition.Value;
+            }
+            else
+            {
+                playerObject.transform.position = Vector3.zero; // Mặc định cho map thường
+            }
+
             playerObject.SetActive(true);
             if (pc != null) pc.ResetState();
         }
 
+        // --- GIAI ĐOẠN 4: BẤT TỬ TẠM THỜI ---
         if (pc != null) pc.TriggerRespawnInvincibility(invincibilityDuration);
         yield return new WaitForSeconds(invincibilityDuration);
 
+        // --- GIAI ĐOẠN 5: RESUME GAME ---
         if (WaveSpawner.Instance != null) WaveSpawner.Instance.OnPlayerRespawned();
 
-        if (currentTime > 0) isTimerRunning = true;
+        // LOGIC MỚI: XỬ LÝ TIMER
+        // Nếu đang đấu Boss (có vị trí override) -> Giữ nguyên Timer tắt
+        if (overrideRespawnPosition.HasValue)
+        {
+            isTimerRunning = false;
+        }
+        // Nếu map thường và còn giờ -> Chạy tiếp
+        else if (currentTime > 0)
+        {
+            isTimerRunning = true;
+        }
+        // Nếu map thường mà hết giờ -> Sudden Death
         else
         {
             isTimerRunning = false;

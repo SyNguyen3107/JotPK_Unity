@@ -6,7 +6,7 @@ public class Enemy : MonoBehaviour
     [Header("Base Stats")]
     public float moveSpeed = 2f;
     public int maxHealth = 3;
-    protected int currentHealth;
+    public int currentHealth;
     public int damageToPlayer = 1;
 
     [Header("Death Settings")]
@@ -16,7 +16,7 @@ public class Enemy : MonoBehaviour
     [Header("Visuals")]
     public Sprite whiteSprite;
     protected SpriteRenderer sr;
-    private Animator animator;
+    protected Animator animator;
     private bool isFlashing = false;
 
     [Header("Audio")]

@@ -40,7 +40,7 @@ public class Bullet : MonoBehaviour
         }
 
         // Va vào quái -> Trừ máu
-        if (hitInfo.CompareTag("Enemy"))
+        if (hitInfo.CompareTag("Enemy") || hitInfo.CompareTag("Boss"))
         {
             Enemy enemy = hitInfo.GetComponent<Enemy>();
             if (enemy != null)

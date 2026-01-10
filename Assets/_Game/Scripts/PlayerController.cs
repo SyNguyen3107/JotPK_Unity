@@ -537,16 +537,27 @@ public class PlayerController : MonoBehaviour
 
     IEnumerator NukeRoutine()
     {
-        GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
-        foreach (var e in enemies)
-        {
-            var enemyScript = e.GetComponent<Enemy>();
-            if (enemyScript != null) enemyScript.Die(false);
-            else Destroy(e);
-        }
+        // --- CẬP NHẬT LOGIC TÌM KẺ ĐỊCH ---
+        // Thay vì tìm theo Tag, ta tìm tất cả object có script Enemy (bao gồm cả Boss)
+        Enemy[] allEnemies = GameObject.FindObjectsOfType<Enemy>();
 
+        foreach (var e in allEnemies)
+        {
+            if (e == null) continue;
+            CowboyController boss = e as CowboyController;
+
+            if (boss != null)
+            {
+                // LÀ BOSS -> TRỪ 10 MÁU
+                boss.TakeDamage(10);
+            }
+            else
+            {
+                e.Die(false);
+            }
+        }
         int explosionsSpawned = 0;
-        while (explosionsSpawned < explosionCount)
+        while (explosionsSpawned < explosionCount) // Đảm bảo bạn đã khai báo explosionCount
         {
             float randomX = Random.Range(mapBoundsMin.x, mapBoundsMax.x);
             float randomY = Random.Range(mapBoundsMin.y, mapBoundsMax.y);
@@ -556,11 +567,22 @@ public class PlayerController : MonoBehaviour
                 Instantiate(explosionFXPrefab, explosionPos, Quaternion.identity);
 
             explosionsSpawned++;
-            float waitTime = (nukeDuration / explosionCount) * Random.Range(0.5f, 1.5f);
+
+            // Tính toán thời gian chờ an toàn tránh chia cho 0
+            float baseWait = (explosionCount > 0) ? (nukeDuration / explosionCount) : 0.1f;
+            float waitTime = baseWait * Random.Range(0.5f, 1.5f);
+
             yield return new WaitForSeconds(waitTime);
         }
     }
+    public void SetMapBounds(Vector2 newMin, Vector2 newMax)
+    {
+        mapBoundsMin = newMin;
+        mapBoundsMax = newMax;
 
+        // Debug để bạn kiểm tra xem nó nhận đúng chưa
+        Debug.Log($"Map Bounds Updated: Min({newMin}), Max({newMax})");
+    }
     void TeleportAndSmoke()
     {
         Vector3 targetPos = FindSafePosition();

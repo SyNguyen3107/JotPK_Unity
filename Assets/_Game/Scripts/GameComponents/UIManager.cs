@@ -22,7 +22,9 @@ public class UIManager : MonoBehaviour
 
     [Header("--- RIGHT PANEL (Area Indicator) ---")]
     public List<Image> areaIcons;
-
+    [Header("--- BOTTOM PANEL (BOSS HP)")]
+    public Image bossHPFill;
+    public GameObject bossHealthBarObject;
 
     public GameObject exitArrowObject;
     void Awake()
@@ -126,6 +128,23 @@ public class UIManager : MonoBehaviour
         {
             img.color = new Color(1, 1, 1, 0); // Trong suốt hoặc ẩn đi
             // img.gameObject.SetActive(false); // Hoặc tắt hẳn
+        }
+    }
+    public void ToggleBossUI(bool isActive)
+    {
+        if (bossHealthBarObject != null)
+        {
+            bossHealthBarObject.SetActive(isActive);
+        }
+    }
+
+    // Cập nhật giá trị thanh máu
+    public void UpdateBossHealth(float current, float max)
+    {
+        if (bossHPFill != null)
+        {
+            // Tính tỉ lệ phần trăm
+            bossHPFill.fillAmount = current / max;
         }
     }
 }
