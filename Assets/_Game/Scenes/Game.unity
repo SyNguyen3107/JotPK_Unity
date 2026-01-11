@@ -467,7 +467,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1934135101723791435, guid: 690f6afd5992dab41b38fe5948311135, type: 3}
       propertyPath: allLevels.Array.data[7].levelDuration
-      value: 3
+      value: 90
       objectReference: {fileID: 0}
     - target: {fileID: 1934135101723791435, guid: 690f6afd5992dab41b38fe5948311135, type: 3}
       propertyPath: allLevels.Array.data[10].levelDuration

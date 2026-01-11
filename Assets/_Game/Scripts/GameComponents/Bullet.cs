@@ -5,50 +5,71 @@ public class Bullet : MonoBehaviour
     [Header("Bullet Stats")]
     public float speed = 10f;
     public float lifeTime = 3f;
-    public int damage = 1; // Sát thương mặc định
+    public int damage = 1; // Sát thương hiện tại của viên đạn
     public Rigidbody2D rb;
 
     void Start()
     {
-        // Tự hủy sau một khoảng thời gian
         Destroy(gameObject, lifeTime);
     }
 
-    // --- CẬP NHẬT: Thêm tham số newDamage ---
     public void Setup(Vector2 direction, int newDamage)
     {
-        // 1. Nạp damage từ Player vào viên đạn này
         this.damage = newDamage;
 
-        // 2. Logic di chuyển (Giữ nguyên)
-        // Lưu ý: rb.linearVelocity là cú pháp Unity 6 / 2023.3+. 
-        // Nếu dùng bản cũ hơn thì đổi thành rb.velocity
+        // Logic di chuyển
         rb.linearVelocity = direction * speed;
 
-        // 3. Logic xoay đạn (Giữ nguyên)
+        // Logic xoay đạn
         float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
         transform.rotation = Quaternion.Euler(0, 0, angle - 90);
     }
 
     void OnTriggerEnter2D(Collider2D hitInfo)
     {
-        // Va vào tường -> Mất đạn
-        if (hitInfo.CompareTag("Wall") || hitInfo.CompareTag("Obstacle")) // Thêm Obstacle cho chắc
+        // 1. Va vào tường -> Luôn hủy đạn
+        if (hitInfo.CompareTag("Wall") || hitInfo.CompareTag("Obstacle"))
         {
             Destroy(gameObject);
             return;
         }
 
-        // Va vào quái -> Trừ máu
+        // 2. Va vào quái hoặc Boss
         if (hitInfo.CompareTag("Enemy") || hitInfo.CompareTag("Boss"))
         {
             Enemy enemy = hitInfo.GetComponent<Enemy>();
+
             if (enemy != null)
             {
-                // Gọi hàm TakeDamage với chỉ số damage đã được nạp ở Setup
+                // A. Lấy máu hiện tại của kẻ địch (Lưu lại trước khi gây dmg)
+                // Lưu ý: Đảm bảo biến 'currentHealth' bên script Enemy là public
+                int enemyHealthBeforeHit = enemy.currentHealth;
+
+                // B. Gây sát thương (Kẻ địch sẽ chết nếu damage >= máu)
                 enemy.TakeDamage(damage);
+
+                // C. Tính toán damage còn dư
+                // Ví dụ: Đạn 10 dmg, Quái 4 máu -> Đạn còn 6 dmg
+                // Ví dụ: Đạn 2 dmg, Quái 5 máu -> Đạn còn -3 dmg
+                damage -= enemyHealthBeforeHit;
+
+                // D. Kiểm tra số phận viên đạn
+                if (damage <= 0)
+                {
+                    // Đạn đã hết lực -> Hủy
+                    Destroy(gameObject);
+                }
+                else
+                {
+                    // Đạn vẫn còn lực (damage > 0) -> Bay tiếp xuyên qua
+                    // Không gọi Destroy(gameObject) ở đây
+                }
             }
-            Destroy(gameObject);
+            else
+            {
+                // Trường hợp object có Tag Enemy nhưng quên gắn script -> Hủy cho an toàn
+                Destroy(gameObject);
+            }
         }
     }
 }
