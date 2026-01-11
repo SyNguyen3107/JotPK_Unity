@@ -4,26 +4,34 @@ public class BossLoot : MonoBehaviour
 {
     public int livesBonus = 1;
 
+    public Sprite lootSprite;
+    void Start()
+    {
+        // Tự lấy sprite nếu chưa gán
+        if (lootSprite == null)
+        {
+            SpriteRenderer sr = GetComponent<SpriteRenderer>();
+            if (sr != null) lootSprite = sr.sprite;
+        }
+    }
     void OnTriggerEnter2D(Collider2D other)
     {
         if (other.CompareTag("Player"))
         {
-            // 1. Cộng mạng
+            Debug.Log("Boss Loot collected!");
             if (GameManager.Instance != null)
             {
                 GameManager.Instance.AddLife(livesBonus);
             }
 
-            // 2. Gọi BossManager để bắt đầu Cutscene
             BossManager bm = FindObjectOfType<BossManager>();
             if (bm != null)
             {
-                bm.OnLootCollected(); // Hàm này ta sẽ viết ngay sau đây
+                // --- TRUYỀN SPRITE SANG ---
+                bm.OnLootCollected(lootSprite);
             }
 
-            // 3. Ẩn vật phẩm đi (để tránh nhặt lại)
             gameObject.SetActive(false);
-            // Destroy(gameObject, 2f); // Có thể destroy sau
         }
     }
 }

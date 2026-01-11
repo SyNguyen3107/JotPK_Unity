@@ -821,7 +821,6 @@ public class PlayerController : MonoBehaviour
             rb.linearVelocity = Vector2.zero;
             rb.bodyType = RigidbodyType2D.Kinematic; // Tắt vật lý để đi xuyên tường
         }
-
         if (legsAnimator != null) legsAnimator.SetBool("IsMoving", true);
 
         float elapsed = 0f;
@@ -926,5 +925,69 @@ public class PlayerController : MonoBehaviour
         isInputEnabled = true;
 
         if (legsAnimator != null) legsAnimator.Play("Idle");
+    }
+    public void SetPhysicsForCutscene(bool isPhysicsOn)
+    {
+        if (rb != null)
+        {
+            rb.linearVelocity = Vector2.zero;
+            // Nếu tắt vật lý -> chuyển sang Kinematic để không bị va chạm đẩy lại
+            rb.bodyType = isPhysicsOn ? RigidbodyType2D.Dynamic : RigidbodyType2D.Kinematic;
+        }
+
+        Collider2D col = GetComponent<Collider2D>();
+        if (col != null)
+        {
+            col.enabled = isPhysicsOn; // Tắt Collider để đi xuyên tường
+        }
+    }
+    // 2. Hàm diễn hoạt nâng đồ (Public để BossManager gọi)
+    public void PlayVictoryPose(Sprite itemSprite)
+    {
+        // Logic giống hệt ItemGetRoutine nhưng không trả về Input ngay
+        if (rb != null) rb.linearVelocity = Vector2.zero;
+
+        // Đổi sprite sang "Giơ tay"
+        if (bodySpriteDisplay != null && handsUpSprite != null)
+        {
+            bodySpriteDisplay.sprite = handsUpSprite;
+        }
+
+        // Hiện vật phẩm trên đầu
+        if (itemLiftDisplay != null)
+        {
+            itemLiftDisplay.sprite = itemSprite;
+            itemLiftDisplay.gameObject.SetActive(true);
+        }
+
+        // Âm thanh
+        if (itemsPickupAudioSource != null && upgradePurchasedClip != null)
+            itemsPickupAudioSource.PlayOneShot(upgradePurchasedClip);
+
+        // Reset animation chân
+        if (legsAnimator != null) legsAnimator.Play("Idle");
+    }
+
+    // Hàm trả về trạng thái bình thường (khi hết pose)
+    public void StopVictoryPose()
+    {
+        // 1. Tắt hiển thị vật phẩm trên đầu
+        if (itemLiftDisplay != null) itemLiftDisplay.gameObject.SetActive(false);
+
+        // 2. Trả sprite thân trên về Idle
+        SetVisualState(isIdle: true);
+
+        // 3. Reset Animation chân về đứng yên
+        if (legsAnimator != null)
+        {
+            legsAnimator.SetBool("IsMoving", false);
+            legsAnimator.Play("Idle");
+        }
+
+        // 4. Đảm bảo nhân vật đứng yên hoàn toàn (Về mặt vật lý)
+        if (rb != null)
+        {
+            rb.linearVelocity = Vector2.zero;
+        }
     }
 }

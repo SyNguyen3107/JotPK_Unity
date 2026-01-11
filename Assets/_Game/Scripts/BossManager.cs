@@ -1,61 +1,60 @@
 ﻿using System.Collections;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class BossManager : MonoBehaviour
 {
-    [Header("References")]
+    [Header("References (Self-Contained in Prefab)")]
     public CowboyController bossScript;
-    public Transform playerRespawnPoint; // Vị trí sau hàng rào
+    public Transform playerRespawnPoint; // Điểm hồi sinh khi đấu Boss
+    public BoxCollider2D playerZoneLimit;
 
     [Header("Victory Setup")]
-    public GameObject bridgeObject;      // Object Cây Cầu (Mặc định tắt)
-    public GameObject lootPrefab;        // Prefab vật phẩm rớt ra
-    public Transform lootSpawnPoint;     // Vị trí rớt đồ (thường là chỗ Boss chết)
-    public string nextSceneName;         // Tên màn chơi tiếp theo (Stage 2 hoặc Map khác)
+    public GameObject bridgeObject;
+    public GameObject riverBlockerObject;
+    public GameObject lootPrefab;
+    public Transform lootSpawnPoint;
+
+    [Header("Environment")]
+    public GameObject levelGridObject;
 
     [Header("Cutscene - Gopher Squad")]
-    public GameObject gopherSquadPrefab; // Prefab chứa hình ảnh 3 con Gopher
-    public Transform gopherSpawnPoint;   // Điểm xuất phát của Gopher (Thường là mép trên màn hình)
+    public GameObject gopherSquadPrefab;
+    public Transform gopherSpawnPoint;
 
-    private bool victoryTriggered = false;
-
-
-    [Header("Player Movement Limits")]
-    public BoxCollider2D playerZoneLimit;
     [Header("Audio")]
     public AudioClip bossMusic;
 
     private bool isBossActive = false;
+    [HideInInspector]
+    public bool victoryTriggered = false;
 
-    void Start()
+    // Start() để trống, chờ GameManager gọi
+    void Start() { }
+
+    // --- HÀM KÍCH HOẠT CHÍNH ---
+    public void ActivateBossLevel()
     {
-        // 1. Dừng Timer của GameManager ngay lập tức
+        Debug.Log("BOSS LEVEL ACTIVATED!");
+        if (bossScript!= null)
+        {
+            bossScript.setBossDialog(true);
+            //Bật lại nếu chưa bật.
+        }
+        // 1. Setup UI Boss & Tắt Timer
         if (GameManager.Instance != null)
         {
             GameManager.Instance.SetTimerRunning(false);
-            GameManager.Instance.overrideRespawnPosition = playerRespawnPoint.position;
+            if (playerRespawnPoint != null)
+                GameManager.Instance.overrideRespawnPosition = playerRespawnPoint.position;
         }
-        if (playerZoneLimit != null)
-        {
-            // Lấy giới hạn từ BoxCollider2D
-            Vector2 zoneMin = playerZoneLimit.bounds.min;
-            Vector2 zoneMax = playerZoneLimit.bounds.max;
 
-            // Tìm Player và áp dụng giới hạn mới
-            PlayerController pc = GameObject.FindAnyObjectByType<PlayerController>(); 
-            if (pc != null)
-            {
-                pc.SetMapBounds(zoneMin, zoneMax);
-            }
-        }
-        // 2. Setup UI
         if (UIManager.Instance != null)
         {
-            UIManager.Instance.ToggleBossUI(true); // Hiện thanh máu dưới
-         }
-
-        // 3. Phát nhạc Boss
+            UIManager.Instance.ToggleBossUI(true);
+            UIManager.Instance.ToggleHUD(true);
+        }
+        bossScript.setBossDialog(false);
+        // 2. Phát nhạc Boss
         if (GameManager.Instance != null && bossMusic != null)
         {
             GameManager.Instance.musicSource.Stop();
@@ -63,9 +62,24 @@ public class BossManager : MonoBehaviour
             GameManager.Instance.musicSource.Play();
         }
 
+        // 3. Giới hạn vùng di chuyển
+        if (playerZoneLimit != null)
+        {
+            Vector2 zoneMin = playerZoneLimit.bounds.min;
+            Vector2 zoneMax = playerZoneLimit.bounds.max;
+
+            if (GameManager.Instance != null && GameManager.Instance.playerObject != null)
+            {
+                PlayerController pc = GameManager.Instance.playerObject.GetComponent<PlayerController>();
+                if (pc != null) pc.SetMapBounds(zoneMin, zoneMax);
+            }
+        }
+
+        // 4. Kích hoạt Boss Script
         if (bossScript != null)
         {
             isBossActive = true;
+            bossScript.StartBossFight();
         }
     }
 
@@ -73,133 +87,154 @@ public class BossManager : MonoBehaviour
     {
         if (isBossActive && bossScript != null && UIManager.Instance != null)
         {
-            // Cập nhật thanh máu liên tục
             UIManager.Instance.UpdateBossHealth(bossScript.currentHealth, bossScript.maxHealth);
-
-            // Kiểm tra chiến thắng
-            if (bossScript.currentHealth <= 0)
-            {
-                HandleBossVictory();
-            }
+            if (bossScript.currentHealth <= 0) HandleBossVictory();
         }
     }
 
     void HandleBossVictory()
     {
-        if (victoryTriggered) return; // Đảm bảo chỉ chạy 1 lần
+        if (victoryTriggered) return;
         victoryTriggered = true;
         isBossActive = false;
-        GameManager.Instance.musicSource.Stop(); //tắt nhạc boss
 
-        // 1. Tắt UI Boss
+        if (GameManager.Instance != null && GameManager.Instance.musicSource != null)
+        {
+            GameManager.Instance.musicSource.Stop();
+        }
         if (UIManager.Instance != null) UIManager.Instance.ToggleBossUI(false);
 
-        // 2. Hiện Cầu (nếu có)
+        // Xử lý Cầu / Sông
+        if (riverBlockerObject != null) riverBlockerObject.SetActive(false);
         if (bridgeObject != null) bridgeObject.SetActive(true);
 
-        // 3. Rơi Vật phẩm
+        // Spawn Loot
         if (lootPrefab != null)
         {
-            // Nếu Boss script còn đó thì lấy vị trí boss, nếu không thì lấy vị trí định sẵn
             Vector3 spawnPos = (bossScript != null) ? bossScript.transform.position : transform.position;
             if (lootSpawnPoint != null) spawnPos = lootSpawnPoint.position;
-
             Instantiate(lootPrefab, spawnPos, Quaternion.identity);
         }
+
+        // Mở rộng map bounds
         if (GameManager.Instance != null && GameManager.Instance.playerObject != null)
         {
             PlayerController pc = GameManager.Instance.playerObject.GetComponent<PlayerController>();
-            // Reset giới hạn map về cực lớn hoặc về mặc định của map để đi qua cầu
-            if (pc != null) pc.SetMapBounds(new Vector2(-100, -100), new Vector2(100, 100));
+            if (pc != null) pc.SetMapBounds(new Vector2(-1000, -1000), new Vector2(1000, 1000));
         }
-        // Reset điểm hồi sinh để qua màn sau không bị lỗi vị trí
-        if (GameManager.Instance != null)
-        {
-            GameManager.Instance.overrideRespawnPosition = null;
-        }
-
-        Debug.Log("BOSS DEFEATED! Starting Cutscene logic...");
-        // (Sẽ gọi logic Cutscene ở Bước 3 & 4)
-    }
-    // --- HÀM MỚI: GỌI TỪ BOSSLOOT KHI NHẶT ĐỒ ---
-    public void OnLootCollected()
-    {
-        StartCoroutine(GopherCutsceneRoutine());
     }
 
-    IEnumerator GopherCutsceneRoutine()
+    public void OnLootCollected(Sprite itemSprite)
     {
-        Debug.Log("Starting Gopher Cutscene...");
+        StartCoroutine(GopherCutsceneRoutine(itemSprite));
+    }
 
-        // 1. Khóa Player
+    IEnumerator GopherCutsceneRoutine(Sprite itemSprite)
+    {
+        Debug.Log("Starting Victory Sequence...");
+
         GameObject player = GameManager.Instance.playerObject;
-        PlayerController pc = player.GetComponent<PlayerController>();
+        PlayerController pc = null;
+        if (player != null) pc = player.GetComponent<PlayerController>();
+
+        // Player tạo dáng
         if (pc != null)
         {
-            pc.isInputEnabled = false; // Đứng im
-            if (pc.rb != null) pc.rb.linearVelocity = Vector2.zero;
-            if (pc.legsAnimator != null) pc.legsAnimator.SetBool("IsMoving", false);
-            // Có thể thêm anim: Player giơ cúp chiến thắng (Victory Pose)
+            pc.isInputEnabled = false;
+            pc.PlayVictoryPose(itemSprite);
         }
+        yield return new WaitForSeconds(2f);
+        if (pc != null) pc.StopVictoryPose();
+        // Màn hình đen (Tắt hết Grid)
+        if (UIManager.Instance != null) UIManager.Instance.ToggleHUD(false);
+        if (levelGridObject != null) levelGridObject.SetActive(false);
+        if (bridgeObject != null) bridgeObject.SetActive(false);
+        if (riverBlockerObject != null) riverBlockerObject.SetActive(false);
 
-        // 2. Spawn Gopher Squad (3 con Gopher)
+        yield return new WaitForSeconds(0.5f);
+
+        // Setup Audio cho Gopher
+        AudioSource audioSourceToUse = null;
+        AudioClip clipToUse = null;
+        if (pc != null)
+        {
+            audioSourceToUse = pc.footstepAudioSource;
+            clipToUse = pc.footstepClip;
+        }
+        float gopherStepRate = 0.25f;
+        float nextStepTime = 0f;
+
+        // Spawn Gopher
         GameObject gophers = null;
         if (gopherSquadPrefab != null && gopherSpawnPoint != null)
         {
             gophers = Instantiate(gopherSquadPrefab, gopherSpawnPoint.position, Quaternion.identity);
         }
 
-        // 3. Gopher chạy đến chỗ Player
         if (gophers != null && player != null)
         {
-            float speed = 5f;
-            // Di chuyển Gophers đến vị trí Player
+            float speed = 6f;
+
+            // Gopher chạy đến Player
             while (Vector3.Distance(gophers.transform.position, player.transform.position) > 0.1f)
             {
                 gophers.transform.position = Vector3.MoveTowards(gophers.transform.position, player.transform.position, speed * Time.deltaTime);
+                if (Time.time >= nextStepTime && audioSourceToUse != null && clipToUse != null)
+                {
+                    audioSourceToUse.PlayOneShot(clipToUse);
+                    nextStepTime = Time.time + gopherStepRate;
+                }
                 yield return null;
             }
 
-            // 4. "Bắt" Player (Gán Player làm con của Gophers để đi theo)
+            // Khiêng Player
+            if (pc != null) pc.SetPhysicsForCutscene(false);
             player.transform.SetParent(gophers.transform);
+            player.transform.localPosition = Vector3.zero;
 
-            // (Tuỳ chọn) Tắt Sprite Player đi nếu Gopher đã có hình "Gopher đang khiêng người"
-            // player.SetActive(false); 
+            yield return new WaitForSeconds(0.5f);
 
-            yield return new WaitForSeconds(0.5f); // Nghỉ một chút tạo dáng
-
-            // 5. Gopher khiêng Player đi ra khỏi màn hình (Đi xuống hoặc đi lên)
-            Vector3 exitPos = gophers.transform.position + Vector3.down * 10f; // Đi xuống dưới 10 đơn vị
+            // Gopher chạy đi
+            Vector3 exitPos = gophers.transform.position + Vector3.down * 15f;
+            nextStepTime = 0f;
 
             while (Vector3.Distance(gophers.transform.position, exitPos) > 0.1f)
             {
                 gophers.transform.position = Vector3.MoveTowards(gophers.transform.position, exitPos, speed * Time.deltaTime);
+                if (Time.time >= nextStepTime && audioSourceToUse != null && clipToUse != null)
+                {
+                    audioSourceToUse.PlayOneShot(clipToUse);
+                    nextStepTime = Time.time + gopherStepRate;
+                }
                 yield return null;
             }
         }
+        yield return new WaitForSeconds(0.5f);
 
-        // 6. Màn hình đen & Chuyển màn
-        // Nếu bạn có SceneFader thì gọi ở đây. Nếu không thì load luôn.
-        Debug.Log("Loading Next Level: " + nextSceneName);
-
-        yield return new WaitForSeconds(1f);
-
-        // Logic chuyển màn
-        if (!string.IsNullOrEmpty(nextSceneName))
+        // Trả Player về
+        if (player != null)
         {
-            SceneManager.LoadScene(nextSceneName);
+            player.transform.SetParent(null);
+            DontDestroyOnLoad(player);
+            if (pc != null) pc.SetPhysicsForCutscene(true);
         }
-        else
+
+        // Chuyển màn
+        if (GameManager.Instance != null)
         {
-            // Nếu chưa có tên màn tiếp theo thì reload để test
-            Debug.LogWarning("No Next Scene Name provided! Reloading current scene.");
-            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+            AudioSource gopherFoostep = gophers != null ? gophers.GetComponent<AudioSource>() : null;
+            if (gopherFoostep != null) gopherFoostep.Stop();
+            if (gophers != null) Destroy(gophers);
+            GameManager.Instance.StartLevelTransition();
         }
     }
+
     void OnDestroy()
     {
-        // Dọn dẹp khi rời scene
-        if (GameManager.Instance != null) GameManager.Instance.overrideRespawnPosition = null;
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.overrideRespawnPosition = null;
+        }
         if (UIManager.Instance != null) UIManager.Instance.ToggleBossUI(false);
     }
 }

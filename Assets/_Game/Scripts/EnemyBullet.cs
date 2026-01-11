@@ -34,9 +34,10 @@ public class EnemyBullet : MonoBehaviour
         {
             if (GameManager.Instance != null)
             {
+                Debug.Log("Enemy bullet hit the player!");
                 GameManager.Instance.PlayerDied();
             }
-            Debug.Log("Enemy bullet hit the player!");
+            
             Destroy(gameObject); // Trúng người -> Mất đạn
         }
         else

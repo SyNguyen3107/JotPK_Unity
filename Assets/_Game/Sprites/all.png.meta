@@ -2885,13 +2885,13 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: all_115
+      name: lifting_table
       rect:
         serializedVersion: 2
         x: 271
-        y: 81
-        width: 16
-        height: 16
+        y: 76
+        width: 32
+        height: 21
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -2902,28 +2902,6 @@ TextureImporter:
       bones: []
       spriteID: 67a11c1b83712e042ace2639efc55f85
       internalID: 747040834
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: all_116
-      rect:
-        serializedVersion: 2
-        x: 287
-        y: 81
-        width: 16
-        height: 16
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 99f5ad4b6cf59cc43ba61e39441cf8fc
-      internalID: -240269120
       vertices: []
       indices: 
       edges: []
@@ -6190,7 +6168,6 @@ TextureImporter:
       all_109: 1493587115
       all_110: -1774927140
       all_111: -808286055
-      all_115: 747040834
       all_116: -240269120
       all_117: 1115747590
       all_118: 805846955
@@ -6401,6 +6378,7 @@ TextureImporter:
       item_smoke_bomb: 646514586
       item_tombstone: 1581388313
       item_wagon_wheel: -1524350651
+      lifting_table: 747040834
       lightning_bolt0: -1730828539
       lightning_bolt1: 2112346632
       mummy0: -1391460391
