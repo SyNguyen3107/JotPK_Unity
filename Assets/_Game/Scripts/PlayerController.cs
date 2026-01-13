@@ -540,22 +540,25 @@ public class PlayerController : MonoBehaviour
         // Thay vì tìm theo Tag, ta tìm tất cả object có script Enemy
         Enemy[] allEnemies = FindObjectsByType<Enemy>(FindObjectsSortMode.None);
         BossController[] bossControllers = FindObjectsByType<BossController>(FindObjectsSortMode.None);
-        if (bossControllers.Length > 0)
+
+        foreach (var b in bossControllers)
         {
-            foreach (var b in bossControllers)
+            if (b != null)
+                b.TakeDamage(10); // Boss chỉ mất 20 máu
+        }
+
+        // --- XỬ LÝ QUÁI THƯỜNG (Giết sạch) ---
+        foreach (var e in allEnemies)
+        {
+            if (e != null)
             {
-                if (b != null)
-                    b.TakeDamage(20);
+                // SỬA LỖI 2: Kiểm tra nếu 'e' là Boss thì bỏ qua, không giết
+                if (e is BossController) continue;
+
+                e.Die(false); // Quái thường thì chết luôn, không rơi đồ (false)
             }
         }
-        if (allEnemies.Length == 0)
-        {
-            foreach (var e in allEnemies)
-            {
-                if (e!= null)
-                    e.Die(false);
-            }
-        }
+
 
         int explosionsSpawned = 0;
         while (explosionsSpawned < explosionCount)

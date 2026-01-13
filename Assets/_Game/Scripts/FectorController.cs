@@ -57,7 +57,7 @@ public class FectorController : BossController
     void Start()
     {
         base.Start();
-        maxHealth = 350;
+        maxHealth = 30;
         currentHealth = maxHealth;
         moveSpeed = moveSpeedCustom;
         currentState = FectorState.Waiting;

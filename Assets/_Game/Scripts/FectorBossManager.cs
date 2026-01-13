@@ -1,11 +1,15 @@
 ﻿using System.Collections;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class FectorBossManager : BossManager
 {
     [Header("References")]
     public FectorController fectorScript;
-
+    [Header("Transition")]
+    public Image fadeScreen; // Kéo cái Panel đen vào đây
+    public float fadeDuration = 2f;
     public override void ActivateBossLevel()
     {
         base.ActivateBossLevel();
@@ -73,8 +77,34 @@ public class FectorBossManager : BossManager
             pc.isInputEnabled = false;
             pc.PlayVictoryPose(itemSprite);
         }
-        yield return new WaitForSeconds(2f);
-        if (pc != null) pc.StopVictoryPose();
+        yield return new WaitForSeconds(3f);
+
+        Debug.Log("Fading out...");
+        if (fadeScreen != null)
+        {
+            fadeScreen.gameObject.SetActive(true); // Bật tấm màn lên
+            float t = 0;
+            while (t < fadeDuration)
+            {
+                t += Time.deltaTime;
+                float alpha = t / fadeDuration;
+                // Chỉnh màu đen với độ trong suốt tăng dần từ 0 -> 1
+                fadeScreen.color = new Color(0, 0, 0, alpha);
+                yield return null;
+            }
+            // Đảm bảo đen hẳn
+            fadeScreen.color = Color.black;
+        }
+        else
+        {
+            Debug.LogWarning("Chưa gán Fade Screen trong Inspector!");
+        }
+
+        // Chờ thêm 0.5s ở màn hình đen cho lắng đọng
+        yield return new WaitForSeconds(0.5f);
+
+        // 3. Chuyển cảnh
+        SceneManager.LoadScene("EndGameCutscene");
     }
     void OnDestroy()
     {

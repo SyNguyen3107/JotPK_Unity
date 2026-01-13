@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 882e1476797120346a2a8ffe56519d9d, type: 3}
-  m_Name: S3A1W1
+  m_Name: S3A3W1
   m_EditorClassIdentifier: Assembly-CSharp::WaveData
   enemyGroups:
   - enemyPrefab: {fileID: 4461168831503460278, guid: 3da7f731c2f5f2d40b9f4f4c4e58600b, type: 3}

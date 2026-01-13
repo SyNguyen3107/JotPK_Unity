@@ -10,12 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 882e1476797120346a2a8ffe56519d9d, type: 3}
-  m_Name: S3A1W2
+  m_Name: S3A3W3
   m_EditorClassIdentifier: Assembly-CSharp::WaveData
   enemyGroups:
   - enemyPrefab: {fileID: 4461168831503460278, guid: 3da7f731c2f5f2d40b9f4f4c4e58600b, type: 3}
-    count: 30
-    rate: 1.5
+    count: 40
+    rate: 1.25
   - enemyPrefab: {fileID: 8332623601309563940, guid: 612eadaf2ce3c9e40ad7e01ddf624b8f, type: 3}
-    count: 10
+    count: 20
     rate: 1
