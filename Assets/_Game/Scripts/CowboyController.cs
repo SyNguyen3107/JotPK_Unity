@@ -11,7 +11,7 @@ public enum BossState
     Dead
 }
 
-public class CowboyController : Enemy
+public class CowboyController : BossController
 {
     [Header("Settings")]
     public float idleTime = 2f;
@@ -23,11 +23,7 @@ public class CowboyController : Enemy
     public Transform firePoint;
     public float fireRate = 0.5f;
 
-    [Header("Visuals")]
-    public GameObject dialogObject;
-
     [Header("Boss Death VFX")]
-    public GameObject screenFlashObject;
     public int smokeCount = 6;
     public float explosionDuration = 0.5f;
 
@@ -36,7 +32,6 @@ public class CowboyController : Enemy
     private float stateTimer;
     private Vector3 targetPosition;
     private float shootTimer;
-    private bool isFlashing = false;
     private PlayerController playerScript;
 
     void Start()
@@ -48,25 +43,9 @@ public class CowboyController : Enemy
         if (animator != null) animator.SetBool("IsMoving", false);
 
     }
-    public void setBossDialog(bool isActive)
-    {
-        if (dialogObject != null)
-        {
-            dialogObject.SetActive(isActive);
-            if (isActive)
-            {
-                Debug.Log("Bật hộp thoại");
-            }
-            else
-            {
-                Debug.Log("Tắt hộp thoại");
-            }
-        }
-    }
     // Hàm này được BossManager gọi khi chuyển cảnh xong
-    public void StartBossFight()
+    public override void StartBossFight()
     {
-        // 1. Tìm và Khóa Player
         GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
         if (playerObj != null)
         {
@@ -78,10 +57,9 @@ public class CowboyController : Enemy
                 if (playerScript.legsAnimator != null) playerScript.legsAnimator.SetBool("IsMoving", false);
             }
         }
-
-        // 2. CHUYỂN SANG INTRO (BẮT ĐẦU ĐẾM NGƯỢC)
         currentState = BossState.Intro;
         stateTimer = 3f;
+        Debug.Log("COWBOY BOSS FIGHT STARTED!");
     }
 
     protected override void Update()
@@ -112,7 +90,7 @@ public class CowboyController : Enemy
             // Hết 3s Intro -> Vào chiến đấu
             if (dialogObject != null)
             {
-                setBossDialog(false);
+                SetBossDialog(false);
                 //Tắt lại nếu chưa tắt
             }
             EnterIdleState();
@@ -172,25 +150,12 @@ public class CowboyController : Enemy
         }
     }
 
-    public void TakeDamage(int dmg)
+    public override void TakeDamage(int dmg)
     {
         if (currentState == BossState.Intro || currentState == BossState.Dead || currentState == BossState.Waiting) return;
         currentHealth -= dmg;
         if (!isFlashing) StartCoroutine(FlashRoutine());
         if (currentHealth <= 0) Die();
-    }
-
-    IEnumerator FlashRoutine()
-    {
-        isFlashing = true;
-        bool wasAnimEnabled = false;
-        if (animator != null) { wasAnimEnabled = animator.enabled; animator.enabled = false; }
-        Sprite originalSprite = sr.sprite;
-        if (whiteSprite != null) sr.sprite = whiteSprite;
-        yield return new WaitForSeconds(0.1f);
-        if (animator != null) animator.enabled = wasAnimEnabled;
-        else sr.sprite = originalSprite;
-        isFlashing = false;
     }
 
     public override void Die(bool dropLoot = true)
@@ -206,7 +171,6 @@ public class CowboyController : Enemy
 
     IEnumerator BossDeathSequence()
     {
-        if (screenFlashObject != null) { screenFlashObject.SetActive(true); yield return new WaitForSeconds(0.1f); screenFlashObject.SetActive(false); }
         if (sr != null) sr.enabled = false;
         for (int i = 0; i < smokeCount; i++)
         {
@@ -216,16 +180,51 @@ public class CowboyController : Enemy
                 GameObject fx = Instantiate(deathEffectPrefab, transform.position + randomOffset, Quaternion.identity);
                 if (deathSounds.Length > 0)
                 {
+                    
                     AudioClip randomClip = deathSounds[Random.Range(0, deathSounds.Length)];
                     DeathEffect deathScript = fx.GetComponent<DeathEffect>();
-                    if (deathScript != null) deathScript.PlaySound(randomClip);
+                    if (deathScript != null)
+                    {
+                        deathScript.PlaySound(randomClip);
+                        Debug.Log("Playing death sound");
+                    }
                 }
             }
             yield return new WaitForSeconds(explosionDuration / smokeCount);
         }
         Destroy(gameObject);
     }
+    protected override void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("Player"))
+        {
+            PlayerController player = collision.gameObject.GetComponent<PlayerController>();
 
+            if (player != null)
+            {
+                // Logic Zombie
+                if (player.isZombieMode)
+                {
+                    TakeDamage(10); // Gây 10 damage
+                    Debug.Log("Zombie Player hit Cowboy! Dealt 10 DMG.");
+                    return;
+                }
+
+                // Logic Bất tử
+                if (player.IsInvincible())
+                {
+                    return;
+                }
+            }
+
+            // Logic thường: Giết Player
+            if (GameManager.Instance != null)
+            {
+                GameManager.Instance.PlayerDied();
+            }
+            // Boss Cowboy KHÔNG tự hủy
+        }
+    }
     // Vẽ Gizmos để bạn dễ chỉnh vùng di chuyển MinX - MaxX
     void OnDrawGizmos()
     {

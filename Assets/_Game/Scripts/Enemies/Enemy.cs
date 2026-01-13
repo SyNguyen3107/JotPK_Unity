@@ -17,7 +17,7 @@ public class Enemy : MonoBehaviour
     public Sprite whiteSprite;
     protected SpriteRenderer sr;
     protected Animator animator;
-    private bool isFlashing = false;
+    protected bool isFlashing = false;
 
     [Header("Audio")]
     public AudioSource audioSource;
@@ -27,7 +27,7 @@ public class Enemy : MonoBehaviour
     public Rigidbody2D rb;
 
     [Header("Drop")]
-    public GameObject itemPrefab; // Prefab chung (cái hòm/túi) chứa item
+    public GameObject itemPrefab;
 
     [Header("Stun Visuals")]
     public GameObject questionMarkObject;
@@ -126,7 +126,7 @@ public class Enemy : MonoBehaviour
     {
     }
 
-    public void TakeDamage(int damage)
+    public virtual void TakeDamage(int damage)
     {
         if (isDead) return;
         currentHealth -= damage;
@@ -232,7 +232,7 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    IEnumerator FlashRoutine()
+    protected IEnumerator FlashRoutine()
     {
         if (isFlashing) yield break;
         isFlashing = true;

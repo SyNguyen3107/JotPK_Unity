@@ -91,7 +91,6 @@ public class PlayerController : MonoBehaviour
     public GameObject struckFxObject;
     public GameObject lightningFxObject;
     public Sprite[] struckSprites;
-    public Sprite[] lightningSprites;
     public float flashSpeed = 0.1f;
     public float cutsceneDuration = 3f;
 
@@ -538,26 +537,28 @@ public class PlayerController : MonoBehaviour
     IEnumerator NukeRoutine()
     {
         // --- CẬP NHẬT LOGIC TÌM KẺ ĐỊCH ---
-        // Thay vì tìm theo Tag, ta tìm tất cả object có script Enemy (bao gồm cả Boss)
-        Enemy[] allEnemies = GameObject.FindObjectsOfType<Enemy>();
-
-        foreach (var e in allEnemies)
+        // Thay vì tìm theo Tag, ta tìm tất cả object có script Enemy
+        Enemy[] allEnemies = FindObjectsByType<Enemy>(FindObjectsSortMode.None);
+        BossController[] bossControllers = FindObjectsByType<BossController>(FindObjectsSortMode.None);
+        if (bossControllers.Length > 0)
         {
-            if (e == null) continue;
-            CowboyController boss = e as CowboyController;
-
-            if (boss != null)
+            foreach (var b in bossControllers)
             {
-                // LÀ BOSS -> TRỪ 10 MÁU
-                boss.TakeDamage(10);
-            }
-            else
-            {
-                e.Die(false);
+                if (b != null)
+                    b.TakeDamage(20);
             }
         }
+        if (allEnemies.Length == 0)
+        {
+            foreach (var e in allEnemies)
+            {
+                if (e!= null)
+                    e.Die(false);
+            }
+        }
+
         int explosionsSpawned = 0;
-        while (explosionsSpawned < explosionCount) // Đảm bảo bạn đã khai báo explosionCount
+        while (explosionsSpawned < explosionCount)
         {
             float randomX = Random.Range(mapBoundsMin.x, mapBoundsMax.x);
             float randomY = Random.Range(mapBoundsMin.y, mapBoundsMax.y);
@@ -630,7 +631,7 @@ public class PlayerController : MonoBehaviour
 
         // Tạm thời tắt cờ Zombie để Stats tính lại về tốc độ gốc (tránh việc cutscene mà chạy nhanh)
         isZombieMode = false;
-
+        isInvincible = true;
         // ==================================================
         // PHASE 1: BIẾN HÌNH (CUTSCENE)
         // ==================================================
@@ -674,17 +675,9 @@ public class PlayerController : MonoBehaviour
 
         while (cutsceneTimer < cutsceneDuration)
         {
+            int index = 0;
             if (struckSprites.Length > 0 && struckSR != null)
-                struckSR.sprite = struckSprites[Random.Range(0, struckSprites.Length)];
-
-            if (lightningSprites.Length > 0 && boltSRs.Length > 0)
-            {
-                foreach (var sr in boltSRs)
-                {
-                    sr.sprite = lightningSprites[Random.Range(0, lightningSprites.Length)];
-                    sr.flipX = (Random.value > 0.5f);
-                }
-            }
+                struckSR.sprite = struckSprites[Random.Range((index++) % struckSprites.Length, struckSprites.Length)];
             yield return new WaitForSeconds(flashSpeed);
             cutsceneTimer += flashSpeed;
         }
@@ -734,7 +727,7 @@ public class PlayerController : MonoBehaviour
         // ==================================================
 
         isZombieMode = false;
-
+        isInvincible = false;
         // Reset Visual
         if (zombieModelObject != null) zombieModelObject.SetActive(false);
         if (activeStateObject != null) activeStateObject.SetActive(true);

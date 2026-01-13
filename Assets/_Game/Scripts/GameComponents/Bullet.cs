@@ -28,7 +28,7 @@ public class Bullet : MonoBehaviour
     void OnTriggerEnter2D(Collider2D hitInfo)
     {
         // 1. Va vào tường -> Luôn hủy đạn
-        if (hitInfo.CompareTag("Wall") || hitInfo.CompareTag("Obstacle"))
+        if (hitInfo.CompareTag("Wall"))
         {
             Destroy(gameObject);
             return;

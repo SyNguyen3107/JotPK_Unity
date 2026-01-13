@@ -28,21 +28,35 @@ public class EnemyBullet : MonoBehaviour
     void OnTriggerEnter2D(Collider2D collision)
     {
         // Nhờ Matrix, hàm này CHỈ chạy khi va vào: Player hoặc Wall
-        // Không bao giờ chạy khi va vào Enemy hay Boss nữa.
 
         if (collision.CompareTag("Player"))
         {
+            PlayerController player = collision.GetComponent<PlayerController>();
+
+            if (player != null)
+            {
+                // --- LOGIC BẢO VỆ PLAYER ---
+                // Nếu Player đang Bất tử HOẶC đang là Zombie -> Không chết
+                if (player.IsInvincible() || player.isZombieMode)
+                {
+                    // Đạn va vào người thì vẫn nổ (hủy đạn) nhưng không gây chết
+                    Destroy(gameObject);
+                    return;
+                }
+            }
+
+            // --- LOGIC GIẾT PLAYER (Nếu không được bảo vệ) ---
             if (GameManager.Instance != null)
             {
                 Debug.Log("Enemy bullet hit the player!");
                 GameManager.Instance.PlayerDied();
             }
-            
-            Destroy(gameObject); // Trúng người -> Mất đạn
+
+            Destroy(gameObject); // Hủy đạn
         }
         else
         {
-            // Nếu va vào bất cứ thứ gì khác (Tường, Obstacle...) mà Matrix cho phép
+            // Nếu va vào bất cứ thứ gì khác (Tường, Obstacle...)
             // -> Hủy đạn luôn
             Destroy(gameObject);
         }

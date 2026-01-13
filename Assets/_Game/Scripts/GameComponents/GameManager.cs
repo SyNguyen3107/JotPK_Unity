@@ -127,7 +127,7 @@ public class GameManager : MonoBehaviour
             {
                 if (existingMap != null) Destroy(existingMap);
                 currentMapInstance = Instantiate(levelData.mapPrefab, Vector3.zero, Quaternion.identity);
-                currentMapInstance.name = "Map_" + levelData.levelName;
+                currentMapInstance.name = "Instance_" + levelData.levelName;
             }
             else
             {
@@ -420,19 +420,18 @@ public class GameManager : MonoBehaviour
         Debug.Log("Transition Done. Waiting 3s...");
         yield return new WaitForSeconds(3f);
 
-        // --- PHÂN LUỒNG: BOSS vs MAP THƯỜNG ---
+        //PHÂN LUỒNG MAP THƯỜNG/BOSS
         BossManager bossMgr = newMap.GetComponentInChildren<BossManager>();
 
         if (bossMgr != null)
         {
-            // >> NẾU LÀ BOSS: Kích hoạt Boss (Code BossManager tự lo nhạc/UI)
+            Debug.Log("BOSS LEVEL DETECTED.");
             bossMgr.ActivateBossLevel();
             isTimerRunning = false;
         }
         else
         {
-            // >> NẾU LÀ MAP THƯỜNG:
-            // Bật nhạc thường
+            Debug.Log("NORMAL LEVEL DETECTED.");
             if (musicSource != null)
             {
                 if (defaultLevelMusic != null) musicSource.clip = defaultLevelMusic;

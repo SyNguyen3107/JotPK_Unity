@@ -24,7 +24,7 @@ public class BossLoot : MonoBehaviour
                 GameManager.Instance.AddLife(livesBonus);
             }
 
-            BossManager bm = FindObjectOfType<BossManager>();
+            BossManager bm = FindFirstObjectByType<BossManager>();
             if (bm != null)
             {
                 // --- TRUYỀN SPRITE SANG ---
