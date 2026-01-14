@@ -1,112 +1,127 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using System;
+
 public class UpgradeManager : MonoBehaviour
 {
     public static UpgradeManager Instance;
-
     public event Action OnUpgradePurchased;
 
-    [Header("Shop Configuration Lists")]
-    // Kéo thả các ScriptableObject vào đây theo thứ tự xuất hiện
-    public List<UpgradeData> slot1Upgrades; // Slot 1: Thường là Giày
-    public List<UpgradeData> slot2Upgrades; // Slot 2: Thường là Súng
-    public List<UpgradeData> slot3Upgrades; // Slot 3: Thường là Đạn/Badge
+    #region --- CONFIGURATION ---
+    [Header("Shop Configuration")]
+    public List<UpgradeData> slot1Upgrades; // Boots
+    public List<UpgradeData> slot2Upgrades; // Gun
+    public List<UpgradeData> slot3Upgrades; // Ammo/Badge
+    #endregion
 
-    [Header("State (Read Only)")]
-    // Index = 0 nghĩa là chưa mua gì (đang chờ mua món đầu tiên)
+    #region --- STATE ---
+    [Header("Current State")]
     public int slot1Index = 0;
     public int slot2Index = 0;
     public int slot3Index = 0;
-
     public bool hasPurchasedThisRound = false;
 
+    // Accessors cho Save System (Mapping: Slot 1=Boot, Slot 2=Gun, Slot 3=Ammo)
+    public int currentBootLevel => slot1Index;
+    public int currentGunLevel => slot2Index;
+    public int currentAmmoLevel => slot3Index;
+    #endregion
+
+    #region --- LIFECYCLE ---
     void Awake()
     {
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
+    }
+    #endregion
 
-        // DontDestroyOnLoad(gameObject); // Bật dòng này nếu GameManager không giữ object này
+    #region --- SAVE / LOAD LOGIC ---
+    public void SetUpgradeLevels(int gunLevel, int bootLevel, int ammoLevel)
+    {
+        slot2Index = gunLevel; // Gun -> Slot 2
+        slot1Index = bootLevel; // Boot -> Slot 1
+        slot3Index = ammoLevel; // Ammo -> Slot 3
+
+        // Sau khi load chỉ số, cần áp dụng ngay vào Player hiện tại (nếu có)
+        ReapplyAllUpgrades();
     }
 
-    // --- LOGIC CHO SHOP (CÁI BÀN) ---
+    // Hàm này gọi mỗi khi bắt đầu màn chơi mới để cộng lại chỉ số cho Player mới spawn
+    public void ReapplyAllUpgrades()
+    {
+        PlayerController player = FindPlayer();
+        if (player == null) return;
+
+        ApplyListUpgrades(player, slot1Upgrades, slot1Index);
+        ApplyListUpgrades(player, slot2Upgrades, slot2Index);
+        ApplyListUpgrades(player, slot3Upgrades, slot3Index);
+
+        // Cập nhật UI Icon bên trái màn hình
+        if (UIManager.Instance != null) UIManager.Instance.UpdateUpgradeIcons();
+    }
+
+    void ApplyListUpgrades(PlayerController player, List<UpgradeData> list, int count)
+    {
+        for (int i = 0; i < count; i++)
+        {
+            if (i < list.Count) player.ApplyPermanentUpgrade(list[i]);
+        }
+    }
+    #endregion
+
+    #region --- SHOP LOGIC ---
     public UpgradeData GetNextUpgradeForSlot(int slotNumber)
     {
         switch (slotNumber)
         {
-            case 1:
-                if (slot1Index < slot1Upgrades.Count) return slot1Upgrades[slot1Index];
-                break;
-            case 2:
-                if (slot2Index < slot2Upgrades.Count) return slot2Upgrades[slot2Index];
-                break;
-            case 3:
-                if (slot3Index < slot3Upgrades.Count) return slot3Upgrades[slot3Index];
-                break;
+            case 1: return (slot1Index < slot1Upgrades.Count) ? slot1Upgrades[slot1Index] : null;
+            case 2: return (slot2Index < slot2Upgrades.Count) ? slot2Upgrades[slot2Index] : null;
+            case 3: return (slot3Index < slot3Upgrades.Count) ? slot3Upgrades[slot3Index] : null;
+            default: return null;
         }
-        return null; // Đã mua hết sạch đồ trong slot này
     }
 
-    // --- LOGIC CHO UI (LEFT PANEL) ---
-    // Hàm này trả về Icon của món đồ ĐÃ MUA GẦN NHẤT để hiển thị lên UI
     public Sprite GetPurchasedIcon(int slotNumber)
     {
-        int currentIndex = 0;
-        List<UpgradeData> currentList = null;
+        int index = 0;
+        List<UpgradeData> list = null;
 
         switch (slotNumber)
         {
-            case 1: currentIndex = slot1Index; currentList = slot1Upgrades; break;
-            case 2: currentIndex = slot2Index; currentList = slot2Upgrades; break;
-            case 3: currentIndex = slot3Index; currentList = slot3Upgrades; break;
+            case 1: index = slot1Index; list = slot1Upgrades; break;
+            case 2: index = slot2Index; list = slot2Upgrades; break;
+            case 3: index = slot3Index; list = slot3Upgrades; break;
         }
 
-        // currentIndex là món "Sắp mua". 
-        // Muốn lấy món "Đã mua", ta phải lấy (currentIndex - 1).
-        if (currentList != null && currentIndex > 0)
-        {
-            return currentList[currentIndex - 1].icon;
-        }
+        if (list != null && index > 0 && index - 1 < list.Count)
+            return list[index - 1].icon;
 
-        return null; // Chưa mua món nào ở slot này -> Trả về null (UI sẽ ẩn hoặc hiện ô trống)
+        return null;
     }
 
-    // --- XỬ LÝ GIAO DỊCH ---
     public bool TryPurchaseUpgrade(int slotNumber)
     {
-        if (hasPurchasedThisRound)
-        {
-            Debug.Log("Shop: Đã mua đồ trong vòng này rồi!");
-            return false;
-        }
+        if (hasPurchasedThisRound) return false;
 
         UpgradeData itemToBuy = GetNextUpgradeForSlot(slotNumber);
         if (itemToBuy == null) return false;
 
         if (GameManager.Instance != null && GameManager.Instance.currentCoins >= itemToBuy.cost)
         {
-            // 1. Trừ tiền
             GameManager.Instance.AddCoin(-itemToBuy.cost);
-
-            // 2. Tăng tiến trình
             AdvanceSlotIndex(slotNumber);
-
-            // 3. Đánh dấu đã mua
             hasPurchasedThisRound = true;
-
-            // 4. Áp dụng hiệu ứng
-            ApplyUpgradeEffect(itemToBuy);
-
-            // 5. PHÁT TÍN HIỆU: "Đã mua xong, dọn hàng thôi!"
-            OnUpgradePurchased?.Invoke(); // <--- THÊM DÒNG NÀY
-
+            ApplyUpgradeEffect(itemToBuy); // Áp dụng và diễn hoạt
+            OnUpgradePurchased?.Invoke();
             return true;
         }
-        else
-        {
-            Debug.Log("Shop: Không đủ tiền!");
-            return false;
-        }
+
+        return false;
+    }
+
+    public void ResetPurchaseStatus()
+    {
+        hasPurchasedThisRound = false;
     }
 
     void AdvanceSlotIndex(int slotNumber)
@@ -118,30 +133,30 @@ public class UpgradeManager : MonoBehaviour
             case 3: slot3Index++; break;
         }
     }
+    #endregion
 
-    public void ResetPurchaseStatus()
-    {
-        hasPurchasedThisRound = false;
-    }
+    #region --- EFFECT APPLICATION ---
     void ApplyUpgradeEffect(UpgradeData data)
     {
-        // 1. Tìm Player và áp dụng chỉ số
-        PlayerController player = FindAnyObjectByType<PlayerController>();
-        if (player == null) player = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerController>();
-
+        PlayerController player = FindPlayer();
         if (player != null)
         {
-            // Cộng chỉ số
             player.ApplyPermanentUpgrade(data);
-
-            // Diễn hoạt cảnh giơ tay
             player.TriggerItemGetAnimation(data.icon);
         }
 
-        // 2. Cập nhật UI bên trái
         if (UIManager.Instance != null)
         {
             UIManager.Instance.UpdateUpgradeIcons();
         }
     }
+
+    PlayerController FindPlayer()
+    {
+        if (GameManager.Instance != null && GameManager.Instance.playerObject != null)
+            return GameManager.Instance.playerObject.GetComponent<PlayerController>();
+
+        return FindFirstObjectByType<PlayerController>();
+    }
+    #endregion
 }

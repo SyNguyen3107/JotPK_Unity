@@ -26,13 +26,62 @@ public class UIManager : MonoBehaviour
     public Image bossHPFill;
     public GameObject bossHealthBarObject;
 
+    [Header("Pause Menu")]
+    public GameObject pauseMenuPanel;
+    public GameObject gameOverPanel;
+
     public GameObject exitArrowObject;
     void Awake()
     {
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
     }
+    void Update()
+    {
+        // Lắng nghe phím P hoặc Esc để Pause
+        if (Input.GetKeyDown(KeyCode.P) || Input.GetKeyDown(KeyCode.Escape))
+        {
+            if (GameManager.Instance != null)
+            {
+                GameManager.Instance.TogglePause();
+            }
+        }
+    }
+    // --- HÀM ĐƯỢC GỌI TỪ GAMEMANAGER ---
+    public void ShowPauseMenu(bool isVisible)
+    {
+        if (pauseMenuPanel != null)
+        {
+            pauseMenuPanel.SetActive(isVisible);
+        }
+    }
 
+    // --- CÁC HÀM GẮN VÀO NÚT BẤM (ON CLICK) ---
+
+    // Nút Resume
+    public void OnResumeButton()
+    {
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.TogglePause();
+        }
+    }
+    public void OnRestartButton()
+    {
+        if (GameManager.Instance != null)
+        {
+            // Gọi hàm RetryLevel bên GameManager (ta sẽ viết ngay sau đây)
+            GameManager.Instance.RetryLevel();
+        }
+    }
+    // Nút Exit to Main Menu
+    public void OnExitButton()
+    {
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.ExitToMainMenu();
+        }
+    }
     // --- CÁC HÀM CẬP NHẬT UI (PUBLIC) ---
     public void Start()
     {
@@ -143,8 +192,14 @@ public class UIManager : MonoBehaviour
     {
         if (bossHPFill != null)
         {
-            // Tính tỉ lệ phần trăm
+            // Debug xem hàm có được gọi không và giá trị bao nhiêu
+            Debug.Log($"UI Update Boss HP: {current}/{max} = {current / max}");
+
             bossHPFill.fillAmount = current / max;
+        }
+        else
+        {
+            Debug.LogError("LỖI: Chưa gán BossHPFill trong UIManager!");
         }
     }
 }

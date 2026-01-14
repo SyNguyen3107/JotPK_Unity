@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using UnityEngine;
 
-// 1. THÊM TRẠNG THÁI WAITING
 public enum BossState
 {
     Waiting,    // Mới sinh ra, chưa làm gì cả (chờ GameManager)
@@ -28,21 +27,27 @@ public class CowboyController : BossController
     public float explosionDuration = 0.5f;
 
     // --- State Variables ---
-    private BossState currentState;
+    // Gán mặc định ngay khi khai báo biến để tránh lỗi race condition
+    private BossState currentState = BossState.Waiting;
+
     private float stateTimer;
     private Vector3 targetPosition;
     private float shootTimer;
     private PlayerController playerScript;
 
+    // Dùng Awake thay vì Start để khởi tạo các biến tham chiếu
+    protected void Awake()
+    {
+        currentHealth = maxHealth;
+    }
+
     void Start()
     {
         base.Start();
-        currentHealth = maxHealth;
-        currentState = BossState.Waiting;
 
         if (animator != null) animator.SetBool("IsMoving", false);
-
     }
+
     // Hàm này được BossManager gọi khi chuyển cảnh xong
     public override void StartBossFight()
     {
@@ -57,9 +62,10 @@ public class CowboyController : BossController
                 if (playerScript.legsAnimator != null) playerScript.legsAnimator.SetBool("IsMoving", false);
             }
         }
-        currentState = BossState.Intro;
+
+        currentState = BossState.Intro; // Chuyển trạng thái sang Intro
         stateTimer = 3f;
-        Debug.Log("COWBOY BOSS FIGHT STARTED!");
+        Debug.Log("COWBOY BOSS FIGHT STARTED! State changed to Intro.");
     }
 
     protected override void Update()
@@ -69,6 +75,7 @@ public class CowboyController : BossController
         switch (currentState)
         {
             case BossState.Waiting:
+                // Boss sẽ đứng im ở đây cho đến khi StartBossFight được gọi
                 break;
             case BossState.Intro:
                 HandleIntro();
@@ -91,7 +98,6 @@ public class CowboyController : BossController
             if (dialogObject != null)
             {
                 SetBossDialog(false);
-                //Tắt lại nếu chưa tắt
             }
             EnterIdleState();
 
@@ -113,14 +119,23 @@ public class CowboyController : BossController
     void HandleMoving()
     {
         if (animator != null) animator.SetBool("IsMoving", true);
+
+        // Di chuyển
         transform.position = Vector3.MoveTowards(transform.position, targetPosition, moveSpeed * Time.deltaTime);
+
+        // Bắn súng
         shootTimer -= Time.deltaTime;
         if (shootTimer <= 0)
         {
             Shoot();
             shootTimer = fireRate;
         }
-        if (Vector3.Distance(transform.position, targetPosition) < 0.1f) EnterIdleState();
+
+        // Kiểm tra đến đích (Chỉ so sánh khoảng cách)
+        if (Vector3.Distance(transform.position, targetPosition) < 0.1f)
+        {
+            EnterIdleState();
+        }
     }
 
     void EnterIdleState()
@@ -133,6 +148,7 @@ public class CowboyController : BossController
     {
         currentState = BossState.Moving;
         float randomX = Random.Range(minX, maxX);
+        // Giữ nguyên Y và Z, chỉ thay đổi X
         targetPosition = new Vector3(randomX, transform.position.y, transform.position.z);
     }
 
@@ -141,7 +157,18 @@ public class CowboyController : BossController
         if (bulletPrefab != null)
         {
             Vector3 shootDir = Vector3.down;
-            if (playerTransform != null) shootDir = (playerTransform.position - transform.position).normalized;
+            // Tự tìm player nếu chưa có
+            if (playerScript == null)
+            {
+                GameObject p = GameObject.FindGameObjectWithTag("Player");
+                if (p) playerScript = p.GetComponent<PlayerController>();
+            }
+
+            if (playerScript != null)
+            {
+                shootDir = (playerScript.transform.position - transform.position).normalized;
+            }
+
             Vector3 spawnPos = (firePoint != null) ? firePoint.position : transform.position;
             GameObject bulletObj = Instantiate(bulletPrefab, spawnPos, Quaternion.identity);
 
@@ -153,8 +180,12 @@ public class CowboyController : BossController
     public override void TakeDamage(int dmg)
     {
         if (currentState == BossState.Intro || currentState == BossState.Dead || currentState == BossState.Waiting) return;
+
         currentHealth -= dmg;
         if (!isFlashing) StartCoroutine(FlashRoutine());
+
+        // Update UI thông qua BossManager (nếu cần thiết, hoặc để BossManager tự lo trong Update)
+
         if (currentHealth <= 0) Die();
     }
 
@@ -163,9 +194,11 @@ public class CowboyController : BossController
         if (isDead) return;
         isDead = true;
         currentState = BossState.Dead;
+
         if (animator != null) animator.SetBool("IsMoving", false);
         if (rb != null) rb.linearVelocity = Vector2.zero;
         GetComponent<Collider2D>().enabled = false;
+
         StartCoroutine(BossDeathSequence());
     }
 
@@ -178,22 +211,20 @@ public class CowboyController : BossController
             {
                 Vector3 randomOffset = Random.insideUnitCircle * 0.5f;
                 GameObject fx = Instantiate(deathEffectPrefab, transform.position + randomOffset, Quaternion.identity);
+
+                // Âm thanh chết
                 if (deathSounds.Length > 0)
                 {
-                    
                     AudioClip randomClip = deathSounds[Random.Range(0, deathSounds.Length)];
                     DeathEffect deathScript = fx.GetComponent<DeathEffect>();
-                    if (deathScript != null)
-                    {
-                        deathScript.PlaySound(randomClip);
-                        Debug.Log("Playing death sound");
-                    }
+                    if (deathScript != null) deathScript.PlaySound(randomClip);
                 }
             }
             yield return new WaitForSeconds(explosionDuration / smokeCount);
         }
         Destroy(gameObject);
     }
+
     protected override void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.CompareTag("Player"))
@@ -202,30 +233,21 @@ public class CowboyController : BossController
 
             if (player != null)
             {
-                // Logic Zombie
                 if (player.isZombieMode)
                 {
-                    TakeDamage(10); // Gây 10 damage
-                    Debug.Log("Zombie Player hit Cowboy! Dealt 10 DMG.");
+                    TakeDamage(10);
                     return;
                 }
-
-                // Logic Bất tử
-                if (player.IsInvincible())
-                {
-                    return;
-                }
+                if (player.IsInvincible()) return;
             }
 
-            // Logic thường: Giết Player
             if (GameManager.Instance != null)
             {
                 GameManager.Instance.PlayerDied();
             }
-            // Boss Cowboy KHÔNG tự hủy
         }
     }
-    // Vẽ Gizmos để bạn dễ chỉnh vùng di chuyển MinX - MaxX
+
     void OnDrawGizmos()
     {
         Gizmos.color = Color.red;

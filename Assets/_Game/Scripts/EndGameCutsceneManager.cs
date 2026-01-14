@@ -26,6 +26,10 @@ public class EndGameCutsceneManager : MonoBehaviour
 
     void Start()
     {
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.canPause = false;
+        }
         // Đảm bảo trạng thái ban đầu
         if (kissSpriteObject != null) kissSpriteObject.SetActive(false);
         if (playerLegAnimator != null) playerLegAnimator.SetBool("IsMoving", false);

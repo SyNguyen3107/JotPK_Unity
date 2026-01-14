@@ -7,18 +7,23 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
 
-    #region --- CONSTANTS (STRING REFERENCES) ---
+    #region --- CONSTANTS ---
     private const string TAG_PLAYER = "Player";
     private const string TAG_ENEMY = "Enemy";
     private const string TAG_DEATH_FX = "DeathFX";
     private const string NAME_INITIAL_MAP = "S1A1";
-    private const string NAME_ENEMY_SPAWN_POINTS = "SpawnPoints"; // Tên cũ
-    private const string NAME_PLAYER_SPAWN_POINT = "PlayerSpawnPoint"; // --- MỚI ---
+    private const string NAME_ENEMY_SPAWN_POINTS = "SpawnPoints";
+    private const string NAME_PLAYER_SPAWN_POINT = "PlayerSpawnPoint";
+    private const string SCENE_GAME_NAME = "Game";
     #endregion
 
     #region --- SETTINGS ---
     [Header("Game Settings")]
     public int startLives = 3;
+
+    [Header("Pause System")]
+    public bool isPaused = false;
+    public bool canPause = true;
 
     [Header("Level Settings")]
     public float levelDuration = 180f;
@@ -45,7 +50,6 @@ public class GameManager : MonoBehaviour
     public Vector3? overrideRespawnPosition = null;
 
     private int currentLevelCoinsSpawned = 0;
-    private int targetCoinsForThisLevel = 0;
 
     [Header("Drop System")]
     public List<PowerUpData> allowedDrops;
@@ -58,12 +62,16 @@ public class GameManager : MonoBehaviour
     [Header("Audio")]
     public AudioSource musicSource;
     public AudioClip defaultLevelMusic;
+    public AudioClip gameOverClip;
     #endregion
 
     #region --- STATE VARIABLES ---
     [Header("References")]
     public GameObject gameOverPanel;
     public GameObject playerObject;
+
+    // --- KHẮC PHỤC LỖI SPAWN: Dùng biến này thay cho Instance ---
+    private WaveSpawner myWaveSpawner;
 
     [Header("Debug Info")]
     [SerializeField] private GameObject currentMapInstance;
@@ -79,18 +87,38 @@ public class GameManager : MonoBehaviour
     private bool isTimerRunning = false;
     private bool isWaitingForClear = false;
     private bool isGameOver = false;
+
+    // Save System
+    public int currentSlotIndex = -1;
+    public GameData currentData;
     #endregion
 
     #region --- UNITY LIFECYCLE ---
     void Awake()
     {
-        if (Instance == null) Instance = this;
+        if (Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+
+            // LẤY COMPONENT NGAY TẠI ĐÂY
+            myWaveSpawner = GetComponent<WaveSpawner>();
+        }
         else Destroy(gameObject);
     }
 
     void Start()
     {
-        InitializeGame();
+        // Tự động chạy nếu đang test trực tiếp trong Scene Game
+        if (SceneManager.GetActiveScene().name == SCENE_GAME_NAME)
+        {
+            if (currentData == null)
+            {
+                currentLives = startLives;
+                currentLevelIndex = startingLevelIndex;
+            }
+            SetupLevel();
+        }
     }
 
     void Update()
@@ -106,41 +134,74 @@ public class GameManager : MonoBehaviour
     }
     #endregion
 
-    #region --- INITIALIZATION ---
-    void InitializeGame()
+    #region --- INITIALIZATION & SETUP ---
+
+    // Hàm gọi từ Menu
+    public void LoadGameAndPlay(int slotIndex, bool isNewGame)
     {
-        currentLives = startLives;
+        currentSlotIndex = slotIndex;
+        if (isNewGame)
+        {
+            // Reset biến local trước
+            currentLives = startLives;
+            currentCoins = 0;
+            currentLevelIndex = startingLevelIndex;
+
+            // Tạo Data mới
+            currentData = new GameData();
+            currentData.lives = startLives;
+            currentData.coins = 0;
+            currentData.currentLevelIndex = startingLevelIndex;
+
+            SaveGame(); // Lưu file lần đầu
+        }
+        else
+        {
+            currentData = SaveSystem.LoadGame(slotIndex);
+        }
+
+        if (currentData != null)
+        {
+            currentLives = currentData.lives;
+            currentCoins = currentData.coins;
+            currentLevelIndex = currentData.currentLevelIndex;
+        }
+
+        SceneManager.LoadScene(SCENE_GAME_NAME);
+    }
+
+    public void SetupLevel()
+    {
+        // 1. Reset Trạng thái
         isGameOver = false;
         isWaitingForClear = false;
-        currentLevelIndex = startingLevelIndex;
-        totalAreasPassed = 0;
+        // Lưu ý: totalAreasPassed không reset ở đây để giữ tiến trình shop nếu load game
 
         GameObject existingMap = GameObject.Find(NAME_INITIAL_MAP);
 
-        // --- LOGIC SINH MAP TEST ---
+        // --- 2. SPAWN MAP ---
         if (currentLevelIndex < allLevels.Count)
         {
             LevelConfig levelData = allLevels[currentLevelIndex];
             levelDuration = levelData.levelDuration;
 
-            if (currentLevelIndex > 0)
+            // Nếu map chưa có sẵn (hoặc khác tên), spawn mới
+            if (currentMapInstance == null || currentMapInstance.name != "Instance_" + levelData.levelName)
             {
-                if (existingMap != null) Destroy(existingMap);
+                if (existingMap != null && currentLevelIndex > 0) Destroy(existingMap);
+                if (currentMapInstance != null) Destroy(currentMapInstance);
+
                 currentMapInstance = Instantiate(levelData.mapPrefab, Vector3.zero, Quaternion.identity);
                 currentMapInstance.name = "Instance_" + levelData.levelName;
-            }
-            else
-            {
-                currentMapInstance = existingMap;
-                if (currentMapInstance == null) Debug.LogWarning($"Không tìm thấy Map khởi đầu '{NAME_INITIAL_MAP}'!");
             }
         }
         else
         {
-            Debug.LogError("Starting Level Index vượt quá số lượng màn chơi trong danh sách!");
+            Debug.LogError("Level Index out of range!");
+            return;
         }
 
-        // Setup State
+        // --- 3. SETUP TIMING & REFS ---
         currentTime = levelDuration;
         isTimerRunning = true;
         Time.timeScale = 1f;
@@ -148,71 +209,98 @@ public class GameManager : MonoBehaviour
         if (playerObject == null) playerObject = GameObject.FindGameObjectWithTag(TAG_PLAYER);
         if (gameOverPanel != null) gameOverPanel.SetActive(false);
 
-        // --- SETUP MAP HIỆN TẠI ---
+        // --- 4. SETUP CONTENT (PLAYER & ENEMY) ---
         if (currentMapInstance != null)
         {
             currentGate = currentMapInstance.GetComponentInChildren<Gate>();
 
-            // 1. TÌM VỊ TRÍ PLAYER (PlayerSpawnPoint)
+            // Setup Player Position
             Transform pSpawn = currentMapInstance.transform.Find(NAME_PLAYER_SPAWN_POINT);
             if (playerObject != null)
             {
-                if (pSpawn != null)
-                    playerObject.transform.position = pSpawn.position;
-                else
-                    playerObject.transform.position = Vector3.zero; // Fallback
+                playerObject.transform.position = (pSpawn != null) ? pSpawn.position : Vector3.zero;
+                playerObject.SetActive(true);
             }
 
-            // 2. SETUP ENEMY WAVES (SpawnPoints)
-            if (WaveSpawner.Instance != null && currentLevelIndex < allLevels.Count)
+            // Setup Wave Data (Luôn nạp dữ liệu wave dù là Boss hay thường, để phòng hờ)
+            if (myWaveSpawner != null && currentLevelIndex < allLevels.Count)
             {
                 LevelConfig levelData = allLevels[currentLevelIndex];
-                WaveSpawner.Instance.waves = levelData.waves;
 
                 Transform enemySpawnParent = currentMapInstance.transform.Find(NAME_ENEMY_SPAWN_POINTS);
+                Transform[] foundSpawnPoints = new Transform[0];
+
                 if (enemySpawnParent != null)
                 {
-                    Transform[] autoSpawnPoints = new Transform[enemySpawnParent.childCount];
+                    foundSpawnPoints = new Transform[enemySpawnParent.childCount];
                     for (int i = 0; i < enemySpawnParent.childCount; i++)
-                    {
-                        autoSpawnPoints[i] = enemySpawnParent.GetChild(i);
-                    }
-                    WaveSpawner.Instance.UpdateLevelData(Vector3.zero, levelData.waves, autoSpawnPoints);
+                        foundSpawnPoints[i] = enemySpawnParent.GetChild(i);
                 }
-                else
-                {
-                    Debug.LogWarning($"Map thiếu '{NAME_ENEMY_SPAWN_POINTS}'. Enemy có thể không spawn đúng chỗ.");
-                }
+
+                // Nạp dữ liệu vào Spawner (nhưng chưa START vội)
+                myWaveSpawner.UpdateLevelData(Vector3.zero, levelData.waves, foundSpawnPoints);
             }
         }
 
-        // Init UI & Audio
+        ApplyPersistentData(); // Apply upgrades/items
+
+        // --- 5. UI SETUP ---
         if (UIManager.Instance != null)
         {
             UIManager.Instance.SetTimerColor(timerNormalColor);
             UIManager.Instance.UpdateLives(currentLives);
-            UIManager.Instance.UpdateCoins(0);
+            UIManager.Instance.UpdateCoins(currentCoins);
             UIManager.Instance.UpdateAreaIndicator(totalAreasPassed);
             UIManager.Instance.UpdateTimer(currentTime, levelDuration);
             UIManager.Instance.ToggleHUD(true);
+            if (gameOverPanel == null)
+            {
+                gameOverPanel = UIManager.Instance.gameOverPanel;
+            }
         }
+        if (gameOverPanel != null) gameOverPanel.SetActive(false);
 
-        if (musicSource != null)
+        // --- 6. START LOGIC (QUAN TRỌNG: PHÂN LUỒNG BOSS/NORMAL) ---
+        // Đây là phần bạn đang thiếu ở logic cũ
+
+        BossManager bossMgr = currentMapInstance.GetComponentInChildren<BossManager>();
+
+        if (bossMgr != null)
         {
-            if (defaultLevelMusic != null) musicSource.clip = defaultLevelMusic;
-            musicSource.loop = true;
-            musicSource.Play();
+            Debug.Log("[SetupLevel] BOSS LEVEL DETECTED via Save Load.");
+
+            // Nếu là Boss: Kích hoạt Boss, tắt Timer, tắt Spawner
+            bossMgr.ActivateBossLevel();
+            isTimerRunning = false;
+
+            // Đảm bảo nhạc thường không đè nhạc boss (ActivateBossLevel sẽ lo phần nhạc boss)
+            // Đảm bảo Spawner không chạy
+            if (myWaveSpawner != null) myWaveSpawner.StopSpawning();
         }
-
-        if (currentLevelIndex > 0 && WaveSpawner.Instance != null)
+        else
         {
-            WaveSpawner.Instance.SetWavePaused(false);
-            WaveSpawner.Instance.StartNextLevelWaves();
+            Debug.Log("[SetupLevel] NORMAL LEVEL DETECTED.");
+
+            // Nếu là Map thường: Bật nhạc thường, bật Timer, bật Spawner
+            if (musicSource != null)
+            {
+                if (defaultLevelMusic != null) musicSource.clip = defaultLevelMusic;
+                musicSource.loop = true;
+                musicSource.Play();
+            }
+
+            isTimerRunning = true;
+
+            if (myWaveSpawner != null)
+            {
+                myWaveSpawner.SetWavePaused(false);
+                myWaveSpawner.StartNextLevelWaves();
+            }
         }
     }
     #endregion
 
-    #region --- CORE GAME LOOP ---
+    #region --- CORE GAME LOOP (TIMER & CLEAR) ---
     void HandleTimer()
     {
         if (!isTimerRunning) return;
@@ -239,12 +327,14 @@ public class GameManager : MonoBehaviour
     {
         if (isWaitingForClear) return;
 
-        Debug.Log("TIME UP! Trigger Sudden Death Mode");
+        Debug.Log("TIME UP! Stop Spawning & Wait for Clear.");
         isTimerRunning = false;
-        isWaitingForClear = true;
+        isWaitingForClear = true; // Bật cờ chờ dọn quái
 
-        if (WaveSpawner.Instance != null) WaveSpawner.Instance.StopSpawning();
+        // 1. Dừng sinh quái ngay lập tức
+        if (myWaveSpawner != null) myWaveSpawner.StopSpawning();
 
+        // 2. Kiểm tra Spikeball (nếu còn sót lại)
         CheckSpikeballEndCondition();
     }
 
@@ -252,8 +342,9 @@ public class GameManager : MonoBehaviour
     {
         if (!isWaitingForClear) return;
 
+        // Logic cũ: Phải giết hết quái đang sống VÀ quái đang chờ spawn phải bằng 0
         int activeEnemyCount = GameObject.FindGameObjectsWithTag(TAG_ENEMY).Length;
-        int pendingEnemyCount = (WaveSpawner.Instance != null) ? WaveSpawner.Instance.GetPendingEnemyCount() : 0;
+        int pendingEnemyCount = (myWaveSpawner != null) ? myWaveSpawner.GetPendingEnemyCount() : 0;
 
         if (activeEnemyCount == 0 && pendingEnemyCount == 0)
         {
@@ -267,33 +358,26 @@ public class GameManager : MonoBehaviour
         GameObject[] enemies = GameObject.FindGameObjectsWithTag(TAG_ENEMY);
         if (enemies.Length == 0) return;
 
-        List<Spikeball> spikeballList = new List<Spikeball>();
+        // Logic: Nếu tất cả quái còn lại là Spikeball thì làm yếu chúng đi
         bool allAreSpikeballs = true;
+        List<Spikeball> list = new List<Spikeball>();
 
-        foreach (GameObject enemyObj in enemies)
+        foreach (GameObject e in enemies)
         {
-            Spikeball sb = enemyObj.GetComponent<Spikeball>();
-            if (sb == null)
-            {
-                allAreSpikeballs = false;
-                break;
-            }
-            spikeballList.Add(sb);
+            Spikeball sb = e.GetComponent<Spikeball>();
+            if (sb == null) { allAreSpikeballs = false; break; }
+            list.Add(sb);
         }
 
         if (allAreSpikeballs)
-        {
-            Debug.Log("Time Up! Chỉ còn Spikeball -> Giảm máu tất cả.");
-            foreach (Spikeball sb in spikeballList) sb.Weaken();
-        }
+            foreach (var sb in list) sb.Weaken();
     }
     #endregion
 
-    #region --- LEVEL TRANSITION (ORIGIN SHIFT) ---
+    #region --- LEVEL TRANSITION ---
     public void CompleteCurrentArea()
     {
         Debug.Log("LEVEL CLEARED!");
-
         if (musicSource != null) musicSource.Stop();
 
         totalAreasPassed++;
@@ -301,21 +385,15 @@ public class GameManager : MonoBehaviour
         isTimerRunning = false;
 
         if (UIManager.Instance != null) UIManager.Instance.UpdateAreaIndicator(totalAreasPassed);
-
         if (currentGate != null) currentGate.OpenGate();
-        else Debug.LogWarning("Current Gate is NULL!");
 
-        // --- SPAWN SHOP ---
+        // Spawn Shop
         bool shouldSpawnShop = (totalAreasPassed > 0) && (totalAreasPassed % levelsPerShop == 0);
-
-        if (shouldSpawnShop && vendorPrefab != null)
+        if (shouldSpawnShop && vendorPrefab != null && currentMapInstance != null)
         {
             if (UpgradeManager.Instance != null) UpgradeManager.Instance.ResetPurchaseStatus();
             GameObject vendor = Instantiate(vendorPrefab, Vector3.zero, Quaternion.identity);
-            if (currentMapInstance != null)
-            {
-                vendor.transform.SetParent(currentMapInstance.transform);
-            }
+            vendor.transform.SetParent(currentMapInstance.transform);
         }
     }
 
@@ -329,71 +407,48 @@ public class GameManager : MonoBehaviour
         currentLevelIndex++;
         if (currentLevelIndex >= allLevels.Count)
         {
-            Debug.Log("WIN! Đã hết màn chơi trong danh sách.");
+            Debug.Log("WIN!");
             yield break;
         }
 
         LevelConfig nextLevelData = allLevels[currentLevelIndex];
 
-        // Tạo map mới ở vị trí offset (dưới màn hình)
+        // 1. Tạo Map Mới (Offset xuống dưới)
         Vector3 offsetPosition = new Vector3(0f, -mapHeight, 0);
         GameObject newMap = Instantiate(nextLevelData.mapPrefab, offsetPosition, Quaternion.identity);
         newMap.name = "Map_" + nextLevelData.levelName;
 
-        // Tắt input player trong lúc chuyển
         PlayerController pc = playerObject.GetComponent<PlayerController>();
         if (pc != null) pc.isInputEnabled = false;
 
-        // --- TÌM ĐIỂM ĐÍCH CHO PLAYER (PlayerSpawnPoint của map mới) ---
-        Vector3 targetWorldPos = offsetPosition; // Mặc định là tâm map mới
+        // 2. Di chuyển Camera & Player
+        Vector3 targetWorldPos = offsetPosition;
         Transform newPSpawn = newMap.transform.Find(NAME_PLAYER_SPAWN_POINT);
-        if (newPSpawn != null)
-        {
-            // Player đi từ cổng map cũ -> PlayerSpawnPoint của map mới
-            targetWorldPos = newPSpawn.position;
-        }
-        else
-        {
-            // Fallback: Nếu không có điểm spawn, đi đến giữa map
-            targetWorldPos = offsetPosition;
-        }
+        if (newPSpawn != null) targetWorldPos = newPSpawn.position;
 
-        // Di chuyển Camera và Player
         StartCoroutine(MoveCamera(offsetPosition, transitionTime));
-        // Player đi đến đúng điểm Spawn Point (đang ở tọa độ thế giới)
         yield return StartCoroutine(pc.MoveToPosition(targetWorldPos, transitionTime));
 
-        // ORIGIN SHIFT (Dời trục tọa độ về 0,0)
+        // 3. Origin Shift (Xóa map cũ, đưa map mới về 0)
         if (currentMapInstance != null)
         {
-            if (transform.IsChildOf(currentMapInstance.transform))
-            {
-                transform.SetParent(null);
-            }
+            if (transform.IsChildOf(currentMapInstance.transform)) transform.SetParent(null);
             Destroy(currentMapInstance);
         }
-
         ClearLeftoverEffects();
 
-        // Đặt map mới về 0,0
         newMap.transform.position = Vector3.zero;
+        if (newPSpawn != null) playerObject.transform.position = newPSpawn.position;
+        else playerObject.transform.position = Vector3.zero;
 
-        // Đặt Player về đúng vị trí (Lúc này PlayerSpawnPoint cũng đã về tọa độ cục bộ tương ứng)
-        if (newPSpawn != null)
-            playerObject.transform.position = newPSpawn.position;
-        else
-            playerObject.transform.position = Vector3.zero;
-
-        // Reset Camera
         Camera.main.transform.position = new Vector3(0, 0, -10);
-
         Physics2D.SyncTransforms();
         currentMapInstance = newMap;
 
-        // --- SETUP MAP MỚI (Enemy Spawn Points) ---
+        // 4. SETUP WAVE CHO MAP MỚI (FIX LỖI SPAWN TẠI ĐÂY)
         Gate newGate = newMap.GetComponentInChildren<Gate>();
 
-        if (WaveSpawner.Instance != null)
+        if (myWaveSpawner != null) // Dùng myWaveSpawner thay vì Instance
         {
             Transform enemySpawnParent = newMap.transform.Find(NAME_ENEMY_SPAWN_POINTS);
             Transform[] newSpawnPoints = new Transform[0];
@@ -402,36 +457,34 @@ public class GameManager : MonoBehaviour
             {
                 newSpawnPoints = new Transform[enemySpawnParent.childCount];
                 for (int i = 0; i < enemySpawnParent.childCount; i++)
-                {
                     newSpawnPoints[i] = enemySpawnParent.GetChild(i);
-                }
             }
-            // Gán điểm spawn quái cho WaveSpawner
-            WaveSpawner.Instance.UpdateLevelData(Vector3.zero, nextLevelData.waves, newSpawnPoints);
+
+            // Cập nhật dữ liệu wave mới cho Spawner
+            myWaveSpawner.UpdateLevelData(Vector3.zero, nextLevelData.waves, newSpawnPoints);
         }
 
         if (UIManager.Instance != null) UIManager.Instance.ToggleHUD(true);
         levelDuration = nextLevelData.levelDuration;
         currentTime = levelDuration;
-
         currentGate = newGate;
         if (currentGate != null) currentGate.CloseGate();
+
+        // 5. Save Game (Auto Save khi qua màn)
+        SaveGame();
 
         Debug.Log("Transition Done. Waiting 3s...");
         yield return new WaitForSeconds(3f);
 
-        //PHÂN LUỒNG MAP THƯỜNG/BOSS
+        // 6. Start Level Logic
         BossManager bossMgr = newMap.GetComponentInChildren<BossManager>();
-
         if (bossMgr != null)
         {
-            Debug.Log("BOSS LEVEL DETECTED.");
             bossMgr.ActivateBossLevel();
             isTimerRunning = false;
         }
         else
         {
-            Debug.Log("NORMAL LEVEL DETECTED.");
             if (musicSource != null)
             {
                 if (defaultLevelMusic != null) musicSource.clip = defaultLevelMusic;
@@ -439,46 +492,19 @@ public class GameManager : MonoBehaviour
                 musicSource.Play();
             }
 
-            // Bật Timer & Wave
             isTimerRunning = true;
-            if (WaveSpawner.Instance != null)
+            if (myWaveSpawner != null)
             {
-                WaveSpawner.Instance.SetWavePaused(false);
-                WaveSpawner.Instance.StartNextLevelWaves();
+                myWaveSpawner.SetWavePaused(false);
+                myWaveSpawner.StartNextLevelWaves();
             }
         }
 
-        // Mở input cho player
         if (pc != null) pc.isInputEnabled = true;
-    }
-
-    void ClearLeftoverEffects()
-    {
-        GameObject[] fxList = GameObject.FindGameObjectsWithTag(TAG_DEATH_FX);
-        foreach (var fx in fxList)
-        {
-            Destroy(fx);
-        }
-    }
-
-    IEnumerator MoveCamera(Vector3 targetCenter, float duration)
-    {
-        Transform camTrans = Camera.main.transform;
-        Vector3 startPos = camTrans.position;
-        Vector3 endPos = new Vector3(targetCenter.x, targetCenter.y, startPos.z);
-
-        float elapsed = 0f;
-        while (elapsed < duration)
-        {
-            camTrans.position = Vector3.Lerp(startPos, endPos, elapsed / duration);
-            elapsed += Time.deltaTime;
-            yield return null;
-        }
-        camTrans.position = endPos;
     }
     #endregion
 
-    #region --- PLAYER STATE ---
+    #region --- PLAYER STATE (DEATH & RESPAWN) ---
     public void PlayerDied()
     {
         if (isGameOver) return;
@@ -492,83 +518,140 @@ public class GameManager : MonoBehaviour
         if (currentLives > 0) StartCoroutine(RespawnSequence());
         else
         {
-            if (playerObject != null) playerObject.SetActive(false);
-            if (musicSource != null) musicSource.Stop();
-            GameOver();
+            // Hết mạng -> Gọi chuỗi Game Over
+            StartCoroutine(GameOverSequence());
         }
     }
 
     IEnumerator RespawnSequence()
     {
-        // --- GIAI ĐOẠN 1: DỪNG GAME & ANIMATION ---
+        // 1. Dừng Game Logic
         isTimerRunning = false;
         if (musicSource != null) musicSource.Stop();
-        if (WaveSpawner.Instance != null) WaveSpawner.Instance.OnPlayerDied();
+
+        // KHÔI PHỤC LOGIC CŨ: Báo cho Spawner biết player chết để thu gom quái
+        if (myWaveSpawner != null) myWaveSpawner.OnPlayerDied();
 
         PlayerController pc = playerObject != null ? playerObject.GetComponent<PlayerController>() : null;
         if (pc != null) pc.TriggerDeathAnimation();
 
         yield return new WaitForSeconds(deathAnimationDuration);
 
-        // --- GIAI ĐOẠN 2: ẨN PLAYER & CHỜ ---
         if (playerObject != null) playerObject.SetActive(false);
         yield return new WaitForSeconds(deathDuration);
 
-        // --- GIAI ĐOẠN 3: HỒI SINH & ĐẶT VỊ TRÍ ---
+        // 2. Hồi sinh
         if (playerObject != null)
         {
-            // ƯU TIÊN 1: Vị trí Custom (Boss)
             if (overrideRespawnPosition.HasValue)
-            {
                 playerObject.transform.position = overrideRespawnPosition.Value;
-            }
-            // ƯU TIÊN 2: PlayerSpawnPoint (Map thường)
             else if (currentMapInstance != null)
             {
                 Transform pSpawn = currentMapInstance.transform.Find(NAME_PLAYER_SPAWN_POINT);
-                if (pSpawn != null)
-                    playerObject.transform.position = pSpawn.position;
-                else
-                    playerObject.transform.position = Vector3.zero;
+                playerObject.transform.position = (pSpawn != null) ? pSpawn.position : Vector3.zero;
             }
-            else
-            {
-                playerObject.transform.position = Vector3.zero;
-            }
-
             playerObject.SetActive(true);
             if (pc != null) pc.ResetState();
         }
 
-        // --- GIAI ĐOẠN 4: BẤT TỬ TẠM THỜI ---
         if (pc != null) pc.TriggerRespawnInvincibility(invincibilityDuration);
         yield return new WaitForSeconds(invincibilityDuration);
 
-        // --- GIAI ĐOẠN 5: RESUME GAME ---
-        if (WaveSpawner.Instance != null) WaveSpawner.Instance.OnPlayerRespawned();
+        // 3. Resume Game -> Báo Spawner trả lại quái
+        if (myWaveSpawner != null) myWaveSpawner.OnPlayerRespawned();
 
-        // XỬ LÝ TIMER KHI RESUME
-        if (overrideRespawnPosition.HasValue)
-        {
-            isTimerRunning = false; // Map Boss
-        }
-        else if (currentTime > 0)
-        {
-            isTimerRunning = true; // Map thường
-        }
-        else
-        {
-            isTimerRunning = false;
-            isWaitingForClear = true;
-        }
+        if (overrideRespawnPosition.HasValue) isTimerRunning = false;
+        else if (currentTime > 0) isTimerRunning = true;
 
         if (musicSource != null) musicSource.Play();
     }
     #endregion
 
-    #region --- DROPS & ITEMS ---
-    public PowerUpData GetDropItemLogic() { return GetWeightedRandomItem(); }
+    #region --- SYSTEM & HELPERS ---
+    void ApplyPersistentData()
+    {
+        if (currentData == null) return;
 
+        this.currentLives = currentData.lives;
+        this.currentCoins = currentData.coins;
+
+        if (UpgradeManager.Instance != null)
+        {
+            UpgradeManager.Instance.SetUpgradeLevels(currentData.gunLevel, currentData.bootLevel, currentData.ammoLevel);
+        }
+        if (playerObject != null)
+        {
+            PlayerController pc = playerObject.GetComponent<PlayerController>();
+            if (pc != null)
+            {
+                if (currentData.hasHeldItem) pc.SetStoredItem(currentData.heldItemType);
+                else pc.ClearStoredItem();
+            }
+        }
+    }
+    public void TogglePause()
+    {
+        // Nếu trạng thái không cho phép -> Bỏ qua
+        if (!canPause) return;
+
+        isPaused = !isPaused;
+
+        if (isPaused)
+        {
+            // Dừng game
+            Time.timeScale = 0f;
+            if (UIManager.Instance != null) UIManager.Instance.ShowPauseMenu(true);
+            if (musicSource != null) musicSource.Pause();
+        }
+        else
+        {
+            // Tiếp tục game
+            Time.timeScale = 1f;
+            if (UIManager.Instance != null) UIManager.Instance.ShowPauseMenu(false);
+            if (musicSource != null) musicSource.UnPause();
+        }
+    }
+
+    public void ExitToMainMenu()
+    {
+        // Quan trọng: Phải trả lại tốc độ thời gian trước khi load scene khác
+        Time.timeScale = 1f;
+        isPaused = false;
+
+        // Reset các trạng thái game nếu cần
+        SceneManager.LoadScene("MainMenu");
+    }
+    public void SaveGame()
+    {
+        if (currentSlotIndex == -1) return;
+        currentData.lives = this.currentLives;
+        currentData.coins = this.currentCoins;
+        currentData.currentLevelIndex = this.currentLevelIndex;
+        SaveSystem.SaveGame(currentData, currentSlotIndex);
+    }
+
+    void ClearLeftoverEffects()
+    {
+        GameObject[] fxList = GameObject.FindGameObjectsWithTag(TAG_DEATH_FX);
+        foreach (var fx in fxList) Destroy(fx);
+    }
+
+    // Các hàm Drop System, Audio, IEnum MoveCamera... (Giữ nguyên như cũ)
+    IEnumerator MoveCamera(Vector3 targetCenter, float duration)
+    {
+        Transform camTrans = Camera.main.transform;
+        Vector3 startPos = camTrans.position;
+        Vector3 endPos = new Vector3(targetCenter.x, targetCenter.y, startPos.z);
+        float elapsed = 0f;
+        while (elapsed < duration)
+        {
+            camTrans.position = Vector3.Lerp(startPos, endPos, elapsed / duration);
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+        camTrans.position = endPos;
+    }
+    public PowerUpData GetDropItemLogic() { return GetWeightedRandomItem(); }
     private PowerUpData GetWeightedRandomItem()
     {
         if (allowedDrops == null || allowedDrops.Count == 0) return null;
@@ -582,23 +665,10 @@ public class GameManager : MonoBehaviour
         }
         return allowedDrops[0];
     }
-
-    public void AddCoin(int amount)
-    {
-        currentCoins += amount;
-        if (UIManager.Instance != null) UIManager.Instance.UpdateCoins(currentCoins);
-    }
-
-    public void AddLife(int amount)
-    {
-        currentLives += amount;
-        if (UIManager.Instance != null) UIManager.Instance.UpdateLives(currentLives);
-    }
-
+    public void AddCoin(int amount) { currentCoins += amount; if (UIManager.Instance != null) UIManager.Instance.UpdateCoins(currentCoins); }
+    public void AddLife(int amount) { currentLives += amount; if (UIManager.Instance != null) UIManager.Instance.UpdateLives(currentLives); }
     public void RegisterCoinSpawn() { currentLevelCoinsSpawned++; }
-
     public void ActivateGlobalStun(float duration) { StartCoroutine(GlobalStunRoutine(duration)); }
-
     IEnumerator GlobalStunRoutine(float duration)
     {
         isSmokeBombActive = true;
@@ -607,29 +677,60 @@ public class GameManager : MonoBehaviour
         isSmokeBombActive = false;
         SetAllEnemiesStun(false);
     }
-
     void SetAllEnemiesStun(bool isStunned)
     {
         GameObject[] enemies = GameObject.FindGameObjectsWithTag(TAG_ENEMY);
-        foreach (var e in enemies)
-        {
-            var enemyScript = e.GetComponent<Enemy>();
-            if (enemyScript != null) enemyScript.SetStunState(isStunned);
-        }
+        foreach (var e in enemies) { var s = e.GetComponent<Enemy>(); if (s) s.SetStunState(isStunned); }
     }
-    #endregion
-
-    #region --- SYSTEM ---
-    void GameOver()
+    void RestartLevel() { SceneManager.LoadScene(SceneManager.GetActiveScene().name); }
+    void OnEnable() { SceneManager.sceneLoaded += OnSceneLoaded; }
+    void OnDisable() { SceneManager.sceneLoaded -= OnSceneLoaded; }
+    void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        Time.timeScale = 1f;
+        if (scene.name == SCENE_GAME_NAME) SetupLevel();
+    }
+    IEnumerator GameOverSequence()
     {
         isGameOver = true;
-        if (gameOverPanel != null) gameOverPanel.SetActive(true);
+        isTimerRunning = false; // Dừng đồng hồ
+
+        // 1. Xử lý nhân vật
+        if (playerObject != null) playerObject.SetActive(false);
+        if (myWaveSpawner != null) myWaveSpawner.StopSpawning(); // Dừng sinh quái
+
+        // 2. Xử lý âm thanh
+        if (musicSource != null)
+        {
+            musicSource.Stop();
+            if (gameOverClip != null)
+            {
+                // Phát nhạc Game Over (không loop)
+                musicSource.loop = false;
+                musicSource.clip = gameOverClip;
+                musicSource.Play();
+
+
+                yield return new WaitForSecondsRealtime(3f);
+            }
+        }
+
+        // 3. Hiển thị Menu (Dừng game hoàn toàn)
         Time.timeScale = 0f;
+        if (gameOverPanel != null) gameOverPanel.SetActive(true);
     }
 
-    void RestartLevel()
+    // --- HÀM CHO NÚT RESTART (QUAN TRỌNG) ---
+    public void RetryLevel()
     {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        // Trả lại thời gian trước khi load
+        Time.timeScale = 1f;
+        isPaused = false;
+
+        // LOGIC CHÌA KHÓA: 
+        // Thay vì chỉ load scene, ta gọi lại hàm LoadGameAndPlay với isNewGame = false.
+        // Hàm này sẽ đọc file Save (được tạo lúc bắt đầu màn chơi) -> Khôi phục Máu, Tiền, Item về lúc mới vào màn.
+        LoadGameAndPlay(currentSlotIndex, false);
     }
     #endregion
 }

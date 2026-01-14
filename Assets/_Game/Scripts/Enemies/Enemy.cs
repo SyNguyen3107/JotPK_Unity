@@ -219,6 +219,7 @@ public class Enemy : MonoBehaviour
             if (player != null && player.isZombieMode)
             {
                 player.KillEnemyOnContact();
+                Debug.Log("Player is in Zombie Mode - Enemy dies on contact");
                 Die(true);
                 return;
             }

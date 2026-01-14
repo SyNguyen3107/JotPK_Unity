@@ -22,33 +22,61 @@ public abstract class BossManager : MonoBehaviour
     // --- LOGIC CHUNG CHO MỌI BOSS ---
     public virtual void ActivateBossLevel()
     {
-        Debug.Log("ACTIVATING BOSS LEVEL (BASE)...");
+        Debug.Log($"[BossManager] ACTIVATING BOSS LEVEL: {gameObject.name}");
 
-        // 1. Setup UI & Timer
+        // 0. Reset trạng thái cũ (Quan trọng khi oad Game)
+        ResetBossState();
+
+        // 1. Tự động tìm BossController nếu chưa gán (Fix lỗi quên kéo thả)
+        if (activeBossScript == null)
+        {
+            activeBossScript = GetComponentInChildren<BossController>();
+            if (activeBossScript == null)
+            {
+                Debug.LogError("[BossManager] LỖI: Không tìm thấy BossController nào trong Map!");
+                return;
+            }
+        }
+
+        // 2. Setup GameManager & Respawn
         if (GameManager.Instance != null)
         {
-            GameManager.Instance.SetTimerRunning(false);
-            if (GameManager.Instance.musicSource != null) GameManager.Instance.musicSource.pitch = 1f;
+            GameManager.Instance.SetTimerRunning(false); // Tắt đồng hồ đếm ngược
 
+            // Reset Pitch nhạc về bình thường
+            if (GameManager.Instance.musicSource != null)
+                GameManager.Instance.musicSource.pitch = 1f;
+
+            // Đặt lại điểm hồi sinh cho Player (để nếu chết thì spawn ở cửa phòng boss)
             if (playerRespawnPoint != null)
                 GameManager.Instance.overrideRespawnPosition = playerRespawnPoint.position;
         }
 
+        // 3. Setup UI
         if (UIManager.Instance != null)
         {
             UIManager.Instance.ToggleBossUI(true);
             UIManager.Instance.ToggleHUD(true);
+
+            // Cập nhật máu ngay lập tức để tránh thanh máu bị rỗng lúc đầu
+            if (activeBossScript != null)
+            {
+                UIManager.Instance.UpdateBossHealth(activeBossScript.currentHealth, activeBossScript.maxHealth);
+            }
         }
 
-        // 2. Audio
+        // 4. Audio
         if (GameManager.Instance != null && bossMusic != null)
         {
-            GameManager.Instance.musicSource.Stop();
-            GameManager.Instance.musicSource.clip = bossMusic;
-            GameManager.Instance.musicSource.Play();
+            if (GameManager.Instance.musicSource != null)
+            {
+                GameManager.Instance.musicSource.Stop();
+                GameManager.Instance.musicSource.clip = bossMusic;
+                GameManager.Instance.musicSource.Play();
+            }
         }
 
-        // 3. Map Bounds
+        // 5. Map Bounds (Khóa Camera/Player vào vùng đấu boss)
         if (playerZoneLimit != null)
         {
             Vector2 zoneMin = playerZoneLimit.bounds.min;
@@ -61,23 +89,46 @@ public abstract class BossManager : MonoBehaviour
             }
         }
 
-        // 4. Kích hoạt Boss (Đa hình)
+        // 6. Kích hoạt Boss (Đa hình)
         if (activeBossScript != null)
         {
             isBossActive = true;
+            // Đảm bảo Boss Object đang bật
+            activeBossScript.gameObject.SetActive(true);
             activeBossScript.StartBossFight();
         }
     }
 
     protected virtual void Update()
     {
-        if (isBossActive && activeBossScript != null && UIManager.Instance != null)
+        if (isBossActive && activeBossScript != null)
         {
-            UIManager.Instance.UpdateBossHealth(activeBossScript.currentHealth, activeBossScript.maxHealth);
+            // Chỉ cập nhật UI nếu có instance
+            if (UIManager.Instance != null)
+            {
+                UIManager.Instance.UpdateBossHealth(activeBossScript.currentHealth, activeBossScript.maxHealth);
+            }
+
+            // Kiểm tra điều kiện thắng
             if (activeBossScript.currentHealth <= 0)
             {
                 HandleBossVictory();
             }
+        }
+    }
+
+    // Reset các cờ để đảm bảo boss fight bắt đầu sạch sẽ
+    private void ResetBossState()
+    {
+        isBossActive = false;
+        victoryTriggered = false;
+
+        // Nếu Boss đã từng bị tắt, bật lại nó
+        if (activeBossScript != null)
+        {
+            activeBossScript.gameObject.SetActive(true);
+            // Có thể cần reset máu boss ở đây nếu muốn:
+            // activeBossScript.currentHealth = activeBossScript.maxHealth;
         }
     }
 
@@ -88,10 +139,15 @@ public abstract class BossManager : MonoBehaviour
         victoryTriggered = true;
         isBossActive = false;
 
+        Debug.Log("[BossManager] VICTORY!");
+
+        // Dừng nhạc
         if (GameManager.Instance != null && GameManager.Instance.musicSource != null)
         {
             GameManager.Instance.musicSource.Stop();
         }
+
+        // Tắt thanh máu Boss
         if (UIManager.Instance != null) UIManager.Instance.ToggleBossUI(false);
 
         // Spawn Loot chung
@@ -102,11 +158,17 @@ public abstract class BossManager : MonoBehaviour
             Instantiate(lootPrefab, spawnPos, Quaternion.identity);
         }
 
-        // Mở map bounds
+        // Mở map bounds (Cho player đi tự do)
         if (GameManager.Instance != null && GameManager.Instance.playerObject != null)
         {
             PlayerController pc = GameManager.Instance.playerObject.GetComponent<PlayerController>();
             if (pc != null) pc.SetMapBounds(new Vector2(-1000, -1000), new Vector2(1000, 1000));
+        }
+
+        // Reset Override Respawn (Để màn sau spawn đúng chỗ)
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.overrideRespawnPosition = null;
         }
     }
 
