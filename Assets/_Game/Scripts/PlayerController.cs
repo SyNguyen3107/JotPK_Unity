@@ -89,6 +89,7 @@ public class PlayerController : MonoBehaviour
     public Sprite bodyDown;
     public Sprite bodyLeft;
     public Sprite bodyRight;
+
     #endregion
 
     #region --- STATE VARIABLES ---
@@ -589,9 +590,18 @@ public class PlayerController : MonoBehaviour
     public void ResetState()
     {
         isDead = false;
-        if (rb) rb.simulated = true;
-        if (legsAnimator) legsAnimator.Play("Idle");
-        if (bodyRenderer) bodyRenderer.enabled = true;
+        if (rb != null) rb.simulated = true;
+
+        // Chỉ cần Rebind là đủ, Animator sẽ tự lo phần hiển thị Sprite Idle
+        if (legsAnimator != null)
+        {
+            legsAnimator.ResetTrigger("Die");
+            legsAnimator.Rebind();
+            legsAnimator.Update(0f);
+            legsAnimator.SetBool("IsMoving", false);
+        }
+
+        if (bodyRenderer != null) bodyRenderer.enabled = true;
         ToggleVisibility(true);
     }
 

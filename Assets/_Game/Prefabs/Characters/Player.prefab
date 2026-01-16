@@ -1445,7 +1445,6 @@ GameObject:
   - component: {fileID: 1271533537446403599}
   - component: {fileID: 7019188084119708178}
   - component: {fileID: 3975486461527801427}
-  - component: {fileID: 4082250954067670106}
   m_Layer: 3
   m_Name: Player
   m_TagString: Player
@@ -1561,41 +1560,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
   moveSpeed: 4
   maxSpeed: 7
-  rb: {fileID: 1271533537446403599}
   mapBoundsMin: {x: -6.5, y: -6.5}
   mapBoundsMax: {x: 6.5, y: 6.5}
   bulletPrefab: {fileID: 4803697644789391034, guid: 246aeb5273441ff4db9666ee7ea1e9ca, type: 3}
-  currentBulletDamage: 1
   firePoint: {fileID: 0}
   bulletOffset: 0.5
+  currentBulletDamage: 1
   currentFireRate: 0.4
   maxFireRate: 0.05
-  gunAudioSource: {fileID: 8521243082086757424}
-  footstepAudioSource: {fileID: 254427882811301201}
-  itemsPickupAudioSource: {fileID: 7640469292121317918}
-  sfxAudioSource: {fileID: 3634484445240895174}
-  zombieAudioSource: {fileID: 791560880868674958}
-  shootClip: {fileID: 8300000, guid: 592d843afdb33824e89df639c56a68b5, type: 3}
-  footstepClip: {fileID: 8300000, guid: 054035413190eea49bddbc6cae76eb8c, type: 3}
-  itemPickupClip: {fileID: 8300000, guid: a5162151409cb194a8a4bac8f7deef00, type: 3}
-  upgradePurchasedClip: {fileID: 8300000, guid: fdfb038fef5bdcc45b23618ada96fa18, type: 3}
-  playerDeathClip: {fileID: 8300000, guid: 989848622c570d14288a35d16e24adf2, type: 3}
-  lightningSound: {fileID: 8300000, guid: d0d138e649a653743999e430d357ab03, type: 3}
-  zombieMusic: {fileID: 8300000, guid: c3f3630b3c7af0e47845071efd90cb18, type: 3}
-  stepDelay: 0.3
-  idleStateObject: {fileID: 6588644181978533171}
-  activeStateObject: {fileID: 2511348322630318304}
-  bodyRenderer: {fileID: 128795819862410710}
-  legsRenderer: {fileID: 6563779303427292352}
-  idleRenderer: {fileID: 5083283337194541428}
-  bodySpriteDisplay: {fileID: 128795819862410710}
-  legsAnimator: {fileID: 3357998620536010297}
-  bodyUp: {fileID: -954812830, guid: 226a2dd9665e9e9408a1469427cf02a8, type: 3}
-  bodyDown: {fileID: 1231330788, guid: 226a2dd9665e9e9408a1469427cf02a8, type: 3}
-  bodyLeft: {fileID: -572029908, guid: 226a2dd9665e9e9408a1469427cf02a8, type: 3}
-  bodyRight: {fileID: -1415268768, guid: 226a2dd9665e9e9408a1469427cf02a8, type: 3}
-  heldItem: {fileID: 0}
-  enableAutoFire: 0
   coffeeSpeed: 8
   hmgFireRate: 0.05
   shotgunSpreadAngle: 15
@@ -1617,7 +1589,6 @@ MonoBehaviour:
   struckSprites:
   - {fileID: -1354847906, guid: 226a2dd9665e9e9408a1469427cf02a8, type: 3}
   - {fileID: 1095552551, guid: 226a2dd9665e9e9408a1469427cf02a8, type: 3}
-  lightningSprites: []
   flashSpeed: 0.1
   cutsceneDuration: 3
   zombieModelObject: {fileID: 3350684758574542923}
@@ -1626,30 +1597,36 @@ MonoBehaviour:
   zombieSpeed: 7
   handsUpSprite: {fileID: 1095552551, guid: 226a2dd9665e9e9408a1469427cf02a8, type: 3}
   itemLiftDisplay: {fileID: 3919015500833558803}
-  isZombieMode: 0
+  gunAudioSource: {fileID: 8521243082086757424}
+  footstepAudioSource: {fileID: 254427882811301201}
+  itemsPickupAudioSource: {fileID: 7640469292121317918}
+  sfxAudioSource: {fileID: 3634484445240895174}
+  zombieAudioSource: {fileID: 791560880868674958}
+  shootClip: {fileID: 8300000, guid: 592d843afdb33824e89df639c56a68b5, type: 3}
+  footstepClip: {fileID: 8300000, guid: 054035413190eea49bddbc6cae76eb8c, type: 3}
+  itemPickupClip: {fileID: 8300000, guid: a5162151409cb194a8a4bac8f7deef00, type: 3}
+  upgradePurchasedClip: {fileID: 8300000, guid: fdfb038fef5bdcc45b23618ada96fa18, type: 3}
+  playerDeathClip: {fileID: 8300000, guid: 989848622c570d14288a35d16e24adf2, type: 3}
+  lightningSound: {fileID: 8300000, guid: d0d138e649a653743999e430d357ab03, type: 3}
+  zombieMusic: {fileID: 8300000, guid: c3f3630b3c7af0e47845071efd90cb18, type: 3}
+  stepDelay: 0.3
+  rb: {fileID: 1271533537446403599}
+  idleStateObject: {fileID: 6588644181978533171}
+  activeStateObject: {fileID: 2511348322630318304}
+  bodyRenderer: {fileID: 128795819862410710}
+  legsRenderer: {fileID: 6563779303427292352}
+  idleRenderer: {fileID: 5083283337194541428}
+  bodySpriteDisplay: {fileID: 128795819862410710}
+  legsAnimator: {fileID: 3357998620536010297}
+  bodyUp: {fileID: -954812830, guid: 226a2dd9665e9e9408a1469427cf02a8, type: 3}
+  bodyDown: {fileID: 1231330788, guid: 226a2dd9665e9e9408a1469427cf02a8, type: 3}
+  bodyLeft: {fileID: -572029908, guid: 226a2dd9665e9e9408a1469427cf02a8, type: 3}
+  bodyRight: {fileID: -1415268768, guid: 226a2dd9665e9e9408a1469427cf02a8, type: 3}
+  defaultLegsSprite: {fileID: -1352337300, guid: 226a2dd9665e9e9408a1469427cf02a8, type: 3}
+  heldItem: {fileID: 0}
   isInputEnabled: 1
---- !u!95 &4082250954067670106
-Animator:
-  serializedVersion: 7
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3913508070216539003}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: f4b8ca4a73ffd074ca47da58e9d8686c, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_AnimatePhysics: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
+  enableAutoFire: 0
+  isZombieMode: 0
 --- !u!1 &3993843586881358532
 GameObject:
   m_ObjectHideFlags: 0
