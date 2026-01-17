@@ -430,6 +430,7 @@ MonoBehaviour:
   sourcePrefab: {fileID: 0}
   deployDuration: 1
   deployedMaxHealth: 7
+  deployedWhiteSprite: {fileID: -4977160037485911365, guid: 226a2dd9665e9e9408a1469427cf02a8, type: 3}
   maxMoveTime: 3
   isDeployed: 0
 --- !u!95 &1665041323796978344

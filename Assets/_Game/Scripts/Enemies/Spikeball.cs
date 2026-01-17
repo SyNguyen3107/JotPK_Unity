@@ -6,13 +6,10 @@ public class Spikeball : Enemy
     [Header("Spikeball Settings")]
     public float deployDuration = 1f; // Thời gian biến hình
     public int deployedMaxHealth = 7; // Máu sau khi biến hình
+    public Sprite deployedWhiteSprite;
 
     private float moveTimer = 0f;
     public float maxMoveTime = 3f;
-
-    // Các biến sprite để code tự đổi (nếu bạn không muốn dùng Animator phức tạp)
-    // Tuy nhiên dùng Animator cho Deploy 3 sprite sẽ mượt hơn. 
-    // Ở đây tôi sẽ viết code hỗ trợ Animator vì nó quản lý State tốt nhất.
 
     private Vector3 targetPosition;
     public bool isDeployed = false;
@@ -96,6 +93,39 @@ public class Spikeball : Enemy
 
         if (!found) targetPosition = transform.position; // Không tìm được thì đứng yên tại chỗ
     }
+    public override void TakeDamage(int damage)
+    {
+        if (isDead) return;
+        currentHealth -= damage;
+        if (isDeployed)
+        {
+            if (deployedWhiteSprite != null)
+            {
+                StartCoroutine(DeployedFlashRoutine());
+            }
+
+        }
+        else
+        {
+            if (whiteSprite != null)
+            {
+                StartCoroutine(FlashRoutine());
+            }
+        }
+
+
+        if (currentHealth > 0)
+        {
+            if (audioSource != null && hitSound != null)
+            {
+                audioSource.PlayOneShot(hitSound);
+            }
+        }
+        else
+        {
+            Die();
+        }
+    }
 
     IEnumerator DeployRoutine()
     {
@@ -111,10 +141,6 @@ public class Spikeball : Enemy
         // 3. Chuyển sang Dạng 2 (Deployed)
         isDeployed = true;
 
-        // --- LOGIC CỘNG DỒN MÁU ---
-        // Máu cũ (ví dụ max 2, bị đánh 1 -> còn 1)
-        // Máu mới max 7. Chênh lệch là 5.
-        // Máu hiện tại = 1 + 5 = 6. -> Logic đúng: vẫn mất 1 máu.
         int healthDifference = deployedMaxHealth - maxHealth;
         maxHealth = deployedMaxHealth;
         currentHealth += healthDifference;
@@ -129,6 +155,7 @@ public class Spikeball : Enemy
         }
     }
 
+
     // Hàm đặc biệt để giảm máu về 1 (Gọi từ GameManager)
     public void Weaken()
     {
@@ -139,18 +166,39 @@ public class Spikeball : Enemy
             Debug.Log("Spikeball weakened!");
         }
     }
+    protected IEnumerator DeployedFlashRoutine()
+    {
+        if (isFlashing) yield break;
+        isFlashing = true;
+
+        bool wasAnimEnabled = false;
+        Sprite originalSprite = sr.sprite;
+
+        if (animator != null)
+        {
+            wasAnimEnabled = animator.enabled;
+            animator.enabled = false;
+        }
+
+        sr.sprite = whiteSprite;
+
+        yield return new WaitForSeconds(0.1f);
+
+        if (animator != null)
+        {
+            animator.enabled = wasAnimEnabled;
+        }
+        else
+        {
+            sr.sprite = originalSprite;
+        }
+
+        isFlashing = false;
+    }
 
     // Xử lý va chạm đặc biệt với Ogre (sau này)
     protected void OnCollisionEnter2D(Collision2D collision)
     {
         base.OnCollisionEnter2D(collision); // Giữ logic va chạm với Player
-
-        // Logic tương lai: Nếu va chạm với Ogre
-        /*
-        if (collision.gameObject.CompareTag("Enemy") && collision.gameObject.GetComponent<Ogre>() != null)
-        {
-            Die(false); // Chết không rơi đồ
-        }
-        */
     }
 }
