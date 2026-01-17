@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
+    #region Configuration & Settings
     [Header("Base Stats")]
     public float moveSpeed = 2f;
     public int maxHealth = 3;
@@ -15,18 +16,12 @@ public class Enemy : MonoBehaviour
 
     [Header("Visuals")]
     public Sprite whiteSprite;
-    protected SpriteRenderer sr;
-    protected Animator animator;
-    protected bool isFlashing = false;
 
     [Header("Audio")]
     public AudioSource audioSource;
     public AudioClip hitSound;
-    public AudioClip footstepClip;  // Kéo file âm thanh bước chân vào đây
-    public float stepRate = 0.5f;   // Thời gian giữa 2 bước chân (giây)
-
-    private float nextStepTime = 0f;
-    private bool isFlyingEnemy = false;
+    public AudioClip footstepClip;
+    public float stepRate = 0.5f;
 
     [Header("Base References")]
     public Rigidbody2D rb;
@@ -36,13 +31,21 @@ public class Enemy : MonoBehaviour
 
     [Header("Stun Visuals")]
     public GameObject questionMarkObject;
-    private float originalSpeed;
+    #endregion
 
+    #region Runtime Variables
     [HideInInspector] public GameObject sourcePrefab;
-
+    protected SpriteRenderer sr;
+    protected Animator animator;
+    protected bool isFlashing = false;
     protected Transform playerTransform;
     protected bool isDead = false;
+    private float nextStepTime = 0f;
+    private bool isFlyingEnemy = false;
+    private float originalSpeed;
+    #endregion
 
+    #region Unity Lifecycle
     protected virtual void Start()
     {
         sr = GetComponent<SpriteRenderer>();
@@ -80,7 +83,6 @@ public class Enemy : MonoBehaviour
 
         if (currentTarget != null)
         {
-
             PlayerController playerScript = null;
             if (playerTransform != null) playerScript = playerTransform.GetComponent<PlayerController>();
 
@@ -91,19 +93,15 @@ public class Enemy : MonoBehaviour
                     transform.position = Vector2.MoveTowards(transform.position, currentTarget.position, moveSpeed * Time.deltaTime);
                 }
             }
-            // --- TRƯỜNG HỢP 2: TƯƠNG TÁC VỚI PLAYER ---
             else
             {
                 bool isPlayerZombie = (playerScript != null && playerScript.isZombieMode);
 
-                // Nếu Player là Zombie VÀ quái này biết sợ (ShouldFlee trả về true)
                 if (isPlayerZombie && ShouldFlee())
                 {
-                    // Logic bỏ chạy (Flee)
                     Vector2 fleeDirection = (transform.position - playerTransform.position).normalized;
                     Vector2 targetPos = (Vector2)transform.position + fleeDirection * moveSpeed * Time.deltaTime;
 
-                    // Giới hạn không cho chạy ra khỏi map
                     if (playerScript != null)
                     {
                         float clampX = Mathf.Clamp(targetPos.x, playerScript.mapBoundsMin.x + 0.5f, playerScript.mapBoundsMax.x - 0.5f);
@@ -111,11 +109,9 @@ public class Enemy : MonoBehaviour
                         transform.position = new Vector2(clampX, clampY);
                     }
 
-                    // Quay mặt ngược hướng Player khi bỏ chạy
                     if (transform.position.x > playerTransform.position.x) sr.flipX = false;
                     else sr.flipX = true;
                 }
-                // Nếu bình thường -> Đuổi theo Player
                 else
                 {
                     if (moveSpeed > 0)
@@ -127,6 +123,36 @@ public class Enemy : MonoBehaviour
             }
         }
     }
+    protected virtual void FixedUpdate()
+
+    {
+
+    }
+
+    protected virtual void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("Player"))
+        {
+            PlayerController player = collision.gameObject.GetComponent<PlayerController>();
+
+            if (player != null && player.isZombieMode)
+            {
+                player.KillEnemyOnContact();
+                Die(true);
+                return;
+            }
+
+            if (player != null && player.IsInvincible())
+            {
+                return;
+            }
+            if (GameManager.Instance != null) GameManager.Instance.PlayerDied();
+            Destroy(gameObject);
+        }
+    }
+    #endregion
+
+    #region Core Logic
     void HandleFootsteps()
     {
         if (isFlyingEnemy || moveSpeed <= 0) return;
@@ -138,9 +164,6 @@ public class Enemy : MonoBehaviour
             audioSource.PlayOneShot(footstepClip);
             nextStepTime = Time.time + stepRate;
         }
-    }
-    protected virtual void FixedUpdate()
-    {
     }
 
     public virtual void TakeDamage(int damage)
@@ -166,7 +189,6 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    // --- LOGIC MỚI: RƠI ĐỒ THEO TRỌNG SỐ & BẢO HIỂM ---
     public virtual void Die(bool shouldDrop = true)
     {
         isDead = true;
@@ -180,8 +202,6 @@ public class Enemy : MonoBehaviour
                 dropData = GameManager.Instance.GetDropItemLogic();
             }
 
-
-            // 3. Spawn Item
             if (dropData != null && itemPrefab != null)
             {
                 GameObject itemObj = Instantiate(itemPrefab, transform.position, Quaternion.identity);
@@ -191,15 +211,12 @@ public class Enemy : MonoBehaviour
                     pickup.Setup(dropData);
                 }
 
-                // Nếu rơi ra Coin -> Báo cáo lại cho Manager
                 if (dropData.type == PowerUpType.Coin)
                 {
                     GameManager.Instance.RegisterCoinSpawn();
                 }
             }
         }
-
-        // --- HẾT LOGIC RƠI ĐỒ ---
 
         if (deathEffectPrefab != null)
         {
@@ -219,37 +236,34 @@ public class Enemy : MonoBehaviour
         Destroy(gameObject);
     }
 
+    public void SetStunState(bool isStunned)
+    {
+        if (isStunned)
+        {
+            moveSpeed = 0;
+            if (animator != null) animator.speed = 0;
+            if (questionMarkObject != null) questionMarkObject.SetActive(true);
+        }
+        else
+        {
+            moveSpeed = originalSpeed;
+            if (animator != null) animator.speed = 1;
+            if (questionMarkObject != null) questionMarkObject.SetActive(false);
+        }
+    }
+
     protected virtual bool ShouldFlee()
     {
         return true;
     }
+
     protected virtual bool ShouldChaseGopher()
     {
         return true;
     }
-    protected virtual void OnCollisionEnter2D(Collision2D collision)
-    {
-        if (collision.gameObject.CompareTag("Player"))
-        {
-            PlayerController player = collision.gameObject.GetComponent<PlayerController>();
+    #endregion
 
-            if (player != null && player.isZombieMode)
-            {
-                player.KillEnemyOnContact();
-                Debug.Log("Player is in Zombie Mode - Enemy dies on contact");
-                Die(true);
-                return;
-            }
-
-            if (player != null && player.IsInvincible())
-            {
-                return;
-            }
-            if (GameManager.Instance != null) GameManager.Instance.PlayerDied();
-            Destroy(gameObject);
-        }
-    }
-
+    #region Coroutines
     protected IEnumerator FlashRoutine()
     {
         if (isFlashing) yield break;
@@ -279,20 +293,5 @@ public class Enemy : MonoBehaviour
 
         isFlashing = false;
     }
-
-    public void SetStunState(bool isStunned)
-    {
-        if (isStunned)
-        {
-            moveSpeed = 0;
-            if (animator != null) animator.speed = 0;
-            if (questionMarkObject != null) questionMarkObject.SetActive(true);
-        }
-        else
-        {
-            moveSpeed = originalSpeed;
-            if (animator != null) animator.speed = 1;
-            if (questionMarkObject != null) questionMarkObject.SetActive(false);
-        }
-    }
+    #endregion
 }

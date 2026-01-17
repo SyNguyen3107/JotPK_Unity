@@ -10,8 +10,6 @@ public class Imp : Enemy
 
         base.Start();
     }
-
-    // Ghi đè hàm này để trả về FALSE -> Không sợ Zombie
     protected override bool ShouldFlee()
     {
         return false;

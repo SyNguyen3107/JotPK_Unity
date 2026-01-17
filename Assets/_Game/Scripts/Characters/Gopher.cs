@@ -5,19 +5,23 @@ public class Gopher : MonoBehaviour
 {
     public static Gopher Instance;
 
+    #region Configuration & Settings
     [Header("Settings")]
     public float moveSpeed = 2f;
     public AudioSource audioSource;
     public AudioClip gopherSFX;
     public AudioClip footstepClip;
-    public float stepRate = 0.5f;   // Thời gian giữa 2 bước chân (giây)
-
-    private float nextStepTime = 0f;
+    public float stepRate = 0.5f;
 
     public float destroyBound = 7.5f;
+    #endregion
 
+    #region Runtime Variables
+    private float nextStepTime = 0f;
     private Vector3 moveDirection;
+    #endregion
 
+    #region Unity Lifecycle
     void Awake()
     {
         Instance = this;
@@ -39,83 +43,9 @@ public class Gopher : MonoBehaviour
 
     void Update()
     {
-        // 1. DI CHUYỂN
         transform.position += moveDirection * moveSpeed * Time.deltaTime;
         HandleFootsteps();
-        // 2. KIỂM TRA ĐIỀU KIỆN BIẾN MẤT (Logic toạ độ đích)
         CheckBoundary();
-    }
-    void HandleFootsteps()
-    {
-        if (audioSource == null || footstepClip == null) return;
-
-        if (Time.time >= nextStepTime)
-        {
-            audioSource.PlayOneShot(footstepClip);
-            nextStepTime = Time.time + stepRate;
-        }
-    }
-    void CalculateDirectionAndOrientation()
-    {
-        float x = transform.position.x;
-        float y = transform.position.y;
-
-        // --- XÁC ĐỊNH HƯỚNG ---
-
-        // Trường hợp 1: Spawn ở cạnh TRÊN hoặc DƯỚI (Y lớn hơn X)
-        if (Mathf.Abs(y) > Mathf.Abs(x))
-        {
-            if (y > 0)
-            {
-                // Spawn ở TRÊN -> Đi xuống
-                moveDirection = Vector3.down;
-            }
-            else
-            {
-                // Spawn ở DƯỚI -> Đi lên
-                moveDirection = Vector3.up;
-            }
-        }
-        // Trường hợp 2: Spawn ở cạnh TRÁI hoặc PHẢI (X lớn hơn Y)
-        else
-        {
-            if (x > 0)
-            {
-                // Spawn ở PHẢI -> Đi trái
-                moveDirection = Vector3.left;
-            }
-            else
-            {
-                // Spawn ở TRÁI -> Đi phải
-                moveDirection = Vector3.right;
-            }
-        }
-    }
-
-    void CheckBoundary()
-    {
-        // Logic: Chỉ kiểm tra vượt biên theo hướng đang di chuyển
-
-        if (moveDirection == Vector3.right) // Đang đi sang Phải
-        {
-            // Chỉ hủy khi X vượt quá giới hạn DƯƠNG (bên phải)
-            if (transform.position.x > destroyBound) Destroy(gameObject);
-        }
-        else if (moveDirection == Vector3.left) // Đang đi sang Trái
-        {
-            // Chỉ hủy khi X vượt quá giới hạn ÂM (bên trái)
-            if (transform.position.x < -destroyBound) Destroy(gameObject);
-        }
-        else if (moveDirection == Vector3.up) // Đang đi lên
-        {
-            // Chỉ hủy khi Y vượt quá giới hạn DƯƠNG (bên trên)
-            if (transform.position.y > destroyBound) Destroy(gameObject);
-        }
-        else if (moveDirection == Vector3.down) // Đang đi xuống
-        {
-            // Chỉ hủy khi Y vượt quá giới hạn ÂM (bên dưới)
-            if (transform.position.y < -destroyBound) Destroy(gameObject);
-        }
     }
 
     void OnTriggerEnter2D(Collider2D other)
@@ -129,4 +59,67 @@ public class Gopher : MonoBehaviour
             }
         }
     }
+    #endregion
+
+    #region Core Logic
+    void HandleFootsteps()
+    {
+        if (audioSource == null || footstepClip == null) return;
+
+        if (Time.time >= nextStepTime)
+        {
+            audioSource.PlayOneShot(footstepClip);
+            nextStepTime = Time.time + stepRate;
+        }
+    }
+
+    void CalculateDirectionAndOrientation()
+    {
+        float x = transform.position.x;
+        float y = transform.position.y;
+
+        if (Mathf.Abs(y) > Mathf.Abs(x))
+        {
+            if (y > 0)
+            {
+                moveDirection = Vector3.down;
+            }
+            else
+            {
+                moveDirection = Vector3.up;
+            }
+        }
+        else
+        {
+            if (x > 0)
+            {
+                moveDirection = Vector3.left;
+            }
+            else
+            {
+                moveDirection = Vector3.right;
+            }
+        }
+    }
+
+    void CheckBoundary()
+    {
+        if (moveDirection == Vector3.right)
+        {
+            if (transform.position.x > destroyBound) Destroy(gameObject);
+        }
+        else if (moveDirection == Vector3.left)
+        {
+            if (transform.position.x < -destroyBound) Destroy(gameObject);
+        }
+        else if (moveDirection == Vector3.up)
+        {
+            if (transform.position.y > destroyBound) Destroy(gameObject);
+        }
+        else if (moveDirection == Vector3.down)
+        {
+            if (transform.position.y < -destroyBound) Destroy(gameObject);
+        }
+    }
+    #endregion
 }
