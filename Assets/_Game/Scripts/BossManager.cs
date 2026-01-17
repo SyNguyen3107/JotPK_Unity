@@ -168,7 +168,7 @@ public abstract class BossManager : MonoBehaviour
         // Reset Override Respawn (Để màn sau spawn đúng chỗ)
         if (GameManager.Instance != null)
         {
-            GameManager.Instance.overrideRespawnPosition = null;
+            GameManager.Instance.useOverrideRespawn = false;
         }
     }
 

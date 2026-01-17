@@ -108,7 +108,7 @@ public class FectorBossManager : BossManager
     }
     void OnDestroy()
     {
-        if (GameManager.Instance != null) GameManager.Instance.overrideRespawnPosition = null;
+        if (GameManager.Instance != null) GameManager.Instance.useOverrideRespawn = false;
         if (UIManager.Instance != null) UIManager.Instance.ToggleBossUI(false);
     }
 }

@@ -205,6 +205,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Orc
   moveSpeed: 2
   maxHealth: 1
+  currentHealth: 0
   damageToPlayer: 1
   deathEffectPrefab: {fileID: 5037848369709413691, guid: 6050a5da9c530a14999645b9819b5d75, type: 3}
   deathSounds:
@@ -213,6 +214,8 @@ MonoBehaviour:
   whiteSprite: {fileID: 4945819037667684097, guid: 226a2dd9665e9e9408a1469427cf02a8, type: 3}
   audioSource: {fileID: -7401060214184405462}
   hitSound: {fileID: 8300000, guid: 9d0796a3c79ebec448ddaa93516b59e4, type: 3}
+  footstepClip: {fileID: 8300000, guid: 054035413190eea49bddbc6cae76eb8c, type: 3}
+  stepRate: 0.5
   rb: {fileID: 4635532394864102644}
   itemPrefab: {fileID: 4688020100261846767, guid: 6d3f94549c48af9489a7d7d733e5a5c2, type: 3}
   questionMarkObject: {fileID: 9180483279650007586}

@@ -22,6 +22,11 @@ public class Enemy : MonoBehaviour
     [Header("Audio")]
     public AudioSource audioSource;
     public AudioClip hitSound;
+    public AudioClip footstepClip;  // Kéo file âm thanh bước chân vào đây
+    public float stepRate = 0.5f;   // Thời gian giữa 2 bước chân (giây)
+
+    private float nextStepTime = 0f;
+    private bool isFlyingEnemy = false;
 
     [Header("Base References")]
     public Rigidbody2D rb;
@@ -57,6 +62,10 @@ public class Enemy : MonoBehaviour
         if (GameManager.Instance != null && GameManager.Instance.isSmokeBombActive)
         {
             SetStunState(true);
+        }
+        if (GetComponent<Butterfly>() != null || GetComponent<Imp>() != null)
+        {
+            isFlyingEnemy = true;
         }
     }
 
@@ -112,16 +121,24 @@ public class Enemy : MonoBehaviour
                     if (moveSpeed > 0)
                     {
                         transform.position = Vector2.MoveTowards(transform.position, playerTransform.position, moveSpeed * Time.deltaTime);
-
-                        // Quay mặt về phía Player
-                        if (playerTransform.position.x < transform.position.x) sr.flipX = true;
-                        else sr.flipX = false;
+                        HandleFootsteps();
                     }
                 }
             }
         }
     }
+    void HandleFootsteps()
+    {
+        if (isFlyingEnemy || moveSpeed <= 0) return;
 
+        if (audioSource == null || footstepClip == null) return;
+
+        if (Time.time >= nextStepTime)
+        {
+            audioSource.PlayOneShot(footstepClip);
+            nextStepTime = Time.time + stepRate;
+        }
+    }
     protected virtual void FixedUpdate()
     {
     }

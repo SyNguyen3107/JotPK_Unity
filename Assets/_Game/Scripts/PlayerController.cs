@@ -506,7 +506,16 @@ public class PlayerController : MonoBehaviour
 
         isDead = true;
         if (rb != null) rb.linearVelocity = Vector2.zero;
-        if (activeStateObject != null) activeStateObject.SetActive(false);
+        if (activeStateObject != null)
+        {
+            activeStateObject.SetActive(false);
+            Debug.Log("Tombstone Cutscene: Hiding Active State Object");
+        }
+        if (idleStateObject != null)
+        {
+            idleStateObject.SetActive(false);
+            Debug.Log("Tombstone Cutscene: Hiding Idle State Object");
+        }
 
         if (struckFxObject != null) struckFxObject.SetActive(true);
         if (lightningFxObject != null) lightningFxObject.SetActive(true);
@@ -541,7 +550,11 @@ public class PlayerController : MonoBehaviour
 
         isZombieMode = true;
         isDead = false;
-        if (zombieModelObject) zombieModelObject.SetActive(true);
+        if (zombieModelObject)
+        {
+            zombieModelObject.SetActive(true);
+            Debug.Log("Tombstone Cutscene: Activating Zombie Model Object");
+        }
 
         RecalculateStats();
         PlaySound(zombieAudioSource, zombieMusic);

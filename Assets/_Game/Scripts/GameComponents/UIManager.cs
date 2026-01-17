@@ -1,7 +1,8 @@
-﻿using UnityEngine;
-using UnityEngine.UI;
-using TMPro;
+﻿using System.Collections;
 using System.Collections.Generic;
+using TMPro;
+using UnityEngine;
+using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
 {
@@ -29,6 +30,9 @@ public class UIManager : MonoBehaviour
     [Header("Pause Menu")]
     public GameObject pauseMenuPanel;
     public GameObject gameOverPanel;
+    [Header("Tutorial UI")]
+    public GameObject tutorialPanel; // Kéo object TutorialPanel vào đây
+    public CanvasGroup tutorialCanvasGroup; // Kéo object TutorialPanel (có CanvasGroup) vào đây
 
     public GameObject exitArrowObject;
     void Awake()
@@ -201,5 +205,27 @@ public class UIManager : MonoBehaviour
         {
             Debug.LogError("LỖI: Chưa gán BossHPFill trong UIManager!");
         }
+    }
+    public void ShowTutorial(bool show)
+    {
+        if (tutorialPanel != null) tutorialPanel.SetActive(show);
+        if (tutorialCanvasGroup != null) tutorialCanvasGroup.alpha = 1f; // Reset độ rõ
+    }
+    public IEnumerator FadeOutTutorial(float duration)
+    {
+        if (tutorialCanvasGroup == null) yield break;
+
+        float startAlpha = tutorialCanvasGroup.alpha;
+        float elapsed = 0f;
+
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            tutorialCanvasGroup.alpha = Mathf.Lerp(startAlpha, 0f, elapsed / duration);
+            yield return null;
+        }
+
+        tutorialCanvasGroup.alpha = 0f;
+        if (tutorialPanel != null) tutorialPanel.SetActive(false);
     }
 }

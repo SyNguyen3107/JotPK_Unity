@@ -194,9 +194,10 @@ public class CowboyBossManager : BossManager
 
     void OnDestroy()
     {
-        if (GameManager.Instance != null)
+        if (GameManager.Instance != null && playerRespawnPoint != null)
         {
-            GameManager.Instance.overrideRespawnPosition = null;
+            GameManager.Instance.useOverrideRespawn = true;
+            GameManager.Instance.overrideRespawnPosition = playerRespawnPoint.position;
         }
         if (UIManager.Instance != null) UIManager.Instance.ToggleBossUI(false);
     }

@@ -30,6 +30,9 @@ public class GameManager : MonoBehaviour
     public Color timerNormalColor = Color.green;
     public Color timerCriticalColor = Color.red;
 
+    public bool useOverrideRespawn = false; // Checkbox để bật tính năng này
+    public Vector3 overrideRespawnPosition;
+
     [Header("Respawn Logic")]
     public float deathAnimationDuration = 1f;
     public float deathDuration = 3f;
@@ -46,9 +49,6 @@ public class GameManager : MonoBehaviour
     [Header("Level Management")]
     public List<LevelConfig> allLevels;
 
-    [Header("Boss Logic")]
-    public Vector3? overrideRespawnPosition = null;
-
     private int currentLevelCoinsSpawned = 0;
 
     [Header("Drop System")]
@@ -63,6 +63,10 @@ public class GameManager : MonoBehaviour
     public AudioSource musicSource;
     public AudioClip defaultLevelMusic;
     public AudioClip gameOverClip;
+
+    [Header("Tutorial Settings")]
+    public bool isTutorialActive = false; // Biến cờ để biết đang trong giai đoạn tutorial
+    private bool hasGameStarted = false;  // Biến cờ để đảm bảo game chỉ start 1 lần
     #endregion
 
     #region --- STATE VARIABLES ---
@@ -128,7 +132,23 @@ public class GameManager : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.R)) RestartLevel();
             return;
         }
+        if (isTutorialActive && !hasGameStarted)
+        {
+            // Kiểm tra các phím di chuyển hoặc bắn
+            float moveX = Input.GetAxisRaw("Horizontal");
+            float moveY = Input.GetAxisRaw("Vertical");
+            bool shootKeys = Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.DownArrow) ||
+                             Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.RightArrow);
 
+            // Nếu có bất kỳ tín hiệu nào
+            if (moveX != 0 || moveY != 0 || shootKeys)
+            {
+                StartCoroutine(StartGameWithDelay());
+            }
+
+            // QUAN TRỌNG: Return luôn để không chạy Timer hay logic khác
+            return;
+        }
         HandleTimer();
         HandleWaitingForClear();
     }
@@ -175,7 +195,6 @@ public class GameManager : MonoBehaviour
         // 1. Reset Trạng thái
         isGameOver = false;
         isWaitingForClear = false;
-        // Lưu ý: totalAreasPassed không reset ở đây để giữ tiến trình shop nếu load game
 
         GameObject existingMap = GameObject.Find(NAME_INITIAL_MAP);
 
@@ -222,11 +241,10 @@ public class GameManager : MonoBehaviour
                 playerObject.SetActive(true);
             }
 
-            // Setup Wave Data (Luôn nạp dữ liệu wave dù là Boss hay thường, để phòng hờ)
+            // Setup Wave Data
             if (myWaveSpawner != null && currentLevelIndex < allLevels.Count)
             {
                 LevelConfig levelData = allLevels[currentLevelIndex];
-
                 Transform enemySpawnParent = currentMapInstance.transform.Find(NAME_ENEMY_SPAWN_POINTS);
                 Transform[] foundSpawnPoints = new Transform[0];
 
@@ -242,7 +260,7 @@ public class GameManager : MonoBehaviour
             }
         }
 
-        ApplyPersistentData(); // Apply upgrades/items
+        ApplyPersistentData();
 
         // --- 5. UI SETUP ---
         if (UIManager.Instance != null)
@@ -253,35 +271,54 @@ public class GameManager : MonoBehaviour
             UIManager.Instance.UpdateAreaIndicator(totalAreasPassed);
             UIManager.Instance.UpdateTimer(currentTime, levelDuration);
             UIManager.Instance.ToggleHUD(true);
-            if (gameOverPanel == null)
-            {
-                gameOverPanel = UIManager.Instance.gameOverPanel;
-            }
+            if (gameOverPanel == null) gameOverPanel = UIManager.Instance.gameOverPanel;
         }
         if (gameOverPanel != null) gameOverPanel.SetActive(false);
 
-        // --- 6. START LOGIC (QUAN TRỌNG: PHÂN LUỒNG BOSS/NORMAL) ---
-        // Đây là phần bạn đang thiếu ở logic cũ
 
-        BossManager bossMgr = currentMapInstance.GetComponentInChildren<BossManager>();
+        // --- 6. START LOGIC (ĐÃ CẬP NHẬT TUTORIAL) ---
 
-        if (bossMgr != null)
+        // NẾU LÀ MÀN ĐẦU TIÊN (Index 0) -> VÀO CHẾ ĐỘ CHỜ (TUTORIAL)
+        if (currentLevelIndex == 0)
         {
-            Debug.Log("[SetupLevel] BOSS LEVEL DETECTED via Save Load.");
+            Debug.Log("[SetupLevel] Tutorial Phase: Waiting for input...");
+            isTutorialActive = true;
+            hasGameStarted = false;
+            isTimerRunning = false; // Dừng Timer
 
-            // Nếu là Boss: Kích hoạt Boss, tắt Timer, tắt Spawner
-            bossMgr.ActivateBossLevel();
-            isTimerRunning = false;
+            // Hiển thị ảnh hướng dẫn
+            if (UIManager.Instance != null) UIManager.Instance.ShowTutorial(true);
 
-            // Đảm bảo nhạc thường không đè nhạc boss (ActivateBossLevel sẽ lo phần nhạc boss)
-            // Đảm bảo Spawner không chạy
+            // Tắt nhạc & Spawner
+            if (musicSource != null) musicSource.Stop();
             if (myWaveSpawner != null) myWaveSpawner.StopSpawning();
         }
         else
         {
-            Debug.Log("[SetupLevel] NORMAL LEVEL DETECTED.");
+            // CÁC MÀN KHÁC: CHẠY LUÔN
+            isTutorialActive = false;
+            if (UIManager.Instance != null) UIManager.Instance.ShowTutorial(false);
 
-            // Nếu là Map thường: Bật nhạc thường, bật Timer, bật Spawner
+            StartGameplayMechanics(); // Gọi hàm helper bên dưới
+        }
+    }
+    void StartGameplayMechanics()
+    {
+        // Logic phân luồng Boss/Normal cũ được chuyển vào đây
+        BossManager bossMgr = currentMapInstance.GetComponentInChildren<BossManager>();
+
+        if (bossMgr != null)
+        {
+            Debug.Log("[GameManager] BOSS LEVEL START.");
+            bossMgr.ActivateBossLevel();
+            isTimerRunning = false;
+            if (myWaveSpawner != null) myWaveSpawner.StopSpawning();
+        }
+        else
+        {
+            Debug.Log("[GameManager] NORMAL LEVEL START.");
+
+            // Bật nhạc thường
             if (musicSource != null)
             {
                 if (defaultLevelMusic != null) musicSource.clip = defaultLevelMusic;
@@ -291,12 +328,33 @@ public class GameManager : MonoBehaviour
 
             isTimerRunning = true;
 
+            // Bật Spawner
             if (myWaveSpawner != null)
             {
                 myWaveSpawner.SetWavePaused(false);
                 myWaveSpawner.StartNextLevelWaves();
             }
         }
+    }
+
+    // --- HÀM 2: COROUTINE ĐẾM NGƯỢC 3 GIÂY ---
+    IEnumerator StartGameWithDelay()
+    {
+        hasGameStarted = true; // Khóa input
+        Debug.Log("Input Detected! Game starts in 3s...");
+
+        // 1. UI Tutorial mờ dần
+        if (UIManager.Instance != null)
+        {
+            StartCoroutine(UIManager.Instance.FadeOutTutorial(3f));
+        }
+
+        // 2. Đếm ngược 3 giây
+        yield return new WaitForSeconds(3f);
+
+        // 3. Bắt đầu game thật sự
+        isTutorialActive = false;
+        StartGameplayMechanics();
     }
     #endregion
 
@@ -543,8 +601,8 @@ public class GameManager : MonoBehaviour
         // 2. Hồi sinh
         if (playerObject != null)
         {
-            if (overrideRespawnPosition.HasValue)
-                playerObject.transform.position = overrideRespawnPosition.Value;
+            if (useOverrideRespawn)
+                playerObject.transform.position = overrideRespawnPosition;
             else if (currentMapInstance != null)
             {
                 Transform pSpawn = currentMapInstance.transform.Find(NAME_PLAYER_SPAWN_POINT);
@@ -560,7 +618,7 @@ public class GameManager : MonoBehaviour
         // 3. Resume Game -> Báo Spawner trả lại quái
         if (myWaveSpawner != null) myWaveSpawner.OnPlayerRespawned();
 
-        if (overrideRespawnPosition.HasValue) isTimerRunning = false;
+        if (useOverrideRespawn) isTimerRunning = false;
         else if (currentTime > 0) isTimerRunning = true;
 
         if (musicSource != null) musicSource.Play();
