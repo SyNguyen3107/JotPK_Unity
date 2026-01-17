@@ -57,7 +57,8 @@ public class GameManager : MonoBehaviour
 
     [Header("Shop Settings")]
     public GameObject vendorPrefab;
-    public int levelsPerShop = 2;
+    [Tooltip("Danh sách index các level mà sau khi hoàn thành sẽ có Shop (Bắt đầu từ 0)")]
+    public List<int> shopSpawnLevels;
 
     [Header("Gopher Event Settings")]
     public GameObject gopherPrefab;
@@ -72,6 +73,13 @@ public class GameManager : MonoBehaviour
     public AudioSource musicSource;
     public AudioClip defaultLevelMusic;
     public AudioClip gameOverClip;
+    public AudioClip pauseClip;   // Âm thanh khi Pause
+    public AudioClip unpauseClip; // Âm thanh khi Resume
+
+    [Header("UI Audio Global")]
+    public AudioSource uiAudioSource; // AudioSource dùng chung cho UI toàn game
+    public AudioClip buttonHoverClip;
+    public AudioClip buttonClickClip;
 
     [Header("Tutorial Settings")]
     public bool isTutorialActive = false; // Biến cờ để biết đang trong giai đoạn tutorial
@@ -349,7 +357,15 @@ public class GameManager : MonoBehaviour
                 musicSource.loop = true;
                 musicSource.Play();
             }
+            if (musicSource != null)
+            {
+                musicSource.Stop(); // 1. Dừng nhạc đang phát (quan trọng)
+                musicSource.time = 0f; // 2. Tua về 0:00 (quan trọng)
 
+                if (defaultLevelMusic != null) musicSource.clip = defaultLevelMusic;
+                musicSource.loop = true;
+                musicSource.Play();
+            }
             isTimerRunning = true;
 
             // Bật Spawner
@@ -474,9 +490,15 @@ public class GameManager : MonoBehaviour
         if (currentGate != null) currentGate.OpenGate();
 
         // Spawn Shop
-        bool shouldSpawnShop = (totalAreasPassed > 0) && (totalAreasPassed % levelsPerShop == 0);
+        bool shouldSpawnShop = false;
+
+        if (shopSpawnLevels != null && shopSpawnLevels.Contains(currentLevelIndex))
+        {
+            shouldSpawnShop = true;
+        }
         if (shouldSpawnShop && vendorPrefab != null && currentMapInstance != null)
         {
+            Debug.Log($"Spawning Shop after level index: {currentLevelIndex}");
             if (UpgradeManager.Instance != null) UpgradeManager.Instance.ResetPurchaseStatus();
             GameObject vendor = Instantiate(vendorPrefab, Vector3.zero, Quaternion.identity);
             vendor.transform.SetParent(currentMapInstance.transform);
@@ -686,14 +708,24 @@ public class GameManager : MonoBehaviour
         {
             // Dừng game
             Time.timeScale = 0f;
-            if (UIManager.Instance != null) UIManager.Instance.ShowPauseMenu(true);
+            if (UIManager.Instance != null)
+            {
+                UIManager.Instance.ShowPauseMenu(true);
+            }
             if (musicSource != null) musicSource.Pause();
+            if (uiAudioSource != null)
+                uiAudioSource.PlayOneShot(pauseClip);
         }
         else
         {
             // Tiếp tục game
             Time.timeScale = 1f;
-            if (UIManager.Instance != null) UIManager.Instance.ShowPauseMenu(false);
+            if (UIManager.Instance != null)
+            {
+                UIManager.Instance.ShowPauseMenu(false);
+            }
+            if (uiAudioSource != null)
+                uiAudioSource.PlayOneShot(unpauseClip);
             if (musicSource != null) musicSource.UnPause();
         }
     }
@@ -703,7 +735,11 @@ public class GameManager : MonoBehaviour
         // Quan trọng: Phải trả lại tốc độ thời gian trước khi load scene khác
         Time.timeScale = 1f;
         isPaused = false;
-
+        if (musicSource != null)
+        {
+            musicSource.Stop();
+            musicSource.time = 0f;
+        }
         // Reset các trạng thái game nếu cần
         SceneManager.LoadScene("MainMenu");
     }
@@ -849,5 +885,23 @@ public class GameManager : MonoBehaviour
 
         Instantiate(gopherPrefab, spawnPos, Quaternion.identity);
         Debug.Log($"[Gopher] Spawned at {spawnPos}");
+    }
+    public void PlayHoverSound()
+    {
+        if (uiAudioSource != null && buttonHoverClip != null)
+        {
+            // Kiểm tra ignoreTimeScale để âm thanh không bị tắt khi Pause
+            uiAudioSource.ignoreListenerPause = true;
+            uiAudioSource.PlayOneShot(buttonHoverClip);
+        }
+    }
+
+    public void PlayClickSound()
+    {
+        if (uiAudioSource != null && buttonClickClip != null)
+        {
+            uiAudioSource.ignoreListenerPause = true;
+            uiAudioSource.PlayOneShot(buttonClickClip);
+        }
     }
 }

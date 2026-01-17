@@ -1127,6 +1127,7 @@ GameObject:
   - component: {fileID: 7950630313244779832}
   - component: {fileID: 468450165506474926}
   - component: {fileID: 5870228039605732351}
+  - component: {fileID: 1671166276430282415}
   m_Layer: 5
   m_Name: GameUI
   m_TagString: Untagged
@@ -1264,7 +1265,107 @@ MonoBehaviour:
   gameOverPanel: {fileID: 878495075938266446}
   tutorialPanel: {fileID: 6581300154049518715}
   tutorialCanvasGroup: {fileID: 3138638852136414148}
+  uiAudioSource: {fileID: 1671166276430282415}
+  buttonHoverClip: {fileID: 8300000, guid: 200589b4f2c21a1478609fb15f4420d1, type: 3}
+  buttonClickClip: {fileID: 8300000, guid: 574c34c0237265a4a811ebfc86a2c440, type: 3}
   exitArrowObject: {fileID: 6605814945179184815}
+--- !u!82 &1671166276430282415
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2293524198407874663}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
+  m_PlayOnAwake: 1
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1 &2458794566625442807
 GameObject:
   m_ObjectHideFlags: 0
@@ -1877,6 +1978,7 @@ GameObject:
   - component: {fileID: 4192406404654328783}
   - component: {fileID: 712738481811459868}
   - component: {fileID: 3685024307535668141}
+  - component: {fileID: 1001089759168325959}
   m_Layer: 5
   m_Name: Btn_Resume
   m_TagString: Untagged
@@ -1986,6 +2088,18 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &1001089759168325959
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4393391120786948649}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a5ec090ca4d979489102e54d81bdbb1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIButtonSound
 --- !u!1 &4709756413848635331
 GameObject:
   m_ObjectHideFlags: 0
@@ -3140,6 +3254,7 @@ GameObject:
   - component: {fileID: 6731533180967880994}
   - component: {fileID: 3717264202611807177}
   - component: {fileID: 7544134905587475220}
+  - component: {fileID: 2593154441877922128}
   m_Layer: 5
   m_Name: Btn_Restart
   m_TagString: Untagged
@@ -3261,6 +3376,18 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &2593154441877922128
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6777058877822288968}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a5ec090ca4d979489102e54d81bdbb1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIButtonSound
 --- !u!1 &6854394680048069147
 GameObject:
   m_ObjectHideFlags: 0
@@ -3312,6 +3439,7 @@ GameObject:
   - component: {fileID: 3518334188009684671}
   - component: {fileID: 1219780774011626066}
   - component: {fileID: 1674352315955344081}
+  - component: {fileID: 3284622595376267915}
   m_Layer: 5
   m_Name: Btn_Exit
   m_TagString: Untagged
@@ -3421,6 +3549,18 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &3284622595376267915
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6874577609671448889}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a5ec090ca4d979489102e54d81bdbb1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIButtonSound
 --- !u!1 &7006626342106264572
 GameObject:
   m_ObjectHideFlags: 0
@@ -3991,6 +4131,7 @@ GameObject:
   - component: {fileID: 1536500240048619295}
   - component: {fileID: 8030057229908081597}
   - component: {fileID: 7682846428404576468}
+  - component: {fileID: 5501324415971342834}
   m_Layer: 5
   m_Name: Btn_Exit
   m_TagString: Untagged
@@ -4112,6 +4253,18 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &5501324415971342834
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8721863450311456601}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a5ec090ca4d979489102e54d81bdbb1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIButtonSound
 --- !u!1 &9141447567506289744
 GameObject:
   m_ObjectHideFlags: 0

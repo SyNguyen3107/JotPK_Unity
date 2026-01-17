@@ -138,7 +138,8 @@ public abstract class BossManager : MonoBehaviour
         if (victoryTriggered) return;
         victoryTriggered = true;
         isBossActive = false;
-
+        int totalAreasPassed = ++GameManager.Instance.totalAreasPassed;
+        if (UIManager.Instance != null) UIManager.Instance.UpdateAreaIndicator(totalAreasPassed);
         Debug.Log("[BossManager] VICTORY!");
 
         // Dừng nhạc

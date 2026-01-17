@@ -35,6 +35,7 @@ public class UIManager : MonoBehaviour
     public CanvasGroup tutorialCanvasGroup; // Kéo object TutorialPanel (có CanvasGroup) vào đây
 
     public GameObject exitArrowObject;
+
     void Awake()
     {
         if (Instance == null) Instance = this;

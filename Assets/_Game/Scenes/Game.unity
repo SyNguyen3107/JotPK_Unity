@@ -187,11 +187,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 66b519fcda17b6946947087c4878216c, type: 3}
---- !u!1 &394298480 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 3913508070216539003, guid: 1b16233835b0ffd43a6bafc030ed7125, type: 3}
-  m_PrefabInstance: {fileID: 4498810193204814259}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &604522112 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 5649830240769989150, guid: e42a54df87a62d945a8d76a648add58a, type: 3}
@@ -406,14 +401,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 1934135101723791435, guid: 690f6afd5992dab41b38fe5948311135, type: 3}
-      propertyPath: dropChance
-      value: 20
-      objectReference: {fileID: 0}
-    - target: {fileID: 1934135101723791435, guid: 690f6afd5992dab41b38fe5948311135, type: 3}
-      propertyPath: playerObject
-      value: 
-      objectReference: {fileID: 394298480}
     - target: {fileID: 8312179908262576811, guid: 690f6afd5992dab41b38fe5948311135, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -457,10 +444,6 @@ PrefabInstance:
     - target: {fileID: 8602648028350720157, guid: 690f6afd5992dab41b38fe5948311135, type: 3}
       propertyPath: m_Name
       value: GameManager
-      objectReference: {fileID: 0}
-    - target: {fileID: 8602648028350720157, guid: 690f6afd5992dab41b38fe5948311135, type: 3}
-      propertyPath: m_IsActive
-      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

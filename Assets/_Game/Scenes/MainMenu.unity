@@ -267,6 +267,7 @@ GameObject:
   - component: {fileID: 196947648}
   - component: {fileID: 196947647}
   - component: {fileID: 196947646}
+  - component: {fileID: 196947649}
   m_Layer: 5
   m_Name: Btn_Play
   m_TagString: Untagged
@@ -388,6 +389,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 196947644}
   m_CullTransparentMesh: 1
+--- !u!114 &196947649
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 196947644}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a5ec090ca4d979489102e54d81bdbb1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIButtonSound
 --- !u!1 &238761693
 GameObject:
   m_ObjectHideFlags: 0
@@ -398,6 +411,7 @@ GameObject:
   m_Component:
   - component: {fileID: 238761694}
   - component: {fileID: 238761695}
+  - component: {fileID: 238761696}
   m_Layer: 5
   m_Name: SaveSlot3
   m_TagString: Untagged
@@ -443,6 +457,18 @@ MonoBehaviour:
   infoText: {fileID: 964637057}
   slotButton: {fileID: 1228825871}
   deleteButton: {fileID: 1371015666}
+--- !u!114 &238761696
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 238761693}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a5ec090ca4d979489102e54d81bdbb1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIButtonSound
 --- !u!1 &264741698
 GameObject:
   m_ObjectHideFlags: 0
@@ -588,18 +614,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 1934135101723791435, guid: 690f6afd5992dab41b38fe5948311135, type: 3}
-      propertyPath: startLives
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 1934135101723791435, guid: 690f6afd5992dab41b38fe5948311135, type: 3}
-      propertyPath: gameOverClip
-      value: 
-      objectReference: {fileID: 8300000, guid: adafdc5d49e7eb64cb40a342faac2da4, type: 3}
-    - target: {fileID: 1934135101723791435, guid: 690f6afd5992dab41b38fe5948311135, type: 3}
-      propertyPath: gameOverPanel
-      value: 
-      objectReference: {fileID: 0}
     - target: {fileID: 8312179908262576811, guid: 690f6afd5992dab41b38fe5948311135, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -781,6 +795,7 @@ GameObject:
   - component: {fileID: 512711558}
   - component: {fileID: 512711557}
   - component: {fileID: 512711556}
+  - component: {fileID: 512711559}
   m_Layer: 5
   m_Name: Btn_Quit
   m_TagString: Untagged
@@ -902,6 +917,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 512711554}
   m_CullTransparentMesh: 1
+--- !u!114 &512711559
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 512711554}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a5ec090ca4d979489102e54d81bdbb1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIButtonSound
 --- !u!1 &819572461
 GameObject:
   m_ObjectHideFlags: 0
@@ -2005,6 +2032,7 @@ GameObject:
   - component: {fileID: 1262546989}
   - component: {fileID: 1262546988}
   - component: {fileID: 1262546987}
+  - component: {fileID: 1262546990}
   m_Layer: 5
   m_Name: Back_Btn
   m_TagString: Untagged
@@ -2126,6 +2154,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1262546985}
   m_CullTransparentMesh: 1
+--- !u!114 &1262546990
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1262546985}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a5ec090ca4d979489102e54d81bdbb1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIButtonSound
 --- !u!1 &1316213662
 GameObject:
   m_ObjectHideFlags: 0
@@ -2472,6 +2512,7 @@ GameObject:
   - component: {fileID: 1424665395}
   - component: {fileID: 1424665394}
   - component: {fileID: 1424665393}
+  - component: {fileID: 1424665397}
   m_Layer: 5
   m_Name: UI
   m_TagString: Untagged
@@ -2563,6 +2604,34 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!114 &1424665397
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1424665392}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 81bc3b06ce94bcf448f4fe229a1e8306, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIManager
+  itemDisplayObj: {fileID: 0}
+  itemIconImage: {fileID: 0}
+  livesText: {fileID: 0}
+  coinsText: {fileID: 0}
+  slot1Icon: {fileID: 0}
+  slot2Icon: {fileID: 0}
+  slot3Icon: {fileID: 0}
+  timerBarFill: {fileID: 0}
+  areaIcons: []
+  bossHPFill: {fileID: 0}
+  bossHealthBarObject: {fileID: 0}
+  pauseMenuPanel: {fileID: 0}
+  gameOverPanel: {fileID: 0}
+  tutorialPanel: {fileID: 0}
+  tutorialCanvasGroup: {fileID: 0}
+  exitArrowObject: {fileID: 0}
 --- !u!1 &1636313635
 GameObject:
   m_ObjectHideFlags: 0
@@ -3244,6 +3313,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1816045302}
   - component: {fileID: 1816045303}
+  - component: {fileID: 1816045304}
   m_Layer: 5
   m_Name: SaveSlot1
   m_TagString: Untagged
@@ -3289,6 +3359,18 @@ MonoBehaviour:
   infoText: {fileID: 264741700}
   slotButton: {fileID: 1713624616}
   deleteButton: {fileID: 1706173885}
+--- !u!114 &1816045304
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1816045301}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a5ec090ca4d979489102e54d81bdbb1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIButtonSound
 --- !u!1 &1819006409
 GameObject:
   m_ObjectHideFlags: 0
@@ -3992,6 +4074,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2124124326}
   - component: {fileID: 2124124327}
+  - component: {fileID: 2124124328}
   m_Layer: 5
   m_Name: SaveSlot2
   m_TagString: Untagged
@@ -4037,6 +4120,18 @@ MonoBehaviour:
   infoText: {fileID: 1115393372}
   slotButton: {fileID: 359723597}
   deleteButton: {fileID: 1394469186}
+--- !u!114 &2124124328
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2124124325}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a5ec090ca4d979489102e54d81bdbb1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIButtonSound
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
