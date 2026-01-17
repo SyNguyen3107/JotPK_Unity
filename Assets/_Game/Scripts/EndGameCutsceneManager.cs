@@ -103,9 +103,8 @@ public class EndGameCutsceneManager : MonoBehaviour
             yield return null;
         }
 
-        // --- HẾT GAME ---
-        Debug.Log("THE END");
-        // Ở đây bạn có thể load lại Menu hoặc hiện Credit
-        // SceneManager.LoadScene("MainMenu"); 
+        // --- HẾT GAME -> CHUYỂN SANG CREDIT ---
+        Debug.Log("THE END. Loading Credit...");
+        SceneManager.LoadScene("Credit");
     }
 }

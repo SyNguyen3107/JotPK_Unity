@@ -121,4 +121,8 @@ public class MainMenuManager : MonoBehaviour
         EditorApplication.isPlaying = false;
 #endif
     }
+    public void OnCreditButton()
+    {
+        SceneManager.LoadScene("Credit");
+    }
 }
