@@ -16,22 +16,42 @@ public class UIButtonSound : MonoBehaviour, IPointerEnterHandler, IPointerClickH
     public void OnPointerEnter(PointerEventData eventData)
     {
         // Kiểm tra nếu nút đang tương tác được (Interactable) mới phát tiếng
-        if (btn != null && !btn.interactable) return;
-
-        if (UIManager.Instance != null)
+        if (btn != null && !btn.interactable)
+        {
+            Debug.Log("Button not interactable, no hover sound");
+            return;
+        }
+        Debug.Log("Play hover sound");
+        if (GameManager.Instance != null)
         {
             GameManager.Instance.PlayHoverSound();
+
+        }
+        else
+        {
+            Debug.Log("GameManager Instance is null, cannot play hover sound");
         }
     }
 
     // Khi nhấn chuột vào nút
     public void OnPointerClick(PointerEventData eventData)
     {
-        if (btn != null && !btn.interactable) return;
+        if (btn != null && !btn.interactable)
+        {
+            Debug.Log("Button not interactable, no click sound");
+            return;
+        }
 
-        if (UIManager.Instance != null)
+        if (GameManager.Instance != null)
         {
             GameManager.Instance.PlayClickSound();
+            Debug.Log("Play click sound");
         }
+        else
+        {
+            Debug.Log("GameManager Instance is null, cannot play click sound");
+        }
+
+
     }
 }
