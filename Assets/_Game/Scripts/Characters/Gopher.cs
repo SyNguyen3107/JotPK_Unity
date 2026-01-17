@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.Audio;
 
 public class Gopher : MonoBehaviour
 {
@@ -6,10 +7,13 @@ public class Gopher : MonoBehaviour
 
     [Header("Settings")]
     public float moveSpeed = 2f;
+    public AudioSource audioSource;
+    public AudioClip gopherSFX;
+    public AudioClip footstepClip;
+    public float stepRate = 0.5f;   // Thời gian giữa 2 bước chân (giây)
 
-    // Giới hạn bản đồ để biến mất. 
-    // Lưu ý: Giá trị này nên BẰNG hoặc LỚN HƠN toạ độ spawn một chút.
-    // Ví dụ map 7.5, spawn ở 8.5 -> destroyBound nên là 8.5 hoặc 9.0
+    private float nextStepTime = 0f;
+
     public float destroyBound = 7.5f;
 
     private Vector3 moveDirection;
@@ -21,6 +25,10 @@ public class Gopher : MonoBehaviour
 
     void Start()
     {
+        if (audioSource != null & gopherSFX != null)
+        {
+            audioSource.PlayOneShot(gopherSFX);
+        }
         CalculateDirectionAndOrientation();
     }
 
@@ -33,17 +41,26 @@ public class Gopher : MonoBehaviour
     {
         // 1. DI CHUYỂN
         transform.position += moveDirection * moveSpeed * Time.deltaTime;
-
+        HandleFootsteps();
         // 2. KIỂM TRA ĐIỀU KIỆN BIẾN MẤT (Logic toạ độ đích)
         CheckBoundary();
     }
+    void HandleFootsteps()
+    {
+        if (audioSource == null || footstepClip == null) return;
 
+        if (Time.time >= nextStepTime)
+        {
+            audioSource.PlayOneShot(footstepClip);
+            nextStepTime = Time.time + stepRate;
+        }
+    }
     void CalculateDirectionAndOrientation()
     {
         float x = transform.position.x;
         float y = transform.position.y;
 
-        // --- XÁC ĐỊNH HƯỚNG VÀ LẬT HÌNH ---
+        // --- XÁC ĐỊNH HƯỚNG ---
 
         // Trường hợp 1: Spawn ở cạnh TRÊN hoặc DƯỚI (Y lớn hơn X)
         if (Mathf.Abs(y) > Mathf.Abs(x))

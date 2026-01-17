@@ -59,6 +59,15 @@ public class GameManager : MonoBehaviour
     public GameObject vendorPrefab;
     public int levelsPerShop = 2;
 
+    [Header("Gopher Event Settings")]
+    public GameObject gopherPrefab;
+    [Range(0, 100)] public float gopherSpawnChance = 5f; // 5%
+    public float gopherSpawnDistance = 6.5f; // Khoảng cách từ tâm (xa hơn map một chút)
+
+    // Biến runtime
+    private bool isGopherScheduled = false;
+    private float gopherSpawnTime = 0f;
+
     [Header("Audio")]
     public AudioSource musicSource;
     public AudioClip defaultLevelMusic;
@@ -304,6 +313,8 @@ public class GameManager : MonoBehaviour
     }
     void StartGameplayMechanics()
     {
+        // Reset trạng thái Gopher mỗi khi vào màn mới
+        isGopherScheduled = false;
         // Logic phân luồng Boss/Normal cũ được chuyển vào đây
         BossManager bossMgr = currentMapInstance.GetComponentInChildren<BossManager>();
 
@@ -317,7 +328,20 @@ public class GameManager : MonoBehaviour
         else
         {
             Debug.Log("[GameManager] NORMAL LEVEL START.");
+            if (gopherPrefab != null)
+            {
+                float roll = Random.Range(0f, 100f);
+                if (roll <= gopherSpawnChance)
+                {
+                    isGopherScheduled = true;
+                    // Chọn thời điểm ngẫu nhiên (từ giây thứ 10 đến trước khi hết giờ 10s)
+                    float minTime = 10f;
+                    float maxTime = Mathf.Max(10f, levelDuration - 10f);
+                    gopherSpawnTime = Random.Range(minTime, maxTime);
 
+                    Debug.Log($"[Gopher] Will spawn at timer: {gopherSpawnTime}");
+                }
+            }
             // Bật nhạc thường
             if (musicSource != null)
             {
@@ -364,7 +388,11 @@ public class GameManager : MonoBehaviour
         if (!isTimerRunning) return;
 
         currentTime -= Time.deltaTime;
-
+        if (isGopherScheduled && currentTime <= gopherSpawnTime)
+        {
+            SpawnGopher();
+            isGopherScheduled = false; // Đảm bảo chỉ spawn 1 lần
+        }
         if (UIManager.Instance != null)
         {
             UIManager.Instance.UpdateTimer(currentTime, levelDuration);
@@ -791,4 +819,35 @@ public class GameManager : MonoBehaviour
         LoadGameAndPlay(currentSlotIndex, false);
     }
     #endregion
+    void SpawnGopher()
+    {
+        if (gopherPrefab == null) return;
+
+        // Chọn ngẫu nhiên 1 trong 4 cạnh: 0=Top, 1=Bottom, 2=Left, 3=Right
+        int side = Random.Range(0, 4);
+        Vector3 spawnPos = Vector3.zero;
+
+        // Random một điểm trên cạnh đó (giả sử map hình vuông/chữ nhật)
+        // mapHeight là biến bạn đã có, ta dùng gopherSpawnDistance cho an toàn
+        float randomOffset = Random.Range(-6.5f, 6.5f);
+
+        switch (side)
+        {
+            case 0: // Top (Y dương)
+                spawnPos = new Vector3(randomOffset, gopherSpawnDistance, 0);
+                break;
+            case 1: // Bottom (Y âm)
+                spawnPos = new Vector3(randomOffset, -gopherSpawnDistance, 0);
+                break;
+            case 2: // Left (X âm)
+                spawnPos = new Vector3(-gopherSpawnDistance, randomOffset, 0);
+                break;
+            case 3: // Right (X dương)
+                spawnPos = new Vector3(gopherSpawnDistance, randomOffset, 0);
+                break;
+        }
+
+        Instantiate(gopherPrefab, spawnPos, Quaternion.identity);
+        Debug.Log($"[Gopher] Spawned at {spawnPos}");
+    }
 }
