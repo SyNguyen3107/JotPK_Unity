@@ -531,6 +531,7 @@ public class PlayerController : MonoBehaviour
         if (rb != null) rb.linearVelocity = Vector2.zero;
         if (activeStateObject != null) activeStateObject.SetActive(false);
         if (idleStateObject != null) idleStateObject.SetActive(false);
+        isInputEnabled = false;
 
         if (struckFxObject != null) struckFxObject.SetActive(true);
         if (lightningFxObject != null) lightningFxObject.SetActive(true);
@@ -563,6 +564,7 @@ public class PlayerController : MonoBehaviour
         isZombieMode = true;
         isDead = false;
         if (zombieModelObject) zombieModelObject.SetActive(true);
+        isInputEnabled = true;
 
         RecalculateStats();
         PlaySound(zombieAudioSource, zombieMusic);
