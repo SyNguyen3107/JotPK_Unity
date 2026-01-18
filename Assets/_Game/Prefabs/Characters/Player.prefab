@@ -774,7 +774,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &8659101005631639356
 Transform:
   m_ObjectHideFlags: 0
@@ -1622,7 +1622,6 @@ MonoBehaviour:
   bodyDown: {fileID: 1231330788, guid: 226a2dd9665e9e9408a1469427cf02a8, type: 3}
   bodyLeft: {fileID: -572029908, guid: 226a2dd9665e9e9408a1469427cf02a8, type: 3}
   bodyRight: {fileID: -1415268768, guid: 226a2dd9665e9e9408a1469427cf02a8, type: 3}
-  defaultLegsSprite: {fileID: -1352337300, guid: 226a2dd9665e9e9408a1469427cf02a8, type: 3}
   heldItem: {fileID: 0}
   isInputEnabled: 1
   enableAutoFire: 0
@@ -2660,7 +2659,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &417773551425478602
 Transform:
   m_ObjectHideFlags: 0

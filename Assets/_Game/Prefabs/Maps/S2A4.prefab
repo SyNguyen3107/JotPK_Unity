@@ -5205,6 +5205,10 @@ MonoBehaviour:
   - {fileID: 0}
   bossHPFill: {fileID: 0}
   bossHealthBarObject: {fileID: 0}
+  pauseMenuPanel: {fileID: 0}
+  gameOverPanel: {fileID: 0}
+  tutorialPanel: {fileID: 0}
+  tutorialCanvasGroup: {fileID: 0}
   exitArrowObject: {fileID: 0}
 --- !u!1 &7720983330286798090
 GameObject:

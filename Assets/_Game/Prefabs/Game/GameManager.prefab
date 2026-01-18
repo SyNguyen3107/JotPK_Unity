@@ -79,7 +79,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b87308476c4cf81458b1affc85cf24cc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameManager
-  startLives: 5
+  startLives: 3
   isPaused: 0
   canPause: 1
   levelDuration: 5
@@ -199,7 +199,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: b1d64b4fdc2f9da49920f58a3c4dd603, type: 2}
   - {fileID: 11400000, guid: e16c09281b0e4df4faece2db0b0a4baf, type: 2}
   - {fileID: 11400000, guid: 1883f52b547783147a8d6ec1c3e6dbcb, type: 2}
-  dropChance: 25
+  dropChance: 15
   vendorPrefab: {fileID: 8070256912491365633, guid: a1f218fa0ab5e1f419f103228258c099, type: 3}
   shopSpawnLevels: 01000000030000000500000007000000090000000b000000
   gopherPrefab: {fileID: 2579933494702073449, guid: 828105460cf444b4e96a67d7bcffe853, type: 3}

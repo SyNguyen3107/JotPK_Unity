@@ -1645,7 +1645,7 @@ MonoBehaviour:
   m_ScaleFactor: 1
   m_ReferenceResolution: {x: 640, y: 360}
   m_ScreenMatchMode: 0
-  m_MatchWidthOrHeight: 1
+  m_MatchWidthOrHeight: 0.5
   m_PhysicalUnit: 3
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
@@ -4115,11 +4115,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ConfirmationPopup
   titleText: {fileID: 2531425933989466392}
   messageText: {fileID: 3093517722147854449}
-  confirmButtonText: {fileID: 6060090903188753787}
   confirmButton: {fileID: 7583785411941156839}
   cancelButton: {fileID: 4272657604899179664}
-  destructiveColor: {r: 1, g: 0.3, b: 0.3, a: 1}
-  constructiveColor: {r: 0.3, g: 1, b: 0.3, a: 1}
 --- !u!1 &9019945810873438855
 GameObject:
   m_ObjectHideFlags: 0

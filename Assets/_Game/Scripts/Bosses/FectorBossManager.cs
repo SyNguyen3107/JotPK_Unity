@@ -60,7 +60,7 @@ public class FectorBossManager : BossManager
         if (GameManager.Instance != null && GameManager.Instance.playerObject != null)
         {
             PlayerController pc = GameManager.Instance.playerObject.GetComponent<PlayerController>();
-            if (pc != null) pc.SetMapBounds(new Vector2(-1000, -1000), new Vector2(1000, 1000));
+            if (pc != null) pc.SetMapBounds(new Vector2(-7.5f, -7.5f), new Vector2(7.5f, 7.5f));
         }
     }
     #endregion

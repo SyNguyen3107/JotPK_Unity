@@ -1265,9 +1265,6 @@ MonoBehaviour:
   gameOverPanel: {fileID: 878495075938266446}
   tutorialPanel: {fileID: 6581300154049518715}
   tutorialCanvasGroup: {fileID: 3138638852136414148}
-  uiAudioSource: {fileID: 1671166276430282415}
-  buttonHoverClip: {fileID: 8300000, guid: 200589b4f2c21a1478609fb15f4420d1, type: 3}
-  buttonClickClip: {fileID: 8300000, guid: 574c34c0237265a4a811ebfc86a2c440, type: 3}
   exitArrowObject: {fileID: 6605814945179184815}
 --- !u!82 &1671166276430282415
 AudioSource:
@@ -1447,11 +1444,11 @@ RectTransform:
   - {fileID: 4109984945548688698}
   m_Father: {fileID: 7987042199505371494}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 1, y: 0.5}
-  m_AnchorMax: {x: 1, y: 0.5}
-  m_AnchoredPosition: {x: -152, y: 92}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 155, y: 90}
   m_SizeDelta: {x: 32, y: 100}
-  m_Pivot: {x: 1, y: 0.5}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &4376613006949976251
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2043,7 +2040,7 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
+  m_PixelsPerUnitMultiplier: 16
 --- !u!114 &3685024307535668141
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3008,11 +3005,11 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 7987042199505371494}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 1, y: 0}
-  m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: -70, y: 33}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 200, y: -122}
   m_SizeDelta: {x: 80, y: 48}
-  m_Pivot: {x: 1, y: 0}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5876158453235804980
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -3319,7 +3316,7 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
+  m_PixelsPerUnitMultiplier: 16
 --- !u!114 &7544134905587475220
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3422,11 +3419,11 @@ RectTransform:
   - {fileID: 3738740727750937799}
   m_Father: {fileID: 7987042199505371494}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0.5}
-  m_AnchorMax: {x: 0, y: 0.5}
-  m_AnchoredPosition: {x: 142, y: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: -160, y: 0}
   m_SizeDelta: {x: 32, y: 292}
-  m_Pivot: {x: 0, y: 0.5}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &6874577609671448889
 GameObject:
   m_ObjectHideFlags: 0
@@ -3504,7 +3501,7 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
+  m_PixelsPerUnitMultiplier: 16
 --- !u!114 &1674352315955344081
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4196,7 +4193,7 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
+  m_PixelsPerUnitMultiplier: 16
 --- !u!114 &7682846428404576468
 MonoBehaviour:
   m_ObjectHideFlags: 0

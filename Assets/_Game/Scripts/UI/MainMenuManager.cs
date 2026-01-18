@@ -65,7 +65,7 @@ public class MainMenuManager : MonoBehaviour
         if (existingData == null)
         {
             string title = $"New Game on Slot #{slotIndex + 1}?";
-            string msg = "Ready to start a new adventure in this slot?";
+            string msg = "Ready to start a new journey in this slot?";
 
             confirmationPopup.Show(title, msg, false, () =>
             {
