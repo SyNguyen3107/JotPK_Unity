@@ -82,6 +82,10 @@ public class FectorBossManager : BossManager
         if (pc != null)
         {
             pc.isInputEnabled = false;
+            if (GameManager.Instance != null && GameManager.Instance.musicSource != null)
+            {
+                GameManager.Instance.musicSource.Stop();
+            }
             pc.PlayVictoryPose(itemSprite);
         }
         yield return new WaitForSeconds(3f);

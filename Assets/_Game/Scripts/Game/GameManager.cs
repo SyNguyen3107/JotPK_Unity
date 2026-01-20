@@ -30,7 +30,7 @@ public class GameManager : MonoBehaviour
     public Color timerNormalColor = Color.green;
     public Color timerCriticalColor = Color.red;
 
-    public bool useOverrideRespawn = false; // Checkbox để bật tính năng này
+    public bool useOverrideRespawn = false;
     public Vector3 overrideRespawnPosition;
 
     [Header("Respawn Logic")]
@@ -62,10 +62,9 @@ public class GameManager : MonoBehaviour
 
     [Header("Gopher Event Settings")]
     public GameObject gopherPrefab;
-    [Range(0, 100)] public float gopherSpawnChance = 5f; // 5%
-    public float gopherSpawnDistance = 6.5f; // Khoảng cách từ tâm (xa hơn map một chút)
+    [Range(0, 100)] public float gopherSpawnChance = 5f;
+    public float gopherSpawnDistance = 6.5f;
 
-    // Biến runtime
     private bool isGopherScheduled = false;
     private float gopherSpawnTime = 0f;
 
@@ -73,17 +72,17 @@ public class GameManager : MonoBehaviour
     public AudioSource musicSource;
     public AudioClip defaultLevelMusic;
     public AudioClip gameOverClip;
-    public AudioClip pauseClip;   // Âm thanh khi Pause
-    public AudioClip unpauseClip; // Âm thanh khi Resume
+    public AudioClip pauseClip;
+    public AudioClip unpauseClip;
 
     [Header("UI Audio Global")]
-    public AudioSource uiAudioSource; // AudioSource dùng chung cho UI toàn game
+    public AudioSource uiAudioSource;
     public AudioClip buttonHoverClip;
     public AudioClip buttonClickClip;
 
     [Header("Tutorial Settings")]
-    public bool isTutorialActive = false; // Biến cờ để biết đang trong giai đoạn tutorial
-    private bool hasGameStarted = false;  // Biến cờ để đảm bảo game chỉ start 1 lần
+    public bool isTutorialActive = false;
+    private bool hasGameStarted = false;
     #endregion
 
     #region --- STATE VARIABLES ---
@@ -91,7 +90,6 @@ public class GameManager : MonoBehaviour
     public GameObject gameOverPanel;
     public GameObject playerObject;
 
-    // --- KHẮC PHỤC LỖI SPAWN: Dùng biến này thay cho Instance ---
     private WaveSpawner myWaveSpawner;
 
     [Header("Debug Info")]
@@ -109,7 +107,6 @@ public class GameManager : MonoBehaviour
     private bool isWaitingForClear = false;
     private bool isGameOver = false;
 
-    // Save System
     public int currentSlotIndex = -1;
     public GameData currentData;
     #endregion
@@ -122,7 +119,6 @@ public class GameManager : MonoBehaviour
             Instance = this;
             DontDestroyOnLoad(gameObject);
 
-            // LẤY COMPONENT NGAY TẠI ĐÂY
             myWaveSpawner = GetComponent<WaveSpawner>();
         }
         else Destroy(gameObject);
@@ -130,7 +126,6 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
-        // Tự động chạy nếu đang test trực tiếp trong Scene Game
         if (SceneManager.GetActiveScene().name == SCENE_GAME_NAME)
         {
             if (currentData == null)
@@ -151,19 +146,16 @@ public class GameManager : MonoBehaviour
         }
         if (isTutorialActive && !hasGameStarted)
         {
-            // Kiểm tra các phím di chuyển hoặc bắn
             float moveX = Input.GetAxisRaw("Horizontal");
             float moveY = Input.GetAxisRaw("Vertical");
             bool shootKeys = Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.DownArrow) ||
                              Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.RightArrow);
 
-            // Nếu có bất kỳ tín hiệu nào
             if (moveX != 0 || moveY != 0 || shootKeys)
             {
                 StartCoroutine(StartGameWithDelay());
             }
 
-            // QUAN TRỌNG: Return luôn để không chạy Timer hay logic khác
             return;
         }
         HandleTimer();
@@ -173,24 +165,21 @@ public class GameManager : MonoBehaviour
 
     #region --- INITIALIZATION & SETUP ---
 
-    // Hàm gọi từ Menu
     public void LoadGameAndPlay(int slotIndex, bool isNewGame)
     {
         currentSlotIndex = slotIndex;
         if (isNewGame)
         {
-            // Reset biến local trước
             currentLives = startLives;
             currentCoins = 0;
             currentLevelIndex = startingLevelIndex;
 
-            // Tạo Data mới
             currentData = new GameData();
             currentData.lives = startLives;
             currentData.coins = 0;
             currentData.currentLevelIndex = startingLevelIndex;
 
-            SaveGame(); // Lưu file lần đầu
+            SaveGame();
         }
         else
         {
@@ -209,19 +198,16 @@ public class GameManager : MonoBehaviour
 
     public void SetupLevel()
     {
-        // 1. Reset Trạng thái
         isGameOver = false;
         isWaitingForClear = false;
 
         GameObject existingMap = GameObject.Find(NAME_INITIAL_MAP);
 
-        // --- 2. SPAWN MAP ---
         if (currentLevelIndex < allLevels.Count)
         {
             LevelConfig levelData = allLevels[currentLevelIndex];
             levelDuration = levelData.levelDuration;
 
-            // Nếu map chưa có sẵn (hoặc khác tên), spawn mới
             if (currentMapInstance == null || currentMapInstance.name != "Instance_" + levelData.levelName)
             {
                 if (existingMap != null && currentLevelIndex > 0) Destroy(existingMap);
@@ -233,11 +219,9 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            Debug.LogError("Level Index out of range!");
             return;
         }
 
-        // --- 3. SETUP TIMING & REFS ---
         currentTime = levelDuration;
         isTimerRunning = true;
         Time.timeScale = 1f;
@@ -245,12 +229,10 @@ public class GameManager : MonoBehaviour
         if (playerObject == null) playerObject = GameObject.FindGameObjectWithTag(TAG_PLAYER);
         if (gameOverPanel != null) gameOverPanel.SetActive(false);
 
-        // --- 4. SETUP CONTENT (PLAYER & ENEMY) ---
         if (currentMapInstance != null)
         {
             currentGate = currentMapInstance.GetComponentInChildren<Gate>();
 
-            // Setup Player Position
             Transform pSpawn = currentMapInstance.transform.Find(NAME_PLAYER_SPAWN_POINT);
             if (playerObject != null)
             {
@@ -258,7 +240,6 @@ public class GameManager : MonoBehaviour
                 playerObject.SetActive(true);
             }
 
-            // Setup Wave Data
             if (myWaveSpawner != null && currentLevelIndex < allLevels.Count)
             {
                 LevelConfig levelData = allLevels[currentLevelIndex];
@@ -272,14 +253,12 @@ public class GameManager : MonoBehaviour
                         foundSpawnPoints[i] = enemySpawnParent.GetChild(i);
                 }
 
-                // Nạp dữ liệu vào Spawner (nhưng chưa START vội)
                 myWaveSpawner.UpdateLevelData(Vector3.zero, levelData.waves, foundSpawnPoints);
             }
         }
 
         ApplyPersistentData();
 
-        // --- 5. UI SETUP ---
         if (UIManager.Instance != null)
         {
             UIManager.Instance.SetTimerColor(timerNormalColor);
@@ -293,64 +272,49 @@ public class GameManager : MonoBehaviour
         if (gameOverPanel != null) gameOverPanel.SetActive(false);
 
 
-        // --- 6. START LOGIC (ĐÃ CẬP NHẬT TUTORIAL) ---
-
-        // NẾU LÀ MÀN ĐẦU TIÊN (Index 0) -> VÀO CHẾ ĐỘ CHỜ (TUTORIAL)
         if (currentLevelIndex == 0)
         {
-            Debug.Log("[SetupLevel] Tutorial Phase: Waiting for input...");
             isTutorialActive = true;
             hasGameStarted = false;
-            isTimerRunning = false; // Dừng Timer
+            isTimerRunning = false;
 
-            // Hiển thị ảnh hướng dẫn
             if (UIManager.Instance != null) UIManager.Instance.ShowTutorial(true);
 
-            // Tắt nhạc & Spawner
             if (musicSource != null) musicSource.Stop();
             if (myWaveSpawner != null) myWaveSpawner.StopSpawning();
         }
         else
         {
-            // CÁC MÀN KHÁC: CHẠY LUÔN
             isTutorialActive = false;
             if (UIManager.Instance != null) UIManager.Instance.ShowTutorial(false);
 
-            StartGameplayMechanics(); // Gọi hàm helper bên dưới
+            StartGameplayMechanics();
         }
     }
     void StartGameplayMechanics()
     {
-        // Reset trạng thái Gopher mỗi khi vào màn mới
         isGopherScheduled = false;
-        // Logic phân luồng Boss/Normal cũ được chuyển vào đây
         BossManager bossMgr = currentMapInstance.GetComponentInChildren<BossManager>();
 
         if (bossMgr != null)
         {
-            Debug.Log("[GameManager] BOSS LEVEL START.");
             bossMgr.ActivateBossLevel();
             isTimerRunning = false;
             if (myWaveSpawner != null) myWaveSpawner.StopSpawning();
         }
         else
         {
-            Debug.Log("[GameManager] NORMAL LEVEL START.");
             if (gopherPrefab != null)
             {
                 float roll = Random.Range(0f, 100f);
                 if (roll <= gopherSpawnChance)
                 {
                     isGopherScheduled = true;
-                    // Chọn thời điểm ngẫu nhiên (từ giây thứ 10 đến trước khi hết giờ 10s)
                     float minTime = 10f;
                     float maxTime = Mathf.Max(10f, levelDuration - 10f);
                     gopherSpawnTime = Random.Range(minTime, maxTime);
-
-                    Debug.Log($"[Gopher] Will spawn at timer: {gopherSpawnTime}");
                 }
             }
-            // Bật nhạc thường
             if (musicSource != null)
             {
                 if (defaultLevelMusic != null) musicSource.clip = defaultLevelMusic;
@@ -359,8 +323,8 @@ public class GameManager : MonoBehaviour
             }
             if (musicSource != null)
             {
-                musicSource.Stop(); // 1. Dừng nhạc đang phát (quan trọng)
-                musicSource.time = 0f; // 2. Tua về 0:00 (quan trọng)
+                musicSource.Stop();
+                musicSource.time = 0f;
 
                 if (defaultLevelMusic != null) musicSource.clip = defaultLevelMusic;
                 musicSource.loop = true;
@@ -368,7 +332,6 @@ public class GameManager : MonoBehaviour
             }
             isTimerRunning = true;
 
-            // Bật Spawner
             if (myWaveSpawner != null)
             {
                 myWaveSpawner.SetWavePaused(false);
@@ -377,22 +340,17 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    // --- HÀM 2: COROUTINE ĐẾM NGƯỢC 3 GIÂY ---
     IEnumerator StartGameWithDelay()
     {
-        hasGameStarted = true; // Khóa input
-        Debug.Log("Input Detected! Game starts in 3s...");
+        hasGameStarted = true;
 
-        // 1. UI Tutorial mờ dần
         if (UIManager.Instance != null)
         {
             StartCoroutine(UIManager.Instance.FadeOutTutorial(3f));
         }
 
-        // 2. Đếm ngược 3 giây
         yield return new WaitForSeconds(3f);
 
-        // 3. Bắt đầu game thật sự
         isTutorialActive = false;
         StartGameplayMechanics();
     }
@@ -407,7 +365,7 @@ public class GameManager : MonoBehaviour
         if (isGopherScheduled && currentTime <= gopherSpawnTime)
         {
             SpawnGopher();
-            isGopherScheduled = false; // Đảm bảo chỉ spawn 1 lần
+            isGopherScheduled = false;
         }
         if (UIManager.Instance != null)
         {
@@ -429,14 +387,11 @@ public class GameManager : MonoBehaviour
     {
         if (isWaitingForClear) return;
 
-        Debug.Log("TIME UP! Stop Spawning & Wait for Clear.");
         isTimerRunning = false;
-        isWaitingForClear = true; // Bật cờ chờ dọn quái
+        isWaitingForClear = true;
 
-        // 1. Dừng sinh quái ngay lập tức
         if (myWaveSpawner != null) myWaveSpawner.StopSpawning();
 
-        // 2. Kiểm tra Spikeball (nếu còn sót lại)
         CheckSpikeballEndCondition();
     }
 
@@ -444,7 +399,6 @@ public class GameManager : MonoBehaviour
     {
         if (!isWaitingForClear) return;
 
-        // Logic cũ: Phải giết hết quái đang sống VÀ quái đang chờ spawn phải bằng 0
         int activeEnemyCount = GameObject.FindGameObjectsWithTag(TAG_ENEMY).Length;
         int pendingEnemyCount = (myWaveSpawner != null) ? myWaveSpawner.GetPendingEnemyCount() : 0;
 
@@ -460,7 +414,6 @@ public class GameManager : MonoBehaviour
         GameObject[] enemies = GameObject.FindGameObjectsWithTag(TAG_ENEMY);
         if (enemies.Length == 0) return;
 
-        // Logic: Nếu tất cả quái còn lại là Spikeball thì làm yếu chúng đi
         bool allAreSpikeballs = true;
         List<Spikeball> list = new List<Spikeball>();
 
@@ -479,7 +432,6 @@ public class GameManager : MonoBehaviour
     #region --- LEVEL TRANSITION ---
     public void CompleteCurrentArea()
     {
-        Debug.Log("LEVEL CLEARED!");
         if (musicSource != null) musicSource.Stop();
 
         totalAreasPassed++;
@@ -489,7 +441,6 @@ public class GameManager : MonoBehaviour
         if (UIManager.Instance != null) UIManager.Instance.UpdateAreaIndicator(totalAreasPassed);
         if (currentGate != null) currentGate.OpenGate();
 
-        // Spawn Shop
         bool shouldSpawnShop = false;
 
         if (shopSpawnLevels != null && shopSpawnLevels.Contains(currentLevelIndex))
@@ -498,7 +449,6 @@ public class GameManager : MonoBehaviour
         }
         if (shouldSpawnShop && vendorPrefab != null && currentMapInstance != null)
         {
-            Debug.Log($"Spawning Shop after level index: {currentLevelIndex}");
             if (UpgradeManager.Instance != null) UpgradeManager.Instance.ResetPurchaseStatus();
             GameObject vendor = Instantiate(vendorPrefab, Vector3.zero, Quaternion.identity);
             vendor.transform.SetParent(currentMapInstance.transform);
@@ -515,13 +465,11 @@ public class GameManager : MonoBehaviour
         currentLevelIndex++;
         if (currentLevelIndex >= allLevels.Count)
         {
-            Debug.Log("WIN!");
             yield break;
         }
 
         LevelConfig nextLevelData = allLevels[currentLevelIndex];
 
-        // 1. Tạo Map Mới (Offset xuống dưới)
         Vector3 offsetPosition = new Vector3(0f, -mapHeight, 0);
         GameObject newMap = Instantiate(nextLevelData.mapPrefab, offsetPosition, Quaternion.identity);
         newMap.name = "Map_" + nextLevelData.levelName;
@@ -529,7 +477,6 @@ public class GameManager : MonoBehaviour
         PlayerController pc = playerObject.GetComponent<PlayerController>();
         if (pc != null) pc.isInputEnabled = false;
 
-        // 2. Di chuyển Camera & Player
         Vector3 targetWorldPos = offsetPosition;
         Transform newPSpawn = newMap.transform.Find(NAME_PLAYER_SPAWN_POINT);
         if (newPSpawn != null) targetWorldPos = newPSpawn.position;
@@ -537,7 +484,6 @@ public class GameManager : MonoBehaviour
         StartCoroutine(MoveCamera(offsetPosition, transitionTime));
         yield return StartCoroutine(pc.MoveToPosition(targetWorldPos, transitionTime));
 
-        // 3. Origin Shift (Xóa map cũ, đưa map mới về 0)
         if (currentMapInstance != null)
         {
             if (transform.IsChildOf(currentMapInstance.transform)) transform.SetParent(null);
@@ -553,10 +499,9 @@ public class GameManager : MonoBehaviour
         Physics2D.SyncTransforms();
         currentMapInstance = newMap;
 
-        // 4. SETUP WAVE CHO MAP MỚI (FIX LỖI SPAWN TẠI ĐÂY)
         Gate newGate = newMap.GetComponentInChildren<Gate>();
 
-        if (myWaveSpawner != null) // Dùng myWaveSpawner thay vì Instance
+        if (myWaveSpawner != null)
         {
             Transform enemySpawnParent = newMap.transform.Find(NAME_ENEMY_SPAWN_POINTS);
             Transform[] newSpawnPoints = new Transform[0];
@@ -568,7 +513,6 @@ public class GameManager : MonoBehaviour
                     newSpawnPoints[i] = enemySpawnParent.GetChild(i);
             }
 
-            // Cập nhật dữ liệu wave mới cho Spawner
             myWaveSpawner.UpdateLevelData(Vector3.zero, nextLevelData.waves, newSpawnPoints);
         }
 
@@ -578,13 +522,10 @@ public class GameManager : MonoBehaviour
         currentGate = newGate;
         if (currentGate != null) currentGate.CloseGate();
 
-        // 5. Save Game (Auto Save khi qua màn)
         SaveGame();
 
-        Debug.Log("Transition Done. Waiting 3s...");
         yield return new WaitForSeconds(3f);
 
-        // 6. Start Level Logic
         BossManager bossMgr = newMap.GetComponentInChildren<BossManager>();
         if (bossMgr != null)
         {
@@ -626,18 +567,15 @@ public class GameManager : MonoBehaviour
         if (currentLives > 0) StartCoroutine(RespawnSequence());
         else
         {
-            // Hết mạng -> Gọi chuỗi Game Over
             StartCoroutine(GameOverSequence());
         }
     }
 
     IEnumerator RespawnSequence()
     {
-        // 1. Dừng Game Logic
         isTimerRunning = false;
         if (musicSource != null) musicSource.Stop();
 
-        // KHÔI PHỤC LOGIC CŨ: Báo cho Spawner biết player chết để thu gom quái
         if (myWaveSpawner != null) myWaveSpawner.OnPlayerDied();
 
         PlayerController pc = playerObject != null ? playerObject.GetComponent<PlayerController>() : null;
@@ -648,7 +586,6 @@ public class GameManager : MonoBehaviour
         if (playerObject != null) playerObject.SetActive(false);
         yield return new WaitForSeconds(deathDuration);
 
-        // 2. Hồi sinh
         if (playerObject != null)
         {
             if (useOverrideRespawn)
@@ -665,7 +602,6 @@ public class GameManager : MonoBehaviour
         if (pc != null) pc.TriggerRespawnInvincibility(invincibilityDuration);
         yield return new WaitForSeconds(invincibilityDuration);
 
-        // 3. Resume Game -> Báo Spawner trả lại quái
         if (myWaveSpawner != null) myWaveSpawner.OnPlayerRespawned();
 
         if (useOverrideRespawn) isTimerRunning = false;
@@ -699,14 +635,12 @@ public class GameManager : MonoBehaviour
     }
     public void TogglePause()
     {
-        // Nếu trạng thái không cho phép -> Bỏ qua
         if (!canPause) return;
 
         isPaused = !isPaused;
 
         if (isPaused)
         {
-            // Dừng game
             Time.timeScale = 0f;
             if (UIManager.Instance != null)
             {
@@ -718,7 +652,6 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            // Tiếp tục game
             Time.timeScale = 1f;
             if (UIManager.Instance != null)
             {
@@ -732,7 +665,6 @@ public class GameManager : MonoBehaviour
 
     public void ExitToMainMenu()
     {
-        // Quan trọng: Phải trả lại tốc độ thời gian trước khi load scene khác
         Time.timeScale = 1f;
         isPaused = false;
         if (musicSource != null)
@@ -740,15 +672,23 @@ public class GameManager : MonoBehaviour
             musicSource.Stop();
             musicSource.time = 0f;
         }
-        // Reset các trạng thái game nếu cần
         SceneManager.LoadScene("MainMenu");
     }
     public void SaveGame()
     {
         if (currentSlotIndex == -1) return;
+
         currentData.lives = this.currentLives;
         currentData.coins = this.currentCoins;
         currentData.currentLevelIndex = this.currentLevelIndex;
+
+        if (UpgradeManager.Instance != null)
+        {
+            currentData.bootLevel = UpgradeManager.Instance.currentBootLevel;
+            currentData.gunLevel = UpgradeManager.Instance.currentGunLevel;
+            currentData.ammoLevel = UpgradeManager.Instance.currentAmmoLevel;
+        }
+
         SaveSystem.SaveGame(currentData, currentSlotIndex);
     }
 
@@ -758,7 +698,6 @@ public class GameManager : MonoBehaviour
         foreach (var fx in fxList) Destroy(fx);
     }
 
-    // Các hàm Drop System, Audio, IEnum MoveCamera... (Giữ nguyên như cũ)
     IEnumerator MoveCamera(Vector3 targetCenter, float duration)
     {
         Transform camTrans = Camera.main.transform;
@@ -815,19 +754,16 @@ public class GameManager : MonoBehaviour
     IEnumerator GameOverSequence()
     {
         isGameOver = true;
-        isTimerRunning = false; // Dừng đồng hồ
+        isTimerRunning = false;
 
-        // 1. Xử lý nhân vật
         if (playerObject != null) playerObject.SetActive(false);
-        if (myWaveSpawner != null) myWaveSpawner.StopSpawning(); // Dừng sinh quái
+        if (myWaveSpawner != null) myWaveSpawner.StopSpawning();
 
-        // 2. Xử lý âm thanh
         if (musicSource != null)
         {
             musicSource.Stop();
             if (gameOverClip != null)
             {
-                // Phát nhạc Game Over (không loop)
                 musicSource.loop = false;
                 musicSource.clip = gameOverClip;
                 musicSource.Play();
@@ -837,21 +773,15 @@ public class GameManager : MonoBehaviour
             }
         }
 
-        // 3. Hiển thị Menu (Dừng game hoàn toàn)
         Time.timeScale = 0f;
         if (gameOverPanel != null) gameOverPanel.SetActive(true);
     }
 
-    // --- HÀM CHO NÚT RESTART (QUAN TRỌNG) ---
     public void RetryLevel()
     {
-        // Trả lại thời gian trước khi load
         Time.timeScale = 1f;
         isPaused = false;
 
-        // LOGIC CHÌA KHÓA: 
-        // Thay vì chỉ load scene, ta gọi lại hàm LoadGameAndPlay với isNewGame = false.
-        // Hàm này sẽ đọc file Save (được tạo lúc bắt đầu màn chơi) -> Khôi phục Máu, Tiền, Item về lúc mới vào màn.
         LoadGameAndPlay(currentSlotIndex, false);
     }
     #endregion
@@ -859,38 +789,33 @@ public class GameManager : MonoBehaviour
     {
         if (gopherPrefab == null) return;
 
-        // Chọn ngẫu nhiên 1 trong 4 cạnh: 0=Top, 1=Bottom, 2=Left, 3=Right
         int side = Random.Range(0, 4);
         Vector3 spawnPos = Vector3.zero;
 
-        // Random một điểm trên cạnh đó (giả sử map hình vuông/chữ nhật)
-        // mapHeight là biến bạn đã có, ta dùng gopherSpawnDistance cho an toàn
         float randomOffset = Random.Range(-6.5f, 6.5f);
 
         switch (side)
         {
-            case 0: // Top (Y dương)
+            case 0:
                 spawnPos = new Vector3(randomOffset, gopherSpawnDistance, 0);
                 break;
-            case 1: // Bottom (Y âm)
+            case 1:
                 spawnPos = new Vector3(randomOffset, -gopherSpawnDistance, 0);
                 break;
-            case 2: // Left (X âm)
+            case 2:
                 spawnPos = new Vector3(-gopherSpawnDistance, randomOffset, 0);
                 break;
-            case 3: // Right (X dương)
+            case 3:
                 spawnPos = new Vector3(gopherSpawnDistance, randomOffset, 0);
                 break;
         }
 
         Instantiate(gopherPrefab, spawnPos, Quaternion.identity);
-        Debug.Log($"[Gopher] Spawned at {spawnPos}");
     }
     public void PlayHoverSound()
     {
         if (uiAudioSource != null && buttonHoverClip != null)
         {
-            // Kiểm tra ignoreTimeScale để âm thanh không bị tắt khi Pause
             uiAudioSource.ignoreListenerPause = true;
             uiAudioSource.PlayOneShot(buttonHoverClip);
         }

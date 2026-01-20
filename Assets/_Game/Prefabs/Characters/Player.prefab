@@ -1626,6 +1626,8 @@ MonoBehaviour:
   isInputEnabled: 1
   enableAutoFire: 0
   isZombieMode: 0
+  defaultFireRate: 0.4
+  defaultMoveSpeed: 4
 --- !u!1 &3993843586881358532
 GameObject:
   m_ObjectHideFlags: 0

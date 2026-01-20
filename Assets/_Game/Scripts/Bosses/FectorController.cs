@@ -57,10 +57,15 @@ public class FectorController : BossController
     void Start()
     {
         base.Start();
-        maxHealth = 30;
         currentHealth = maxHealth;
         moveSpeed = moveSpeedCustom;
-        currentState = FectorState.Waiting;
+
+        // --- FIX LỖI TẠI ĐÂY ---
+        // Chỉ đặt trạng thái Waiting nếu Boss chưa bị kích hoạt (Chưa vào Intro)
+        if (currentState != FectorState.Intro)
+        {
+            currentState = FectorState.Waiting;
+        }
     }
     public override void StartBossFight()
     {

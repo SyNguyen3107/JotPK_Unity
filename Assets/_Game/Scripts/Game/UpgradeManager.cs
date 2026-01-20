@@ -38,8 +38,11 @@ public class UpgradeManager : MonoBehaviour
     #region Save & Load Logic
     public void SetUpgradeLevels(int gunLevel, int bootLevel, int ammoLevel)
     {
-        slot2Index = gunLevel; // Gun -> Slot 2
+        // LOG 1: Kiểm tra xem dữ liệu truyền vào có đúng không hay vẫn là 0
+        Debug.Log($"[UpgradeManager] SetUpgradeLevels Called -> Gun: {gunLevel} | Boot: {bootLevel} | Ammo: {ammoLevel}");
+
         slot1Index = bootLevel; // Boot -> Slot 1
+        slot2Index = gunLevel; // Gun -> Slot 2
         slot3Index = ammoLevel; // Ammo -> Slot 3
 
         ReapplyAllUpgrades();
@@ -48,10 +51,21 @@ public class UpgradeManager : MonoBehaviour
     public void ReapplyAllUpgrades()
     {
         PlayerController player = FindPlayer();
-        if (player == null) return;
 
+        if (player == null)
+        {
+            return;
+        }
+
+
+        // Thêm log định danh rõ ràng cho từng slot để dễ debug
+        Debug.Log("[UpgradeManager] Applying Slot 1 (Boots)...");
         ApplyListUpgrades(player, slot1Upgrades, slot1Index);
+
+        Debug.Log("[UpgradeManager] Applying Slot 2 (Gun)...");
         ApplyListUpgrades(player, slot2Upgrades, slot2Index);
+
+        Debug.Log("[UpgradeManager] Applying Slot 3 (Ammo)...");
         ApplyListUpgrades(player, slot3Upgrades, slot3Index);
 
         if (UIManager.Instance != null) UIManager.Instance.UpdateUpgradeIcons();
@@ -59,9 +73,21 @@ public class UpgradeManager : MonoBehaviour
 
     void ApplyListUpgrades(PlayerController player, List<UpgradeData> list, int count)
     {
+        // LOG 3: Kiểm tra list có null không và count là bao nhiêu
+        if (list == null)
+        {
+            return;
+        }
+
+
         for (int i = 0; i < count; i++)
         {
-            if (i < list.Count) player.ApplyPermanentUpgrade(list[i]);
+            if (i < list.Count)
+            {
+                // LOG 4: Xác nhận item nào đang được add vào
+                Debug.Log($"[UpgradeManager] -> Applying Upgrade Item [{i}]: {list[i].name}");
+                player.ApplyPermanentUpgrade(list[i]);
+            }
         }
     }
     #endregion

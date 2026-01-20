@@ -5,7 +5,7 @@ public class PlayerController : MonoBehaviour
 {
     #region Configuration & Settings
     [Header("Movement & Physics")]
-    public float moveSpeed = 5f;
+    public float moveSpeed = 4f;
     public float maxSpeed = 8f;
     public Vector2 mapBoundsMin = new Vector2(-6f, -5f);
     public Vector2 mapBoundsMax = new Vector2(6f, 5f);
@@ -118,18 +118,21 @@ public class PlayerController : MonoBehaviour
     private bool isInvincible = false;
     [HideInInspector] public bool isZombieMode = false;
 
-    private float defaultFireRate;
-    private float defaultMoveSpeed;
+    public float defaultFireRate = 0.4f;
+    public float defaultMoveSpeed = 4f;
     private float zombieTimer = 0f;
     private Coroutine tombstoneCoroutine;
     #endregion
 
     #region Unity Lifecycle
-    void Start()
+    void Awake()
     {
         defaultFireRate = currentFireRate;
         defaultMoveSpeed = moveSpeed;
+    }
 
+    void Start()
+    {
         if (rb == null) rb = GetComponent<Rigidbody2D>();
         if (legsRenderer != null && legsAnimator == null)
             legsAnimator = legsRenderer.GetComponent<Animator>();
@@ -256,19 +259,28 @@ public class PlayerController : MonoBehaviour
         switch (data.type)
         {
             case UpgradeType.MoveSpeed:
+                if (defaultMoveSpeed == 0 && moveSpeed > 0) defaultMoveSpeed = moveSpeed;
                 defaultMoveSpeed += data.valueAmount;
                 moveSpeed = defaultMoveSpeed;
                 break;
+
             case UpgradeType.FireRate:
+                if (defaultFireRate == 0 && currentFireRate > 0) defaultFireRate = currentFireRate;
                 defaultFireRate = Mathf.Max(maxFireRate, defaultFireRate - data.valueAmount);
                 currentFireRate = defaultFireRate;
                 break;
+
             case UpgradeType.AmmoDamage:
                 currentBulletDamage += (int)data.valueAmount;
                 break;
+
             case UpgradeType.ExtraLife:
-                if (GameManager.Instance != null) GameManager.Instance.AddLife(1);
+                if (GameManager.Instance != null)
+                {
+                    GameManager.Instance.AddLife(1);
+                }
                 break;
+
             case UpgradeType.SheriffBadge:
                 PowerUpData badge = ScriptableObject.CreateInstance<PowerUpData>();
                 badge.type = PowerUpType.SheriffBadge;
@@ -276,6 +288,7 @@ public class PlayerController : MonoBehaviour
                 badge.icon = data.icon;
                 PickUpItem(badge);
                 break;
+
             case UpgradeType.SuperGun:
                 shotgunExpirationTime = float.MaxValue;
                 isShotgunActive = true;
@@ -656,6 +669,7 @@ public class PlayerController : MonoBehaviour
     {
         mapBoundsMin = newMin;
         mapBoundsMax = newMax;
+        Debug.Log($"Map bounds set to {mapBoundsMin} -> {mapBoundsMax}");
     }
     #endregion
 

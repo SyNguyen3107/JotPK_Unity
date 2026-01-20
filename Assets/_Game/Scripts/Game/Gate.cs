@@ -32,7 +32,11 @@ public class Gate : MonoBehaviour
     {
         isOpen = true;
 
-        if (bottomGateObject != null) bottomGateObject.SetActive(false);
+        if (bottomGateObject != null)
+        {
+            bottomGateObject.SetActive(false);
+            Debug.Log("Gate opened.");
+        }
 
         if (UIManager.Instance != null) UIManager.Instance.ToggleExitArrow(true);
     }

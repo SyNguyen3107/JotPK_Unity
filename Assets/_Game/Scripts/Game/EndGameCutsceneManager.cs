@@ -32,7 +32,6 @@ public class EndGameCutsceneManager : MonoBehaviour
         {
             GameManager.Instance.canPause = false;
         }
-
         if (kissSpriteObject != null) kissSpriteObject.SetActive(false);
         if (playerLegAnimator != null) playerLegAnimator.SetBool("IsMoving", false);
 

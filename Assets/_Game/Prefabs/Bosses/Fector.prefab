@@ -281,6 +281,8 @@ MonoBehaviour:
   whiteSprite: {fileID: -8438291159918940483, guid: 226a2dd9665e9e9408a1469427cf02a8, type: 3}
   audioSource: {fileID: 955420855722891488}
   hitSound: {fileID: 8300000, guid: 9d0796a3c79ebec448ddaa93516b59e4, type: 3}
+  footstepClip: {fileID: 0}
+  stepRate: 0.5
   rb: {fileID: 8858108463681281017}
   itemPrefab: {fileID: 4688020100261846767, guid: 6d3f94549c48af9489a7d7d733e5a5c2, type: 3}
   questionMarkObject: {fileID: 0}
