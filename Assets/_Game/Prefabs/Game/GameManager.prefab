@@ -187,6 +187,20 @@ MonoBehaviour:
     mapPrefab: {fileID: 7720983330286798090, guid: a0d5b126eea335d46a758e0e6fcb80d7, type: 3}
     waves: []
     levelDuration: 90
+  levelNames:
+  - Prairie\nArea 1
+  - Prairie\nArea 2
+  - Prairie\nArea 3
+  - Prairie\nArea 4
+  - Prairie\nArea 5
+  - Forest\nArea 1
+  - Forest\nArea 2
+  - Forest\nArea 3
+  - Forest\nArea 4
+  - Graveyard\nArea 1
+  - Graveyard\nArea 2
+  - Graveyard\nArea 3
+  - Graveyard\nArea 4
   allowedDrops:
   - {fileID: 11400000, guid: a7d17e702a6382e419073fd04476e9f4, type: 2}
   - {fileID: 11400000, guid: c55bfbd59c3144644b9c7bb780f489bb, type: 2}

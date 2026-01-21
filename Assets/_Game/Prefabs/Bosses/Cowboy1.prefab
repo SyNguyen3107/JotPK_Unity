@@ -110,7 +110,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CowboyController
   moveSpeed: 4
-  maxHealth: 50
+  maxHealth: 100
   currentHealth: 0
   damageToPlayer: 1
   deathEffectPrefab: {fileID: 6860427870915328847, guid: 5ec1de7fc7480ee468221fe83e6b032c, type: 3}
@@ -119,11 +119,14 @@ MonoBehaviour:
   whiteSprite: {fileID: -905626988124345088, guid: 226a2dd9665e9e9408a1469427cf02a8, type: 3}
   audioSource: {fileID: 3794523153993716131}
   hitSound: {fileID: 8300000, guid: 9d0796a3c79ebec448ddaa93516b59e4, type: 3}
+  footstepClip: {fileID: 0}
+  stepRate: 0.5
   rb: {fileID: 1029741233083263475}
   itemPrefab: {fileID: 4688020100261846767, guid: 6d3f94549c48af9489a7d7d733e5a5c2, type: 3}
   questionMarkObject: {fileID: 3615532482916321513}
   sourcePrefab: {fileID: 0}
   dialogObject: {fileID: 6682633320799692722}
+  bossName: JUAREZ The Deadeye
   idleTime: 2
   minX: -6.5
   maxX: 6.5

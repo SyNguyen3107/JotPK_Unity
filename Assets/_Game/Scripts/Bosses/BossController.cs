@@ -4,7 +4,7 @@ public abstract class BossController : Enemy
 {
     [Header("Boss Common Visuals")]
     public GameObject dialogObject;
-
+    public string bossName = "Unknown Boss";
     public abstract void StartBossFight();
 
     public virtual void SetBossDialog(bool isActive)

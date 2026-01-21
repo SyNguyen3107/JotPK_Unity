@@ -10,6 +10,7 @@ public class ShopSlot : MonoBehaviour
     [Header("References")]
     public SpriteRenderer iconRenderer;
     public TextMeshPro priceText;
+    public TextMeshPro labelText;
     #endregion
 
     #region Runtime Variables
@@ -56,11 +57,17 @@ public class ShopSlot : MonoBehaviour
                 priceText.text = currentItem.cost.ToString();
                 priceText.gameObject.SetActive(true);
             }
+            if (labelText)
+            {
+                labelText.text = currentItem.displayLabel;
+                labelText.gameObject.SetActive(true);
+            }
         }
         else
         {
             if (iconRenderer != null) iconRenderer.enabled = false;
             if (priceText != null) priceText.gameObject.SetActive(false);
+            if (labelText) labelText.gameObject.SetActive(false);
         }
     }
     #endregion

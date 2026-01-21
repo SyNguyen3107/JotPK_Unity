@@ -41,6 +41,15 @@ public class CowboyBossManager : BossManager
     #endregion
 
     #region Core Logic
+    public override void ActivateBossLevel()
+    {
+        base.ActivateBossLevel();
+
+        if (cowboyBossScript != null && UIManager.Instance != null)
+        {
+            UIManager.Instance.SetBossName(cowboyBossScript.bossName);
+        }
+    }
     protected override void HandleBossVictory()
     {
         base.HandleBossVictory();

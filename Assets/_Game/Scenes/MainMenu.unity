@@ -127,26 +127,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 1934135101723791435, guid: 690f6afd5992dab41b38fe5948311135, type: 3}
-      propertyPath: allLevels.Array.data[0].levelDuration
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1934135101723791435, guid: 690f6afd5992dab41b38fe5948311135, type: 3}
-      propertyPath: allLevels.Array.data[1].levelDuration
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1934135101723791435, guid: 690f6afd5992dab41b38fe5948311135, type: 3}
-      propertyPath: allLevels.Array.data[2].levelDuration
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1934135101723791435, guid: 690f6afd5992dab41b38fe5948311135, type: 3}
-      propertyPath: allLevels.Array.data[3].levelDuration
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1934135101723791435, guid: 690f6afd5992dab41b38fe5948311135, type: 3}
-      propertyPath: allLevels.Array.data[11].levelDuration
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 8312179908262576811, guid: 690f6afd5992dab41b38fe5948311135, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0

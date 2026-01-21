@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
@@ -122,6 +123,7 @@ public class PlayerController : MonoBehaviour
     public float defaultMoveSpeed = 4f;
     private float zombieTimer = 0f;
     private Coroutine tombstoneCoroutine;
+    private float invincibilityExpirationTime = 0f;
     #endregion
 
     #region Unity Lifecycle
@@ -298,6 +300,11 @@ public class PlayerController : MonoBehaviour
     #endregion
 
     #region Stats & Buffs
+    public struct ActiveBuffInfo
+    {
+        public PowerUpType type;
+        public float remainingTime;
+    }
     void HandleBuffTimers()
     {
         float now = Time.time;
@@ -307,7 +314,44 @@ public class PlayerController : MonoBehaviour
         isSheriffActive = now < sheriffExpirationTime;
         isCoffeeActive = now < coffeeExpirationTime;
     }
+    public List<ActiveBuffInfo> GetActiveBuffs()
+    {
+        List<ActiveBuffInfo> list = new List<ActiveBuffInfo>();
+        float now = Time.time;
 
+        if (isHMGActive) list.Add(new ActiveBuffInfo { type = PowerUpType.HeavyMachineGun, remainingTime = hmgExpirationTime - now });
+        if (isShotgunActive) list.Add(new ActiveBuffInfo { type = PowerUpType.Shotgun, remainingTime = shotgunExpirationTime - now });
+        if (isWheelActive) list.Add(new ActiveBuffInfo { type = PowerUpType.WagonWheel, remainingTime = wheelExpirationTime - now });
+        if (isSheriffActive) list.Add(new ActiveBuffInfo { type = PowerUpType.SheriffBadge, remainingTime = sheriffExpirationTime - now });
+        if (isCoffeeActive) list.Add(new ActiveBuffInfo { type = PowerUpType.Coffee, remainingTime = coffeeExpirationTime - now });
+        // 2. Tombstone (Zombie Mode)
+        if (isZombieMode)
+        {
+            // Lưu ý: zombieTimer là biến đếm ngược (Duration -> 0) nên dùng trực tiếp, không cần trừ 'now'
+            list.Add(new ActiveBuffInfo
+            {
+                type = PowerUpType.Tombstone,
+                remainingTime = zombieTimer
+            });
+        }
+
+        // 3. SmokeBomb (Hiển thị dưới dạng Invincibility)
+        // Chỉ hiện nếu đang bất tử MÀ KHÔNG PHẢI do Zombie (để tránh hiện 2 icon cùng lúc)
+        if (isInvincible && !isZombieMode)
+        {
+            float timeLeft = invincibilityExpirationTime - now;
+            if (timeLeft > 0)
+            {
+                list.Add(new ActiveBuffInfo
+                {
+                    type = PowerUpType.SmokeBomb,
+                    remainingTime = timeLeft
+                });
+            }
+        }
+
+        return list;
+    }
     void RecalculateStats()
     {
         float targetSpeed = defaultMoveSpeed;
@@ -532,6 +576,8 @@ public class PlayerController : MonoBehaviour
 
     IEnumerator TombstoneRoutine()
     {
+        //--- PHASE 1: CUTSCENE ---
+        if (GameManager.Instance != null) GameManager.Instance.canPause = false;
         if (zombieAudioSource != null) zombieAudioSource.Stop();
         if (zombieModelObject != null) zombieModelObject.SetActive(false);
         isZombieMode = false;
@@ -574,6 +620,9 @@ public class PlayerController : MonoBehaviour
         if (darkness) Destroy(darkness);
         if (UIManager.Instance) UIManager.Instance.ToggleHUD(true);
 
+
+        //--- PHASE 2: ZOMBIE MODE ---
+        if (GameManager.Instance != null) GameManager.Instance.canPause = true;
         isZombieMode = true;
         isDead = false;
         if (zombieModelObject) zombieModelObject.SetActive(true);
@@ -712,7 +761,11 @@ public class PlayerController : MonoBehaviour
 
     public bool IsInvincible() => isInvincible;
 
-    public void TriggerRespawnInvincibility(float duration) => StartCoroutine(InvincibilityRoutine(duration));
+    public void TriggerRespawnInvincibility(float duration)
+    {
+        invincibilityExpirationTime = Time.time + duration;
+        StartCoroutine(InvincibilityRoutine(duration));
+    }
 
     IEnumerator InvincibilityRoutine(float duration)
     {

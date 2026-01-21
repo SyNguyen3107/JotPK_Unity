@@ -15,6 +15,7 @@ MonoBehaviour:
   itemName: Heavy Machine Gun
   icon: {fileID: -1416087736, guid: 226a2dd9665e9e9408a1469427cf02a8, type: 3}
   type: 3
+  description: Significantly increases fire rate. Lasts about 12 seconds.
   valueAmount: 0
   duration: 12
   activateSound: {fileID: 8300000, guid: 83c67f222297f80408a2f0eaaffa31b3, type: 3}

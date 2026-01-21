@@ -22,6 +22,8 @@ public class PowerUpData : ScriptableObject
     public string itemName;
     public Sprite icon;
     public PowerUpType type;
+    [TextArea(3, 5)]
+    public string description;
 
     [Header("Values")]
     public float valueAmount;

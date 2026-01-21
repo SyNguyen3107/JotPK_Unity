@@ -59,9 +59,8 @@ public class FectorController : BossController
         base.Start();
         currentHealth = maxHealth;
         moveSpeed = moveSpeedCustom;
+        bossName = "FECTOR The Immortal";
 
-        // --- FIX LỖI TẠI ĐÂY ---
-        // Chỉ đặt trạng thái Waiting nếu Boss chưa bị kích hoạt (Chưa vào Intro)
         if (currentState != FectorState.Intro)
         {
             currentState = FectorState.Waiting;
@@ -410,6 +409,8 @@ public class FectorController : BossController
         for (int i = 0; i < 3; i++)
         {
             StartCoroutine(SpawnMultipleSmokes(transform.position));
+            AudioClip randomClip = deathSounds[Random.Range(0, deathSounds.Length)];
+            audioSource.PlayOneShot(randomClip);
             yield return new WaitForSeconds(0.3f);
         }
 

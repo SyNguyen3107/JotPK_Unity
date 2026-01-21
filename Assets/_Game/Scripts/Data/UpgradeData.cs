@@ -16,7 +16,7 @@ public class UpgradeData : ScriptableObject
     [Header("Display Info")]
     public string upgradeName;
     public Sprite icon;
-    [TextArea] public string description;
+    public string displayLabel;
 
     [Header("Cost & Logic")]
     public int cost;

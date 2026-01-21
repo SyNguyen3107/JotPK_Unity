@@ -15,6 +15,9 @@ MonoBehaviour:
   itemName: Tombstone
   icon: {fileID: 1581388313, guid: 226a2dd9665e9e9408a1469427cf02a8, type: 3}
   type: 9
+  description: The player becomes a zombie for a brief amount of time, granting increased
+    movement speed and the ability to kill on contact. Enemies flee from the player.
+    Lasts about 8 seconds.
   valueAmount: 0
   duration: 10
   activateSound: {fileID: 8300000, guid: d0d138e649a653743999e430d357ab03, type: 3}

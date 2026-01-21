@@ -40,6 +40,7 @@ public class CowboyController : BossController
     protected void Awake()
     {
         currentHealth = maxHealth;
+        bossName = "JUAREZ The Deadeye";
     }
 
     void Start()

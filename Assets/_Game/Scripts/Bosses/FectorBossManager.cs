@@ -36,6 +36,11 @@ public class FectorBossManager : BossManager
     public override void ActivateBossLevel()
     {
         base.ActivateBossLevel();
+
+        if (fectorScript != null && UIManager.Instance != null)
+        {
+            UIManager.Instance.SetBossName(fectorScript.bossName);
+        }
     }
 
     void HandleVictory()

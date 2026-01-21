@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::UpgradeData
   upgradeName: Ammo2
   icon: {fileID: 218888170, guid: 226a2dd9665e9e9408a1469427cf02a8, type: 3}
-  description: 
+  displayLabel: +DMG
   cost: 30
   type: 2
   valueAmount: 1

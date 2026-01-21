@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::UpgradeData
   upgradeName: Boot2
   icon: {fileID: 2111745279, guid: 226a2dd9665e9e9408a1469427cf02a8, type: 3}
-  description: 
+  displayLabel: +SPD
   cost: 20
   type: 0
   valueAmount: 1

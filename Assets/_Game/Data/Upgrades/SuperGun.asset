@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::UpgradeData
   upgradeName: Gun3
   icon: {fileID: -1690053254, guid: 226a2dd9665e9e9408a1469427cf02a8, type: 3}
-  description: 
+  displayLabel: ???
   cost: 99
   type: 5
   valueAmount: 0

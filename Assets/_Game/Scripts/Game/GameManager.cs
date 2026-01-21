@@ -48,6 +48,7 @@ public class GameManager : MonoBehaviour
 
     [Header("Level Management")]
     public List<LevelConfig> allLevels;
+    public List<string> levelNames;
 
     private int currentLevelCoinsSpawned = 0;
 
@@ -96,7 +97,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GameObject currentMapInstance;
     [SerializeField] private float currentTime;
     [SerializeField] public int currentLives;
-    [SerializeField] private int currentLevelIndex = 0;
+    [SerializeField] public int currentLevelIndex = 0;
 
     [Header("Game Flags")]
     public int totalAreasPassed = 0;
@@ -264,7 +265,34 @@ public class GameManager : MonoBehaviour
             UIManager.Instance.SetTimerColor(timerNormalColor);
             UIManager.Instance.UpdateLives(currentLives);
             UIManager.Instance.UpdateCoins(currentCoins);
-            UIManager.Instance.UpdateAreaIndicator(totalAreasPassed);
+
+            string nameToShow = "";
+
+            if (levelNames != null && currentLevelIndex < levelNames.Count)
+            {
+                nameToShow = levelNames[currentLevelIndex];
+            }
+            else
+            {
+                if (currentLevelIndex >= 0 && currentLevelIndex <= 4)
+                {
+                    nameToShow = $"Prairie\nArea {currentLevelIndex + 1}";
+                }
+                else if (currentLevelIndex >= 5 && currentLevelIndex <= 8)
+                {
+                    nameToShow = $"Forest\nArea {currentLevelIndex - 4}";
+                }
+                else if (currentLevelIndex >= 9 && currentLevelIndex <= 12)
+                {
+                    nameToShow = $"Graveyard\nArea {currentLevelIndex - 8}";
+                }
+                else
+                {
+                    Debug.LogWarning("Level name not defined for current level index: " + currentLevelIndex);
+                }
+            }
+            UIManager.Instance.ShowLevelName(nameToShow);
+
             UIManager.Instance.UpdateTimer(currentTime, levelDuration);
             UIManager.Instance.ToggleHUD(true);
             if (gameOverPanel == null) gameOverPanel = UIManager.Instance.gameOverPanel;

@@ -272,7 +272,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FectorController
   moveSpeed: 4
-  maxHealth: 350
+  maxHealth: 400
   currentHealth: 0
   damageToPlayer: 1
   deathEffectPrefab: {fileID: 6860427870915328847, guid: 5ec1de7fc7480ee468221fe83e6b032c, type: 3}
@@ -288,6 +288,7 @@ MonoBehaviour:
   questionMarkObject: {fileID: 0}
   sourcePrefab: {fileID: 0}
   dialogObject: {fileID: 2480857022170679219}
+  bossName: FECTOR The Immortal
   idleTime: 3
   moveSpeedCustom: 4
   mapBoundsMin: {x: -6.5, y: -6.5}

@@ -15,6 +15,9 @@ MonoBehaviour:
   itemName: Smoke Bomb
   icon: {fileID: 646514586, guid: 226a2dd9665e9e9408a1469427cf02a8, type: 3}
   type: 8
+  description: Teleports the player to a random spot on-screen and causes enemies
+    to stand still with question-marks above their head. Enemies will continue to
+    spawn, building up inside the spawn zones. Lasts about 4 seconds.
   valueAmount: 0
   duration: 0
   activateSound: {fileID: 8300000, guid: 361877fde0b38bd4a8f32910129c132b, type: 3}

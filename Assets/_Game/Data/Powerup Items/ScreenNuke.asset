@@ -15,6 +15,8 @@ MonoBehaviour:
   itemName: Screen Nuke
   icon: {fileID: 1396851553, guid: 226a2dd9665e9e9408a1469427cf02a8, type: 3}
   type: 7
+  description: Instantly destroys all enemies on-screen. Enemies killed like this
+    do not drop items.
   valueAmount: 0
   duration: 0
   activateSound: {fileID: 8300000, guid: 2dc8c563fda3a8c47b577163da7b598e, type: 3}

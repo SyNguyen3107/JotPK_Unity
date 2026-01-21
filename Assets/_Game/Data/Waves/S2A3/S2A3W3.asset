@@ -14,11 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::WaveData
   enemyGroups:
   - enemyPrefab: {fileID: 8353078837580226619, guid: b28d39b4c8b7fb24b8f7b0e444d2256e, type: 3}
-    count: 30
-    rate: 1
+    count: 40
+    rate: 0.25
   - enemyPrefab: {fileID: 4655255782507878393, guid: ca489f4582c47f64ea69da50dfbdc031, type: 3}
-    count: 15
-    rate: 1
+    count: 25
+    rate: 0.25
   - enemyPrefab: {fileID: 5843037898469409843, guid: 2a75d75eefa7a0c4699003695ca51442, type: 3}
-    count: 15
-    rate: 1
+    count: 20
+    rate: 0.5

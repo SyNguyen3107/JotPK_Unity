@@ -23,14 +23,22 @@ public class UIManager : MonoBehaviour
 
     [Header("--- RIGHT PANEL (Area Indicator) ---")]
     public List<Image> areaIcons;
+    public TextMeshProUGUI levelNameText;
+    public CanvasGroup levelNameCanvasGroup;
 
     [Header("--- BOTTOM PANEL (BOSS HP)")]
     public Image bossHPFill;
     public GameObject bossHealthBarObject;
+    public TextMeshProUGUI bossNameText;
 
     [Header("Pause Menu")]
     public GameObject pauseMenuPanel;
     public GameObject gameOverPanel;
+    [Header("Pause Menu Buff Display")]
+    public Transform buffListContainer;
+    public GameObject buffSlotPrefab;
+    [Header("Pause Menu Panels")]
+    public PlayerStatsUI playerStatsUI;
 
     [Header("Tutorial UI")]
     public GameObject tutorialPanel;
@@ -108,7 +116,14 @@ public class UIManager : MonoBehaviour
             else areaIcons[i].gameObject.SetActive(false);
         }
     }
-
+    public void ShowLevelName(string name)
+    {
+        if (levelNameText != null)
+        {
+            levelNameText.text = name;
+            StartCoroutine(LevelNameFadeRoutine());
+        }
+    }
     public void ToggleExitArrow(bool isActive)
     {
         if (exitArrowObject != null)
@@ -169,6 +184,10 @@ public class UIManager : MonoBehaviour
         {
             bossHealthBarObject.SetActive(isActive);
         }
+        if (bossNameText != null)
+        {
+            bossNameText.gameObject.SetActive(isActive);
+        }
     }
 
     public void UpdateBossHealth(float current, float max)
@@ -176,6 +195,25 @@ public class UIManager : MonoBehaviour
         if (bossHPFill != null)
         {
             bossHPFill.fillAmount = current / max;
+        }
+    }
+    public void SetBossName(string name)
+    {
+        if (bossNameText != null)
+        {
+            bossNameText.text = name;
+        }
+        else
+        {
+            int currentLevelIndex = GameManager.Instance != null ? GameManager.Instance.currentLevelIndex : 0;
+            if (currentLevelIndex == 4 || currentLevelIndex == 8)
+            {
+                bossNameText.text = "JUAREZ The Deadeye";
+            }
+            else if (currentLevelIndex == 12)
+            {
+                bossNameText.text = "FECTOR The Immortal";
+            }
         }
     }
     #endregion
@@ -186,9 +224,45 @@ public class UIManager : MonoBehaviour
         if (pauseMenuPanel != null)
         {
             pauseMenuPanel.SetActive(isVisible);
+            if (isVisible)
+                UpdatePauseMenuBuffs();
+            if (playerStatsUI != null) 
+                playerStatsUI.UpdateStats();
         }
     }
+    void UpdatePauseMenuBuffs()
+    {
+        if (buffListContainer == null || buffSlotPrefab == null) return;
 
+        foreach (Transform child in buffListContainer)
+        {
+            Destroy(child.gameObject);
+        }
+
+        if (GameManager.Instance != null && GameManager.Instance.playerObject != null)
+        {
+            PlayerController pc = GameManager.Instance.playerObject.GetComponent<PlayerController>();
+            if (pc != null)
+            {
+                var activeBuffs = pc.GetActiveBuffs();
+
+                foreach (var buff in activeBuffs)
+                {
+                    PowerUpData data = GameManager.Instance.allowedDrops.Find(x => x.type == buff.type);
+
+                    if (data != null)
+                    {
+                        GameObject slotObj = Instantiate(buffSlotPrefab, buffListContainer);
+                        BuffSlotUI slotScript = slotObj.GetComponent<BuffSlotUI>();
+                        if (slotScript != null)
+                        {
+                            slotScript.Setup(data, buff.remainingTime, data.duration);
+                        }
+                    }
+                }
+            }
+        }
+    }
     public void ShowTutorial(bool show)
     {
         if (tutorialPanel != null) tutorialPanel.SetActive(show);
@@ -239,6 +313,36 @@ public class UIManager : MonoBehaviour
 
         tutorialCanvasGroup.alpha = 0f;
         if (tutorialPanel != null) tutorialPanel.SetActive(false);
+    }
+    IEnumerator LevelNameFadeRoutine()
+    {
+        if (levelNameCanvasGroup == null) yield break;
+
+        // 1. Hiện rõ (Fade In)
+        float duration = 0.5f;
+        float elapsed = 0f;
+        levelNameCanvasGroup.alpha = 0f;
+
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            levelNameCanvasGroup.alpha = Mathf.Lerp(0f, 1f, elapsed / duration);
+            yield return null;
+        }
+        levelNameCanvasGroup.alpha = 1f;
+
+        // 2. Giữ nguyên trong 3 giây
+        yield return new WaitForSeconds(3f);
+
+        // 3. Mờ dần (Fade Out)
+        elapsed = 0f;
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            levelNameCanvasGroup.alpha = Mathf.Lerp(1f, 0f, elapsed / duration);
+            yield return null;
+        }
+        levelNameCanvasGroup.alpha = 0f;
     }
     #endregion
 }
